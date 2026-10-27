@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>运动损伤急救助手 · Sports Injury Helper</title>
+<style>
+:root{
+  --bg:#f6f7f9;--card:#fff;--text:#1d2330;--muted:#5d6676;--line:#dde1e7;
+  --acc:#1f6feb;--acc-soft:#e8f0fe;
+  --red:#c62828;--red-soft:#fdecec;--orange:#d9480f;--orange-soft:#fff1e6;
+  --yellow:#a86400;--yellow-soft:#fff8e1;--green:#2e7d32;--green-soft:#e8f5e9;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#12151b;--card:#1b2029;--text:#e7eaf0;--muted:#9aa3b2;--line:#2c3340;
+  --acc:#5b9bff;--acc-soft:#1c2a42;
+  --red:#ff6b6b;--red-soft:#3a1d1f;--orange:#ff9b5c;--orange-soft:#3a2617;
+  --yellow:#f2c14e;--yellow-soft:#352d17;--green:#6fcf73;--green-soft:#1c3220;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+main{max-width:680px;margin:0 auto;padding:16px 16px 48px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+h1{font-size:22px;margin:0;line-height:1.3}
+h2{font-size:19px;margin:0 0 10px}
+h3{font-size:17px;margin:0 0 6px}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px}
+.langs{flex:0 0 auto;display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.langs button{background:var(--card);color:var(--muted);border-radius:0;padding:8px 14px;font-size:15px;white-space:nowrap}
+.langs button+button{border-left:1px solid var(--line)}
+.langs button.on{background:var(--acc);color:#fff;font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.alert{background:var(--red-soft);border-color:var(--red)}
+.alert h2{color:var(--red)}
+.alert ul{margin:0 0 8px;padding-left:20px}
+.alert .numbers{font-weight:700;margin:0}
+.muted{color:var(--muted);font-size:15px}
+.injuries{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.injury{background:var(--card);color:var(--text);border:2px solid var(--line);padding:12px 14px;text-align:left;min-height:72px}
+.injury strong{display:block;font-size:18px}
+.injury span{color:var(--muted);font-size:14px}
+.injury[aria-pressed="true"]{border-color:var(--acc);background:var(--acc-soft)}
+fieldset{border:0;margin:0 0 16px;padding:0}
+fieldset.missing legend{color:var(--red)}
+legend{font-weight:600;margin-bottom:8px;padding:0}
+.options{display:flex;flex-wrap:wrap;gap:8px}
+.options label{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:10px;padding:10px 14px;cursor:pointer;min-height:44px}
+.options input{width:18px;height:18px;margin:0;accent-color:var(--acc)}
+.options label:has(input:checked){border-color:var(--acc);background:var(--acc-soft)}
+.primary{background:var(--acc);color:#fff;font-weight:700;padding:13px 22px;width:100%;font-size:18px}
+.secondary{background:transparent;color:var(--acc);border:1.5px solid var(--acc);padding:10px 18px}
+.error{color:var(--red);font-weight:600;margin:10px 0 0}
+.photo{border:1.5px dashed var(--line);border-radius:12px;padding:14px;margin-bottom:18px}
+.photo .muted{margin:0 0 10px}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.file-btn{display:inline-block;border-radius:10px;cursor:pointer}
+.file-btn:focus-within{outline:2px solid var(--acc);outline-offset:2px}
+.photo-result{display:flex;gap:12px;align-items:flex-start;margin-top:12px}
+.photo-result img{width:96px;height:96px;object-fit:cover;border-radius:8px;flex:0 0 auto;background:var(--line)}
+.photo-result p{margin:0 0 6px}
+#photoDesc{font-style:italic}
+.tag{font-size:12px;font-weight:600;color:var(--acc);background:var(--acc-soft);border-radius:6px;padding:1px 6px;margin-left:4px;white-space:nowrap}
+.level{border-width:2px}
+.level h2{margin-bottom:4px}
+.level p{margin:0}
+.level-emergency{background:var(--red-soft);border-color:var(--red)}.level-emergency h2{color:var(--red)}
+.level-today{background:var(--orange-soft);border-color:var(--orange)}.level-today h2{color:var(--orange)}
+.level-soon{background:var(--yellow-soft);border-color:var(--yellow)}.level-soon h2{color:var(--yellow)}
+.level-selfCare{background:var(--green-soft);border-color:var(--green)}.level-selfCare h2{color:var(--green)}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--acc);color:#fff;font-size:15px;margin-right:8px;vertical-align:2px}
+ol.steps,ul.points{margin:0;padding-left:22px}
+ol.steps li,ul.points li{margin-bottom:6px}
+.phase{border-left:4px solid var(--acc);padding:4px 0 4px 12px;margin-top:14px}
+.phase .when{font-weight:700}
+.phase .goal{color:var(--muted);font-size:15px;margin-bottom:4px}
+.phase ul{margin:0;padding-left:20px}
+.actions{display:flex;justify-content:center;margin-top:6px}
+footer{color:var(--muted);font-size:14px;text-align:center;margin-top:20px}
+#subPick{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+@media (max-width:420px){h1{font-size:20px}.injury{padding:10px 12px}.injury strong{font-size:17px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1 id="title"></h1>
+  <div class="langs" id="langs" role="group"><button data-lang="zh" lang="zh-CN">中</button><button data-lang="en" lang="en">EN</button></div>
+</header>
+
+<section class="card alert" aria-labelledby="alertTitle">
+  <h2 id="alertTitle"></h2>
+  <ul id="redFlags"></ul>
+  <p class="numbers" id="numbers"></p>
+</section>
+
+<section class="card">
+  <h2 id="pickTitle"></h2>
+  <div class="injuries" id="categories"></div>
+  <div id="subPick" hidden>
+    <h3 id="subTitle"></h3>
+    <div class="injuries" id="injuries"></div>
+  </div>
+</section>
+
+<section class="card" id="questionsCard" hidden>
+  <h2 id="questionsTitle"></h2>
+  <form id="questions" novalidate>
+    <div class="photo" id="photoBox">
+      <h3 id="photoTitle"></h3>
+      <p class="muted" id="photoHint"></p>
+      <label class="secondary file-btn"><input type="file" accept="image/*" id="photoInput" class="visually-hidden"><span id="photoBtn"></span></label>
+      <div class="photo-result" id="photoResult" hidden>
+        <img id="photoPreview" alt="">
+        <div><p id="photoStatus" role="status"></p><p id="photoDesc"></p></div>
+      </div>
+    </div>
+    <div id="questionList"></div>
+    <button type="submit" class="primary" id="assessBtn"></button>
+    <p class="error" id="error" role="alert" hidden></p>
+  </form>
+</section>
+
+<div id="results" hidden>
+  <section class="card level" id="levelCard"><h2 id="levelLabel"></h2><p id="levelSummary"></p></section>
+  <section class="card"><h2><span class="step-num">1</span><span id="firstAidTitle"></span></h2><ol class="steps" id="firstAid"></ol></section>
+  <section class="card"><h2><span class="step-num">2</span><span id="whereTitle"></span></h2><ul class="points" id="where"></ul></section>
+  <section class="card"><h2><span class="step-num">3</span><span id="rehabTitle"></span></h2><p class="muted" id="rehabNote"></p><div id="rehab"></div></section>
+  <div class="actions"><button type="button" class="secondary" id="restartBtn"></button></div>
+</div>
+
+<footer id="disclaimer"></footer>
+</main>
+
+<script src="triage.js"></script>
+<script>
+// Interface text. Injury content lives in triage.js.
+var T = {
+  en: {
+    title: 'Sports Injury Helper',
+    langGroup: 'Interface language',
+    alertTitle: 'Call for help right away if:',
+    numbers: 'Emergency: 911 (US) · 120 (China)',
+    pickTitle: 'What happened?',
+    subTitle: 'Which one?',
+    questionsTitle: 'Answer a few questions',
+    assess: 'See what to do',
+    missing: 'Please answer every question ({0} left).',
+    firstAidTitle: 'Right now',
+    whereTitle: 'Where to go',
+    rehabTitle: 'Getting back to sport',
+    restart: 'Start over',
+    disclaimer: 'For reference only. This page cannot diagnose an injury and does not replace a doctor.',
+    photoTitle: 'Add a photo (optional)',
+    photoHint: 'Take a photo of the injury. Chrome\'s built-in AI looks at it on this computer and fills in what it can see. The photo is not uploaded anywhere.',
+    photoBtn: 'Choose or take a photo',
+    photoChange: 'Use another photo',
+    photoAlt: 'Your injury photo',
+    photoChecking: 'The AI is looking at the photo…',
+    photoDownloading: 'Downloading Chrome\'s AI model (first time only)… {0}%',
+    photoFilled: 'Filled in {0} from the photo, marked "from photo". Check them and change any that are wrong.',
+    photoNothing: 'Nothing in the photo could fill in a question. Please answer them yourself.',
+    photoNotInjury: 'This photo does not seem to show an injury. Try another one.',
+    photoUnsupported: 'This browser\'s AI cannot look at photos (it needs a recent desktop Chrome). Please answer the questions yourself.',
+    photoBadImage: 'This image could not be read. Try a JPG or PNG.',
+    photoError: 'The AI could not look at the photo. Please answer the questions yourself.',
+    photoTag: 'from photo'
+  },
+  zh: {
+    title: '运动损伤急救助手',
+    langGroup: '界面语言',
+    alertTitle: '出现以下情况，立刻求助：',
+    numbers: '急救电话：120（中国）· 911（美国）',
+    pickTitle: '哪里受伤了？',
+    subTitle: '具体是哪一种？',
+    questionsTitle: '回答几个问题',
+    assess: '查看处理建议',
+    missing: '请回答所有问题（还剩 {0} 题）。',
+    firstAidTitle: '现在马上做',
+    whereTitle: '去哪里看',
+    rehabTitle: '康复训练',
+    restart: '重新开始',
+    disclaimer: '仅供参考。本页面不能诊断伤情，也不能代替医生。',
+    photoTitle: '用照片帮忙判断（可选）',
+    photoHint: '拍一张伤处的照片。Chrome 自带的 AI 会在这台电脑上看照片，帮你预填能看出来的题目。照片不会上传到任何地方。',
+    photoBtn: '选择或拍摄照片',
+    photoChange: '换一张照片',
+    photoAlt: '你的伤处照片',
+    photoChecking: 'AI 正在看照片……',
+    photoDownloading: '正在下载 Chrome 的 AI 模型（只有第一次需要）……{0}%',
+    photoFilled: '已根据照片预填 {0} 题，标着“照片建议”。请检查，不对就改。',
+    photoNothing: '照片里看不出能预填的内容，请自己回答下面的题。',
+    photoNotInjury: '这张照片里好像没有受伤部位，换一张试试。',
+    photoUnsupported: '这个浏览器的 AI 不能看图片（需要较新的电脑版 Chrome）。请自己回答下面的题。',
+    photoBadImage: '读不了这张图片，换成 JPG 或 PNG 试试。',
+    photoError: 'AI 看照片时出错了，请自己回答下面的题。',
+    photoTag: '照片建议'
+  }
+};
+
+var LANG_KEY = 'injury-helper-lang';
+var lang = loadLang();
+var currentCategory = null;
+var currentInjury = null;
+var answers = {};
+var showingResults = false;
+// Photo state: which answers came from the photo, and what to show.
+var photo = {run: 0, filled: {}, status: null, statusArg: '', description: '', url: null};
+
+function loadLang() {
+  try { var v = localStorage.getItem(LANG_KEY); return T[v] ? v : 'zh'; } catch (e) { return 'zh'; }
+}
+function saveLang() {
+  try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* storage blocked: the choice just is not remembered */ }
+}
+function t(key) { return T[lang][key]; }
+// Pick the current language from a {en, zh} object.
+function L(text) { return text[lang]; }
+function $(id) { return document.getElementById(id); }
+
+function fillList(listId, items) {
+  var list = $(listId);
+  list.innerHTML = '';
+  items.forEach(function (item) {
+    var li = document.createElement('li');
+    li.textContent = L(item);
+    list.appendChild(li);
+  });
+}
+
+function renderStatic() {
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  document.title = t('title');
+  ['title', 'alertTitle', 'numbers', 'pickTitle', 'subTitle', 'questionsTitle', 'firstAidTitle', 'whereTitle', 'rehabTitle', 'disclaimer']
+    .forEach(function (id) { $(id).textContent = t(id); });
+  $('assessBtn').textContent = t('assess');
+  $('restartBtn').textContent = t('restart');
+  $('langs').setAttribute('aria-label', t('langGroup'));
+  document.querySelectorAll('#langs button').forEach(function (b) {
+    b.classList.toggle('on', b.dataset.lang === lang);
+    b.setAttribute('aria-pressed', b.dataset.lang === lang);
+  });
+  fillList('redFlags', RED_FLAGS);
+}
+
+// A big tappable card with a name and a hint underneath, used for both
+// categories and the injuries inside a category.
+function choiceButton(item, selected, onPick) {
+  var b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'injury';
+  b.setAttribute('aria-pressed', selected);
+  b.innerHTML = '<strong></strong><span></span>';
+  b.querySelector('strong').textContent = L(item.name);
+  b.querySelector('span').textContent = L(item.hint);
+  b.addEventListener('click', onPick);
+  return b;
+}
+
+function renderCategories() {
+  var box = $('categories');
+  box.innerHTML = '';
+  CATEGORIES.forEach(function (category) {
+    box.appendChild(choiceButton(category, currentCategory === category, function () { pickCategory(category); }));
+  });
+  // Only categories with more than one injury ask which one.
+  var showSub = currentCategory !== null && currentCategory.injuries.length > 1;
+  $('subPick').hidden = !showSub;
+  var sub = $('injuries');
+  sub.innerHTML = '';
+  if (!showSub) return;
+  currentCategory.injuries.forEach(function (injury) {
+    sub.appendChild(choiceButton(injury, currentInjury === injury, function () { pickInjury(injury); }));
+  });
+}
+
+function renderQuestions() {
+  var list = $('questionList');
+  list.innerHTML = '';
+  if (!currentInjury) return;
+  currentInjury.questions.forEach(function (q, i) {
+    var fs = document.createElement('fieldset');
+    fs.id = 'q-' + q.id;
+    var legend = document.createElement('legend');
+    legend.textContent = (i + 1) + '. ' + L(q.text);
+    fs.appendChild(legend);
+    var options = document.createElement('div');
+    options.className = 'options';
+    q.options.forEach(function (opt) {
+      var label = document.createElement('label');
+      var input = document.createElement('input');
+      input.type = 'radio';
+      input.name = q.id;
+      input.value = opt.value;
+      input.checked = answers[q.id] === opt.value;
+      input.addEventListener('change', function () {
+        answers[q.id] = opt.value;
+        fs.classList.remove('missing');
+        // Once changed by hand, the answer no longer comes from the photo.
+        delete photo.filled[q.id];
+        fs.querySelectorAll('.tag').forEach(function (tag) { tag.remove(); });
+        // Changing an answer after seeing advice updates the advice.
+        if (showingResults) renderResults();
+        else if (!$('error').hidden) showMissing();
+      });
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(L(opt.text)));
+      if (input.checked && photo.filled[q.id]) {
+        var tag = document.createElement('span');
+        tag.className = 'tag';
+        tag.textContent = t('photoTag');
+        label.appendChild(tag);
+      }
+      options.appendChild(label);
+    });
+    fs.appendChild(options);
+    list.appendChild(fs);
+  });
+}
+
+function resetPhoto() {
+  photo.run++;
+  photo.filled = {};
+  photo.status = null;
+  photo.description = '';
+  if (photo.url) URL.revokeObjectURL(photo.url);
+  photo.url = null;
+  $('photoInput').value = '';
+}
+
+function setPhotoStatus(status, arg) {
+  photo.status = status;
+  photo.statusArg = arg === undefined ? '' : arg;
+  renderPhoto();
+}
+
+// Only injuries with something visible to check get the photo section.
+function renderPhoto() {
+  $('photoBox').hidden = !currentInjury || photoChecks(currentInjury).length === 0;
+  $('photoTitle').textContent = t('photoTitle');
+  $('photoHint').textContent = t('photoHint');
+  $('photoBtn').textContent = t(photo.url ? 'photoChange' : 'photoBtn');
+  $('photoResult').hidden = !photo.url;
+  $('photoPreview').src = photo.url || '';
+  $('photoPreview').alt = t('photoAlt');
+  $('photoStatus').textContent = photo.status ? t(photo.status).replace('{0}', photo.statusArg) : '';
+  $('photoDesc').textContent = photo.description;
+}
+
+// Phone photos are large; a smaller copy is much faster for the AI.
+async function shrinkPhoto(file) {
+  var bitmap = await createImageBitmap(file);
+  var scale = Math.min(1, 768 / Math.max(bitmap.width, bitmap.height));
+  var canvas = document.createElement('canvas');
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  return canvas;
+}
+
+// Chrome's model may not write every language; fall back to English.
+async function photoOutputLanguage() {
+  if (lang === 'en') return 'en';
+  var availability = await LanguageModel.availability({
+    expectedInputs: [{type: 'text', languages: ['en']}, {type: 'image'}],
+    expectedOutputs: [{type: 'text', languages: [lang]}]
+  });
+  return availability === 'unavailable' ? 'en' : lang;
+}
+
+// When the model had to write English, translate its description with
+// Chrome's built-in Translator; keep the English if that is not possible.
+async function translateDescription(text, from) {
+  if (from === lang || !text || !window.Translator) return text;
+  try {
+    var translator = await Translator.create({sourceLanguage: from, targetLanguage: lang});
+    var translated = await translator.translate(text);
+    translator.destroy();
+    return translated;
+  } catch (e) {
+    return text;
+  }
+}
+
+async function askModelAboutPhoto(injury, canvas) {
+  var outputLanguage = await photoOutputLanguage();
+  var session = await LanguageModel.create({
+    expectedInputs: [{type: 'text', languages: ['en']}, {type: 'image'}],
+    expectedOutputs: [{type: 'text', languages: [outputLanguage]}],
+    monitor: function (m) {
+      m.addEventListener('downloadprogress', function (e) { setPhotoStatus('photoDownloading', Math.round(e.loaded * 100)); });
+    }
+  });
+  try {
+    var json = await session.prompt([{
+      role: 'user',
+      content: [{type: 'text', value: photoPrompt(injury, outputLanguage)}, {type: 'image', value: canvas}]
+    }], {responseConstraint: photoSchema(injury)});
+    var result = JSON.parse(json);
+    result.description = await translateDescription(result.description, outputLanguage);
+    return result;
+  } finally {
+    session.destroy();
+  }
+}
+
+async function analyzePhoto(file) {
+  var injury = currentInjury;
+  resetPhoto();
+  var run = photo.run;
+  photo.url = URL.createObjectURL(file);
+  if (!file.type.startsWith('image/')) { setPhotoStatus('photoBadImage'); return; }
+  if (!window.LanguageModel) { setPhotoStatus('photoUnsupported'); return; }
+  setPhotoStatus('photoChecking');
+  var canvas;
+  try {
+    canvas = await shrinkPhoto(file);
+  } catch (e) {
+    setPhotoStatus('photoBadImage');
+    return;
+  }
+  var result;
+  try {
+    result = await askModelAboutPhoto(injury, canvas);
+  } catch (e) {
+    // A newer photo or another injury was picked meanwhile.
+    if (run !== photo.run) return;
+    setPhotoStatus(e.name === 'NotSupportedError' ? 'photoUnsupported' : 'photoError');
+    return;
+  }
+  if (run !== photo.run) return;
+  var filled = applyPhotoResult(injury, answers, result);
+  filled.forEach(function (id) { photo.filled[id] = true; });
+  photo.description = result.isInjury ? result.description : '';
+  if (!result.isInjury) setPhotoStatus('photoNotInjury');
+  else if (filled.length === 0) setPhotoStatus('photoNothing');
+  else setPhotoStatus('photoFilled', filled.length);
+  renderQuestions();
+  if (showingResults) renderResults();
+  else if (!$('error').hidden) showMissing();
+}
+
+$('photoInput').addEventListener('change', function () {
+  var file = $('photoInput').files[0];
+  if (file) analyzePhoto(file);
+});
+
+function renderResults() {
+  var advice = buildAdvice(currentInjury, answers);
+  var level = LEVELS[advice.level];
+  $('levelCard').className = 'card level level-' + advice.level;
+  $('levelLabel').textContent = L(level.label);
+  $('levelSummary').textContent = L(level.summary);
+  fillList('firstAid', advice.firstAid);
+  fillList('where', advice.where);
+  $('rehabNote').textContent = L(advice.rehabNote);
+  var rehab = $('rehab');
+  rehab.innerHTML = '';
+  advice.rehab.forEach(function (phase) {
+    var div = document.createElement('div');
+    div.className = 'phase';
+    div.innerHTML = '<div class="when"></div><div class="goal"></div><ul></ul>';
+    div.querySelector('.when').textContent = L(phase.when);
+    div.querySelector('.goal').textContent = L(phase.goal);
+    phase.moves.forEach(function (m) {
+      var li = document.createElement('li');
+      li.textContent = L(m);
+      div.querySelector('ul').appendChild(li);
+    });
+    rehab.appendChild(div);
+  });
+  $('results').hidden = false;
+}
+
+// Mark unanswered questions; returns how many are left.
+function showMissing() {
+  var missing = missingAnswers(currentInjury, answers);
+  missing.forEach(function (id) { $('q-' + id).classList.add('missing'); });
+  $('error').textContent = t('missing').replace('{0}', missing.length);
+  $('error').hidden = missing.length === 0;
+  return missing.length;
+}
+
+function clearAnswers() {
+  resetPhoto();
+  answers = {};
+  showingResults = false;
+  $('results').hidden = true;
+  $('error').hidden = true;
+}
+
+function pickCategory(category) {
+  if (currentCategory === category) return;
+  currentCategory = category;
+  currentInjury = null;
+  clearAnswers();
+  $('questionsCard').hidden = true;
+  if (category.injuries.length === 1) {
+    pickInjury(category.injuries[0]);
+    return;
+  }
+  renderCategories();
+  $('subPick').scrollIntoView({behavior: 'smooth', block: 'center'});
+}
+
+function pickInjury(injury) {
+  if (currentInjury === injury) return;
+  currentInjury = injury;
+  clearAnswers();
+  renderCategories();
+  renderPhoto();
+  renderQuestions();
+  $('questionsCard').hidden = false;
+  $('questionsCard').scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+function renderAll() {
+  renderStatic();
+  renderCategories();
+  renderPhoto();
+  renderQuestions();
+  if (showingResults) renderResults();
+  if (!$('error').hidden) showMissing();
+}
+
+$('questions').addEventListener('submit', function (e) {
+  e.preventDefault();
+  if (showMissing() > 0) {
+    $('q-' + missingAnswers(currentInjury, answers)[0]).scrollIntoView({behavior: 'smooth', block: 'center'});
+    return;
+  }
+  showingResults = true;
+  renderResults();
+  $('results').scrollIntoView({behavior: 'smooth', block: 'start'});
+});
+
+$('restartBtn').addEventListener('click', function () {
+  currentCategory = null;
+  currentInjury = null;
+  clearAnswers();
+  $('questionsCard').hidden = true;
+  renderAll();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+});
+
+document.querySelectorAll('#langs button').forEach(function (b) {
+  b.addEventListener('click', function () {
+    lang = b.dataset.lang;
+    saveLang();
+    renderAll();
+  });
+});
+
+renderAll();
+</script>
+</body>
+</html>

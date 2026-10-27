@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Injury Helper Tests</title>
+<style>
+body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-system,BlinkMacSystemFont,sans-serif}
+.pass{color:#2e7d32}.fail{color:#c62828;font-weight:700}
+</style>
+</head>
+<body>
+<h1 id="summary">Running…</h1>
+<ul id="log"></ul>
+<script src="triage.js"></script>
+<script>
+var results = [];
+function test(name, fn) {
+  try { fn(); results.push({name: name, ok: true}); }
+  catch (e) { results.push({name: name, ok: false, msg: e.message}); }
+}
+function equal(actual, expected) {
+  if (actual !== expected) throw new Error('expected ' + JSON.stringify(expected) + ', got ' + JSON.stringify(actual));
+}
+
+var ankle = findInjury('ankle');
+var patella = findInjury('patella');
+var mildAnkle = {deformity: 'no', walk: 'yes', bonePain: 'no', swelling: 'mild'};
+var reducedPatella = {inPlace: 'back', swelling: 'no', locking: 'no', before: 'first'};
+function withAnswer(base, id, value) {
+  var copy = Object.assign({}, base);
+  copy[id] = value;
+  return copy;
+}
+
+test('ankle: mild sprain is self-care', function () { equal(ankle.assess(mildAnkle), 'selfCare'); });
+test('ankle: deformity or numb foot is an emergency', function () { equal(ankle.assess(withAnswer(mildAnkle, 'deformity', 'yes')), 'emergency'); });
+test('ankle: cannot walk four steps needs a doctor today', function () { equal(ankle.assess(withAnswer(mildAnkle, 'walk', 'no')), 'today'); });
+test('ankle: bone pain needs a doctor today', function () { equal(ankle.assess(withAnswer(mildAnkle, 'bonePain', 'yes')), 'today'); });
+test('ankle: limping means a visit within days', function () { equal(ankle.assess(withAnswer(mildAnkle, 'walk', 'pain')), 'soon'); });
+test('ankle: clear swelling means a visit within days', function () { equal(ankle.assess(withAnswer(mildAnkle, 'swelling', 'moderate')), 'soon'); });
+
+test('patella: still out is an emergency', function () { equal(patella.assess(withAnswer(reducedPatella, 'inPlace', 'out')), 'emergency'); });
+test('patella: not sure if still out is treated as an emergency', function () { equal(patella.assess(withAnswer(reducedPatella, 'inPlace', 'unsure')), 'emergency'); });
+test('patella: big swelling needs a doctor today', function () { equal(patella.assess(withAnswer(reducedPatella, 'swelling', 'yes')), 'today'); });
+test('patella: locking needs a doctor today', function () { equal(patella.assess(withAnswer(reducedPatella, 'locking', 'yes')), 'today'); });
+test('patella: went back with no warning signs still needs a doctor', function () { equal(patella.assess(reducedPatella), 'soon'); });
+test('patella: repeat dislocation adds the surgery advice', function () {
+  equal(buildAdvice(patella, withAnswer(reducedPatella, 'before', 'again')).where.length, patella.where.soon.length + 1);
+});
+test('patella: first dislocation has no surgery advice', function () {
+  equal(buildAdvice(patella, reducedPatella).where.length, patella.where.soon.length);
+});
+
+test('sprain: a pop means a visit within days', function () {
+  equal(findInjury('sprain').assess({deformity: 'no', use: 'yes', pop: 'yes', swelling: 'mild'}), 'soon');
+});
+test('strain: cannot rise on toes after an Achilles injury needs a doctor today', function () {
+  equal(findInjury('strain').assess({achilles: 'yes', gap: 'no', use: 'yes', bruise: 'mild'}), 'today');
+});
+test('dislocation: a shoulder still out is an emergency, a finger still out is today', function () {
+  var d = findInjury('dislocation');
+  equal(d.assess({part: 'shoulder', inPlace: 'out', numb: 'no', before: 'first'}), 'emergency');
+  equal(d.assess({part: 'finger', inPlace: 'out', numb: 'no', before: 'first'}), 'today');
+});
+test('fracture: a neck, back, hip or thigh injury is an emergency', function () {
+  equal(findInjury('fracture').assess({open: 'no', spine: 'yes', bonePain: 'no', use: 'yes'}), 'emergency');
+});
+test('concussion: any symptom needs a doctor today', function () {
+  equal(findInjury('concussion').assess({danger: 'no', neck: 'no', symptoms: 'yes'}), 'today');
+});
+test('bruise: rock-hard swelling is an emergency', function () {
+  equal(findInjury('bruise').assess({tense: 'yes', trunk: 'no', use: 'yes', swelling: 'small'}), 'emergency');
+});
+test('wound: bleeding that will not stop is an emergency', function () {
+  equal(findInjury('wound').assess({bleeding: 'yes', deep: 'no', dirty: 'no', infected: 'no'}), 'emergency');
+});
+test('cramp: a swollen red leg needs a doctor today', function () {
+  equal(findInjury('cramp').assess({heat: 'no', swollen: 'yes', eased: 'yes', often: 'no'}), 'today');
+});
+test('overuse: one painful spot on a bone means a visit within days', function () {
+  equal(findInjury('overuse').assess({boneSpot: 'yes', rest: 'no', limp: 'no', weeks: 'short'}), 'soon');
+});
+test('heat: confusion is an emergency', function () {
+  equal(findInjury('heat').assess({mind: 'yes', vomit: 'no', better: 'yes'}), 'emergency');
+});
+
+test('every injury belongs to exactly one category, with a unique id', function () {
+  var seen = {};
+  CATEGORIES.forEach(function (c) {
+    c.injuries.forEach(function (injury) {
+      if (seen[injury.id]) throw new Error(injury.id + ' appears twice');
+      seen[injury.id] = true;
+    });
+  });
+  equal(Object.keys(seen).length, INJURIES.length);
+});
+test('categories have names in English and Chinese', function () {
+  CATEGORIES.forEach(function (c) {
+    if (!c.name.en || !c.name.zh || !c.hint.en || !c.hint.zh) throw new Error('missing text in category ' + c.id);
+  });
+});
+
+test('photo: fills unanswered questions from the AI result', function () {
+  var answers = {};
+  var filled = applyPhotoResult(ankle, answers, {isInjury: true, description: '', deformity: 'unknown', swelling: 'severe'});
+  equal(filled.join(','), 'swelling');
+  equal(answers.swelling, 'severe');
+});
+test('photo: never overwrites an answer the person gave', function () {
+  var answers = {swelling: 'mild'};
+  equal(applyPhotoResult(ankle, answers, {isInjury: true, description: '', deformity: 'unknown', swelling: 'severe'}).length, 0);
+  equal(answers.swelling, 'mild');
+});
+test('photo: cannot rule out a warning sign (ankle deformity "no" is ignored)', function () {
+  var answers = {};
+  applyPhotoResult(ankle, answers, {isInjury: true, description: '', deformity: 'no', swelling: 'unknown'});
+  equal(answers.deformity, undefined);
+});
+test('photo: a photo without an injury fills nothing', function () {
+  equal(applyPhotoResult(ankle, {}, {isInjury: false, description: '', deformity: 'yes', swelling: 'severe'}).length, 0);
+});
+test('photo: the schema only allows permitted values plus "unknown"', function () {
+  equal(photoSchema(ankle).properties.deformity.enum.join(','), 'yes,unknown');
+  equal(photoSchema(ankle).properties.swelling.enum.join(','), 'mild,moderate,severe,unknown');
+});
+test('photo: every check points at a real question and real answers', function () {
+  Object.keys(PHOTO_CHECKS).forEach(function (id) {
+    var injury = findInjury(id);
+    if (!injury) throw new Error('no injury ' + id);
+    PHOTO_CHECKS[id].forEach(function (check) {
+      var question = findQuestion(injury, check.question);
+      if (!question) throw new Error(id + ' has no question ' + check.question);
+      (check.allow || []).forEach(function (value) {
+        if (!question.options.some(function (o) { return o.value === value; })) throw new Error(id + '.' + check.question + ' has no answer ' + value);
+      });
+    });
+  });
+});
+test('photo: injuries with nothing visible get no photo checks', function () {
+  equal(photoChecks(findInjury('concussion')).length, 0);
+});
+
+test('missingAnswers lists unanswered questions', function () {
+  equal(missingAnswers(ankle, {walk: 'yes'}).join(','), 'deformity,bonePain,swelling');
+});
+
+// Every answer combination must give a level that has "where" advice, and
+// every text must exist in both languages.
+INJURIES.forEach(function (injury) {
+  test(injury.id + ': every answer combination has advice', function () {
+    var combos = [{}];
+    injury.questions.forEach(function (q) {
+      var next = [];
+      combos.forEach(function (c) { q.options.forEach(function (o) { next.push(withAnswer(c, q.id, o.value)); }); });
+      combos = next;
+    });
+    combos.forEach(function (c) {
+      var advice = buildAdvice(injury, c);
+      if (!LEVELS[advice.level] || !advice.where || advice.where.length === 0) throw new Error('no advice for ' + JSON.stringify(c));
+    });
+  });
+  test(injury.id + ': all text is in English and Chinese', function () {
+    (function check(value, path) {
+      if (value && typeof value === 'object') {
+        if ('en' in value || 'zh' in value) {
+          if (!value.en || !value.zh) throw new Error('missing translation at ' + path);
+          return;
+        }
+        Object.keys(value).forEach(function (k) { check(value[k], path + '.' + k); });
+      }
+    })(injury, injury.id);
+  });
+});
+
+var failed = results.filter(function (r) { return !r.ok; }).length;
+document.getElementById('summary').textContent = failed ? failed + ' of ' + results.length + ' tests failed' : 'All ' + results.length + ' tests passed';
+document.getElementById('summary').className = failed ? 'fail' : 'pass';
+results.forEach(function (r) {
+  var li = document.createElement('li');
+  li.className = r.ok ? 'pass' : 'fail';
+  li.textContent = (r.ok ? '✓ ' : '✗ ') + r.name + (r.msg ? ': ' + r.msg : '');
+  document.getElementById('log').appendChild(li);
+});
+</script>
+</body>
+</html>
