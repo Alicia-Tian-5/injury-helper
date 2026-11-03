@@ -1176,18 +1176,19 @@ var HEAT_ILLNESS = {
 };
 
 // The big categories shown first. A category with several injuries asks
-// which one before showing questions.
+// which one before showing questions. Each has an icon and a color (hue,
+// 0-360) so the cards are easy to tell apart and the page feels warmer.
 var CATEGORIES = [
-  {id: 'sprain', name: {en: 'Sprain', zh: '扭伤'}, hint: {en: 'Ligaments: ankle, knee, wrist', zh: '韧带：脚踝、膝盖、手腕'}, injuries: [ANKLE_SPRAIN, OTHER_SPRAIN]},
-  {id: 'strain', name: {en: 'Strain', zh: '拉伤'}, hint: {en: 'Muscles and tendons', zh: '肌肉、肌腱'}, injuries: [MUSCLE_STRAIN]},
-  {id: 'dislocation', name: {en: 'Dislocation', zh: '脱位'}, hint: {en: 'A joint popped out', zh: '关节错位'}, injuries: [PATELLA_DISLOCATION, OTHER_DISLOCATION]},
-  {id: 'fracture', name: {en: 'Broken bone', zh: '骨折'}, hint: {en: 'Cracked or broken', zh: '骨头裂了或断了'}, injuries: [FRACTURE]},
-  {id: 'concussion', name: {en: 'Head injury', zh: '脑震荡'}, hint: {en: 'A hit to the head', zh: '头部被撞'}, injuries: [CONCUSSION]},
-  {id: 'bruise', name: {en: 'Bruise', zh: '撞伤淤青'}, hint: {en: 'Hit by a ball or body', zh: '被球或人撞到'}, injuries: [BRUISE]},
-  {id: 'wound', name: {en: 'Cuts and scrapes', zh: '擦伤割伤'}, hint: {en: 'Skin broken, bleeding', zh: '皮肤破了、流血'}, injuries: [WOUND]},
-  {id: 'cramp', name: {en: 'Cramp', zh: '抽筋'}, hint: {en: 'Muscle locks tight', zh: '肌肉突然绷紧'}, injuries: [CRAMP]},
-  {id: 'overuse', name: {en: 'Overuse pain', zh: '劳损'}, hint: {en: 'Built up over time', zh: '慢慢累积的疼'}, injuries: [OVERUSE]},
-  {id: 'heat', name: {en: 'Heat illness', zh: '中暑'}, hint: {en: 'Dizzy or sick in the heat', zh: '天热头晕、恶心'}, injuries: [HEAT_ILLNESS]}
+  {id: 'sprain', icon: '🦶', hue: 28, name: {en: 'Sprain', zh: '扭伤'}, hint: {en: 'Ligaments: ankle, knee, wrist', zh: '韧带：脚踝、膝盖、手腕'}, injuries: [ANKLE_SPRAIN, OTHER_SPRAIN]},
+  {id: 'strain', icon: '💪', hue: 8, name: {en: 'Strain', zh: '拉伤'}, hint: {en: 'Muscles and tendons', zh: '肌肉、肌腱'}, injuries: [MUSCLE_STRAIN]},
+  {id: 'dislocation', icon: '🦵', hue: 268, name: {en: 'Dislocation', zh: '脱位'}, hint: {en: 'A joint popped out', zh: '关节错位'}, injuries: [PATELLA_DISLOCATION, OTHER_DISLOCATION]},
+  {id: 'fracture', icon: '🦴', hue: 210, name: {en: 'Broken bone', zh: '骨折'}, hint: {en: 'Cracked or broken', zh: '骨头裂了或断了'}, injuries: [FRACTURE]},
+  {id: 'concussion', icon: '🤕', hue: 330, name: {en: 'Head injury', zh: '脑震荡'}, hint: {en: 'A hit to the head', zh: '头部被撞'}, injuries: [CONCUSSION]},
+  {id: 'bruise', icon: '⚽', hue: 190, name: {en: 'Bruise', zh: '撞伤淤青'}, hint: {en: 'Hit by a ball or body', zh: '被球或人撞到'}, injuries: [BRUISE]},
+  {id: 'wound', icon: '🩹', hue: 350, name: {en: 'Cuts and scrapes', zh: '擦伤割伤'}, hint: {en: 'Skin broken, bleeding', zh: '皮肤破了、流血'}, injuries: [WOUND]},
+  {id: 'cramp', icon: '⚡', hue: 45, name: {en: 'Cramp', zh: '抽筋'}, hint: {en: 'Muscle locks tight', zh: '肌肉突然绷紧'}, injuries: [CRAMP]},
+  {id: 'overuse', icon: '🔁', hue: 150, name: {en: 'Overuse pain', zh: '劳损'}, hint: {en: 'Built up over time', zh: '慢慢累积的疼'}, injuries: [OVERUSE]},
+  {id: 'heat', icon: '☀️', hue: 36, name: {en: 'Heat illness', zh: '中暑'}, hint: {en: 'Dizzy or sick in the heat', zh: '天热头晕、恶心'}, injuries: [HEAT_ILLNESS]}
 ];
 
 var INJURIES = CATEGORIES.reduce(function (all, c) { return all.concat(c.injuries); }, []);
@@ -1200,6 +1201,96 @@ var RED_FLAGS = [
   {en: 'Confused or collapsing after exercising in the heat', zh: '天热运动后意识不清或晕倒'},
   {en: 'Pain too strong to move at all', zh: '疼得完全动不了'}
 ];
+
+// Comfort for the feelings that come with each stage of recovery, the same
+// for every injury. Shown after the rehab advice.
+var COMFORT_STAGES = [
+  {
+    when: {en: 'Right after the injury', zh: '刚受伤的时候'},
+    words: {
+      en: 'Feeling scared, angry or asking "why me" is normal. Your body is not failing you; it has already started to heal.',
+      zh: '害怕、生气、觉得"为什么偏偏是我"，都很正常。你的身体没有辜负你，它已经开始修复了。'
+    },
+    tryThis: {en: 'Tell one person how you feel today, not only how the injury feels.', zh: '今天跟一个人说说你的心情，不只是伤口的情况。'}
+  },
+  {
+    when: {en: 'In the middle of recovery', zh: '恢复到一半的时候'},
+    words: {
+      en: 'Progress can feel slow, and watching others train while you can\'t is hard. Slow days are still part of getting better.',
+      zh: '进步可能感觉很慢，看着别人训练自己却不能上场，很难受。慢的日子也是在变好。'
+    },
+    tryThis: {en: 'Write down one small thing you could do today that you could not do last week.', zh: '记下一件今天能做到、上周还做不到的小事。'}
+  },
+  {
+    when: {en: 'Getting ready to play again', zh: '准备回到运动的时候'},
+    words: {
+      en: 'Being afraid of getting hurt again is common, even when your body is ready. Confidence comes back one session at a time.',
+      zh: '害怕再次受伤很常见，哪怕身体已经准备好了。信心会一次一次训练慢慢回来。'
+    },
+    tryThis: {en: 'Start with an easy session you know you can finish, and notice that you did it.', zh: '先从一次肯定能完成的轻松训练开始，并告诉自己：我做到了。'}
+  }
+];
+
+// Where to talk to a counselor. `href` opens the phone or the website.
+var COUNSELING = [
+  {
+    name: {en: 'UIUC Counseling Center', zh: '伊利诺伊大学心理咨询中心'},
+    detail: {en: 'Free for students · 217-333-3704', zh: '学生免费 · 217-333-3704'},
+    links: [
+      {label: {en: 'Call', zh: '打电话'}, href: 'tel:+12173333704'},
+      {label: {en: 'Website', zh: '官网'}, href: 'https://counselingcenter.illinois.edu/'}
+    ]
+  },
+  {
+    name: {en: '988 Lifeline (US)', zh: '988 心理危机热线（美国）'},
+    detail: {en: 'Call or text 988, any time', zh: '电话或短信 988，全天 24 小时'},
+    links: [
+      {label: {en: 'Call', zh: '打电话'}, href: 'tel:988'},
+      {label: {en: 'Text', zh: '发短信'}, href: 'sms:988'}
+    ]
+  },
+  {
+    name: {en: 'Psychological help line (China)', zh: '全国心理援助热线（中国）'},
+    detail: {en: '12356', zh: '12356'},
+    links: [
+      {label: {en: 'Call', zh: '打电话'}, href: 'tel:12356'}
+    ]
+  }
+];
+
+// Kinds of places to search for on a map, from most to least urgent.
+// `query` is the search text sent to the map, in that map's language.
+var HOSPITAL_KINDS = [
+  {
+    name: {en: 'Emergency room', zh: '急诊'},
+    when: {en: 'Bone out of place, numbness, head injury, or pain you cannot bear.', zh: '骨头错位、发麻、头部受伤，或者疼得受不了。'},
+    query: {en: 'emergency room', zh: '医院急诊'}
+  },
+  {
+    name: {en: 'Urgent care', zh: '社区医院 / 门诊'},
+    when: {en: 'Needs a doctor today but is not an emergency.', zh: '今天需要看医生，但不是急症。'},
+    query: {en: 'urgent care', zh: '社区卫生服务中心'}
+  },
+  {
+    name: {en: 'Orthopedics / sports medicine', zh: '骨科 / 运动医学科'},
+    when: {en: 'Joint, ligament or bone problems that need a specialist.', zh: '关节、韧带、骨头的问题，需要专科医生。'},
+    query: {en: 'sports medicine orthopedics', zh: '骨科 运动医学'}
+  },
+  {
+    name: {en: 'Physical therapy', zh: '康复理疗'},
+    when: {en: 'Getting strength and movement back after the injury.', zh: '受伤后恢复力量和活动度。'},
+    query: {en: 'physical therapy', zh: '康复理疗'}
+  }
+];
+
+// Map search links for a kind of place. The map app uses the visitor's own
+// location, so this page never asks for it.
+function mapLinks(kind) {
+  return {
+    google: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(kind.query.en + ' near me'),
+    amap: 'https://uri.amap.com/search?keyword=' + encodeURIComponent(kind.query.zh)
+  };
+}
 
 // Questions a photo can help answer, per injury. `ask` is what the AI looks
 // for. `allow` limits which answers it may fill in: a photo can show a

@@ -6,19 +6,21 @@
 <title>运动损伤急救助手 · Sports Injury Helper</title>
 <style>
 :root{
-  --bg:#f6f7f9;--card:#fff;--text:#1d2330;--muted:#5d6676;--line:#dde1e7;
-  --acc:#1f6feb;--acc-soft:#e8f0fe;
+  --bg:#fdf8f3;--bg-top:#fbe6d8;--card:#fff;--text:#3a2e28;--muted:#7a6a60;--line:#f0e2d6;
+  --acc:#b8603d;--acc-soft:#fbeadf;--tint:#fdf1e8;--shadow:0 2px 10px rgba(150,90,50,.08);
   --red:#c62828;--red-soft:#fdecec;--orange:#d9480f;--orange-soft:#fff1e6;
   --yellow:#a86400;--yellow-soft:#fff8e1;--green:#2e7d32;--green-soft:#e8f5e9;
 }
 @media (prefers-color-scheme:dark){:root{
-  --bg:#12151b;--card:#1b2029;--text:#e7eaf0;--muted:#9aa3b2;--line:#2c3340;
-  --acc:#5b9bff;--acc-soft:#1c2a42;
+  --bg:#1a1614;--bg-top:#2e221c;--card:#241e1b;--text:#f0e8e3;--muted:#b3a59c;--line:#3a302a;
+  --acc:#e8956f;--acc-soft:#3a2820;--tint:#2c231f;--shadow:none;
   --red:#ff6b6b;--red-soft:#3a1d1f;--orange:#ff9b5c;--orange-soft:#3a2617;
   --yellow:#f2c14e;--yellow-soft:#352d17;--green:#6fcf73;--green-soft:#1c3220;
 }}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:17px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+/* Elements with display rules below must still disappear when hidden. */
+[hidden]{display:none !important}
+body{margin:0;background:linear-gradient(180deg,var(--bg-top) 0,var(--bg) 320px) no-repeat,var(--bg);color:var(--text);font:17px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
 main{max-width:680px;margin:0 auto;padding:16px 16px 48px}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
 h1{font-size:22px;margin:0;line-height:1.3}
@@ -29,17 +31,35 @@ button{font:inherit;cursor:pointer;border:0;border-radius:10px}
 .langs button{background:var(--card);color:var(--muted);border-radius:0;padding:8px 14px;font-size:15px;white-space:nowrap}
 .langs button+button{border-left:1px solid var(--line)}
 .langs button.on{background:var(--acc);color:#fff;font-weight:700}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
 .alert{background:var(--red-soft);border-color:var(--red)}
 .alert h2{color:var(--red)}
 .alert ul{margin:0 0 8px;padding-left:20px}
 .alert .numbers{font-weight:700;margin:0}
 .muted{color:var(--muted);font-size:15px}
 .injuries{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.injury{background:var(--card);color:var(--text);border:2px solid var(--line);padding:12px 14px;text-align:left;min-height:72px}
-.injury strong{display:block;font-size:18px}
-.injury span{color:var(--muted);font-size:14px}
-.injury[aria-pressed="true"]{border-color:var(--acc);background:var(--acc-soft)}
+/* Each choice card gets its category's own soft color from --hue. */
+.injury{--hue:28;background:hsl(var(--hue) 85% 95%);color:var(--text);border:2px solid transparent;border-radius:14px;padding:12px 14px;text-align:left;min-height:72px;display:flex;align-items:center;gap:12px}
+.injury .icon{flex:0 0 auto;width:42px;height:42px;border-radius:50%;background:hsl(var(--hue) 80% 87%);display:flex;align-items:center;justify-content:center;font-size:22px}
+.injury strong{display:block;font-size:18px;color:hsl(var(--hue) 55% 32%)}
+.injury small{display:block;color:var(--muted);font-size:14px}
+.injury:hover{background:hsl(var(--hue) 85% 92%)}
+.injury[aria-pressed="true"]{border-color:hsl(var(--hue) 60% 50%);background:hsl(var(--hue) 85% 90%)}
+@media (prefers-color-scheme:dark){
+  .injury{background:hsl(var(--hue) 30% 17%)}
+  .injury .icon{background:hsl(var(--hue) 35% 26%)}
+  .injury strong{color:hsl(var(--hue) 75% 78%)}
+  .injury:hover{background:hsl(var(--hue) 30% 21%)}
+  .injury[aria-pressed="true"]{border-color:hsl(var(--hue) 65% 62%);background:hsl(var(--hue) 32% 23%)}
+}
+.welcome{background:linear-gradient(135deg,#ffd9c2 0%,#ffe9d6 45%,#d6f0ea 100%);border:0;display:flex;gap:14px;align-items:center}
+.welcome .hug{font-size:34px;line-height:1}
+.welcome h2{margin:0 0 2px;color:#8a3f1f}
+.welcome p{margin:0;color:#5a4a40}
+@media (prefers-color-scheme:dark){
+  .welcome{background:linear-gradient(135deg,#4a2c20 0%,#3a2a20 45%,#1f3833 100%)}
+  .welcome h2{color:#ffc9a8}.welcome p{color:#e3d6cc}
+}
 fieldset{border:0;margin:0 0 16px;padding:0}
 fieldset.missing legend{color:var(--red)}
 legend{font-weight:600;margin-bottom:8px;padding:0}
@@ -68,6 +88,27 @@ legend{font-weight:600;margin-bottom:8px;padding:0}
 .level-soon{background:var(--yellow-soft);border-color:var(--yellow)}.level-soon h2{color:var(--yellow)}
 .level-selfCare{background:var(--green-soft);border-color:var(--green)}.level-selfCare h2{color:var(--green)}
 .step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--acc);color:#fff;font-size:15px;margin-right:8px;vertical-align:2px}
+/* The three advice sections each get their own color: act, go, recover. */
+.advice-now{border-top:5px solid #e8794f}.advice-now .step-num{background:#e8794f}
+.advice-where{border-top:5px solid #2f9e8f}.advice-where .step-num{background:#2f9e8f}
+.advice-rehab{border-top:5px solid #5aa860}.advice-rehab .step-num{background:#5aa860}
+.advice-rehab .phase{border-left-color:#5aa860}
+.advice-comfort{border-top:5px solid #9b7fd1}.advice-comfort .step-num{background:#9b7fd1}
+.comfort-stage{border-left:4px solid #9b7fd1;padding:4px 0 4px 12px;margin-top:12px}
+.comfort-stage .when{font-weight:700}
+.comfort-stage p{margin:2px 0}
+.comfort-stage .try{color:var(--muted);font-size:15px}
+.counseling{background:#f3eefc;border-radius:14px;padding:14px;margin-top:16px}
+.counseling h3{color:#6a4fa8}
+.counselor{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0}
+.counselor+.counselor{border-top:1px solid #e2d9f5}
+.counselor .detail{color:var(--muted);font-size:14px}
+.counselor .links{display:flex;gap:8px}
+.counselor a{background:#9b7fd1;color:#fff;text-decoration:none;font-weight:600;border-radius:10px;padding:8px 16px;min-height:40px;display:inline-flex;align-items:center}
+@media (prefers-color-scheme:dark){
+  .counseling{background:#2a2338}.counseling h3{color:#c9b4f5}
+  .counselor+.counselor{border-top-color:#3d3352}
+}
 ol.steps,ul.points{margin:0;padding-left:22px}
 ol.steps li,ul.points li{margin-bottom:6px}
 .phase{border-left:4px solid var(--acc);padding:4px 0 4px 12px;margin-top:14px}
@@ -76,16 +117,91 @@ ol.steps li,ul.points li{margin-bottom:6px}
 .phase ul{margin:0;padding-left:20px}
 .actions{display:flex;justify-content:center;margin-top:6px}
 footer{color:var(--muted);font-size:14px;text-align:center;margin-top:20px}
+.actions{gap:10px;flex-wrap:wrap}
+.cases-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.cases-head h2{margin:0}
+.field{display:block;margin-bottom:12px}
+.field span{display:block;font-weight:600;margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;font:inherit;color:var(--text);background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px}
+.field textarea{resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--acc);outline-offset:0;border-color:var(--acc)}
+#caseForm{border:1.5px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+.success{color:var(--green);font-weight:600}
+.filter{max-width:280px;margin-top:12px}
+.case{border-top:1px solid var(--line);padding:12px 0}
+.case-meta{color:var(--muted);font-size:14px;margin-bottom:4px}
+.case-meta strong{color:var(--text)}
+.case p{margin:0 0 6px;white-space:pre-wrap}
+.case dl{margin:0}
+.case dt{font-weight:600;font-size:15px;margin-top:6px}
+.case dd{margin:0;white-space:pre-wrap}
 #subPick{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
-@media (max-width:420px){h1{font-size:20px}.injury{padding:10px 12px}.injury strong{font-size:17px}}
+.tabs{position:sticky;top:0;z-index:5;display:flex;gap:6px;overflow-x:auto;margin:0 -16px 14px;padding:8px 16px;background:var(--bg)}
+.tabs a{flex:0 0 auto;text-decoration:none;color:var(--muted);font-weight:600;border-radius:999px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line)}
+.tabs a[aria-current="page"]{background:var(--acc);border-color:var(--acc);color:#fff}
+.place{padding:12px 0}
+.place+.place{border-top:1px solid var(--line)}
+.place .detail{color:var(--muted);font-size:15px}
+.place .links{display:flex;gap:8px;margin-top:8px}
+.place a{background:var(--acc);color:#fff;text-decoration:none;font-weight:600;border-radius:10px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center}
+.cover{text-align:center;padding:36px 12px 28px}
+.cover-icon{font-size:48px;line-height:1}
+.slogan{font-size:28px;font-weight:800;line-height:1.35;margin:14px 0 10px;color:var(--acc)}
+.cover-intro{color:var(--text);margin:0 auto 22px;max-width:460px}
+.start{display:inline-block;width:auto;text-decoration:none;padding:14px 36px;border-radius:999px}
+.cover-sos{color:var(--red);font-size:15px;font-weight:600;margin:16px 0 0}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.feature{display:flex;flex-direction:column;gap:2px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;color:var(--text);text-decoration:none;box-shadow:var(--shadow)}
+.feature>span:first-child{font-size:26px}
+h1 a{color:inherit;text-decoration:none}
+.chat-log{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.bubble{max-width:85%;padding:10px 14px;border-radius:16px;white-space:pre-wrap}
+.bubble.me{align-self:flex-end;background:var(--acc);color:#fff;border-bottom-right-radius:4px}
+.bubble.ai{align-self:flex-start;background:var(--acc-soft);color:var(--text);border-bottom-left-radius:4px}
+.chat-form{display:flex;gap:8px;align-items:flex-end}
+.chat-form textarea{flex:1;font:inherit;color:var(--text);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;resize:vertical}
+.chat-form textarea:focus{outline:2px solid var(--acc);border-color:var(--acc)}
+.chat-form .primary{width:auto;padding:12px 18px;font-size:17px}
+.chat-crisis{background:var(--red-soft);border:1.5px solid var(--red);border-radius:12px;padding:12px;color:var(--text);margin-top:10px}
+.chat-crisis a{color:var(--red);font-weight:700}
+@media (max-width:420px){.slogan{font-size:24px}h1{font-size:20px}.injury{padding:10px 12px}.injury strong{font-size:17px}}
 </style>
 </head>
 <body>
 <main>
 <header>
-  <h1 id="title"></h1>
+  <h1><a href="#home" id="title"></a></h1>
   <div class="langs" id="langs" role="group"><button data-lang="zh" lang="zh-CN">中</button><button data-lang="en" lang="en">EN</button></div>
 </header>
+
+<div class="view" id="view-home" hidden>
+  <section class="cover">
+    <div class="cover-icon" aria-hidden="true">🤍</div>
+    <p class="slogan" id="slogan"></p>
+    <p class="cover-intro" id="coverIntro"></p>
+    <a class="primary start" href="#assess" id="startBtn"></a>
+    <p class="cover-sos" id="coverSos"></p>
+  </section>
+  <div class="features">
+    <a class="feature" href="#assess"><span aria-hidden="true">🩹</span><strong id="featAssess"></strong><span class="muted" id="featAssessText"></span></a>
+    <a class="feature" href="#comfort"><span aria-hidden="true">💜</span><strong id="featComfort"></strong><span class="muted" id="featComfortText"></span></a>
+    <a class="feature" href="#cases"><span aria-hidden="true">💬</span><strong id="featCases"></strong><span class="muted" id="featCasesText"></span></a>
+    <a class="feature" href="#hospitals"><span aria-hidden="true">🏥</span><strong id="featHospitals"></strong><span class="muted" id="featHospitalsText"></span></a>
+  </div>
+</div>
+
+<nav class="tabs" id="tabs">
+  <a href="#assess" data-view="assess">🩹 <span id="navAssess"></span></a>
+  <a href="#comfort" data-view="comfort">💜 <span id="navComfort"></span></a>
+  <a href="#cases" data-view="cases">💬 <span id="navCases"></span></a>
+  <a href="#hospitals" data-view="hospitals">🏥 <span id="navHospitals"></span></a>
+</nav>
+
+<div class="view" id="view-assess">
+<section class="card welcome">
+  <div class="hug" aria-hidden="true">🤍</div>
+  <div><h2 id="welcomeTitle"></h2><p id="welcomeText"></p></div>
+</section>
 
 <section class="card alert" aria-labelledby="alertTitle">
   <h2 id="alertTitle"></h2>
@@ -122,21 +238,77 @@ footer{color:var(--muted);font-size:14px;text-align:center;margin-top:20px}
 
 <div id="results" hidden>
   <section class="card level" id="levelCard"><h2 id="levelLabel"></h2><p id="levelSummary"></p></section>
-  <section class="card"><h2><span class="step-num">1</span><span id="firstAidTitle"></span></h2><ol class="steps" id="firstAid"></ol></section>
-  <section class="card"><h2><span class="step-num">2</span><span id="whereTitle"></span></h2><ul class="points" id="where"></ul></section>
-  <section class="card"><h2><span class="step-num">3</span><span id="rehabTitle"></span></h2><p class="muted" id="rehabNote"></p><div id="rehab"></div></section>
-  <div class="actions"><button type="button" class="secondary" id="restartBtn"></button></div>
+  <section class="card advice-now"><h2><span class="step-num">1</span><span id="firstAidTitle"></span></h2><ol class="steps" id="firstAid"></ol></section>
+  <section class="card advice-where"><h2><span class="step-num">2</span><span id="whereTitle"></span></h2><ul class="points" id="where"></ul></section>
+  <section class="card advice-rehab"><h2><span class="step-num">3</span><span id="rehabTitle"></span></h2><p class="muted" id="rehabNote"></p><div id="rehab"></div></section>
+  <div class="actions"><button type="button" class="secondary" id="seeComfortBtn"></button><button type="button" class="secondary" id="seeCasesBtn"></button><button type="button" class="secondary" id="restartBtn"></button></div>
+</div>
+</div>
+
+<div class="view" id="view-comfort" hidden>
+  <section class="card advice-comfort">
+    <h2 id="comfortTitle"></h2>
+    <div id="comfort"></div>
+    <div class="counseling">
+      <h3 id="counselingTitle"></h3>
+      <div id="counselingList"></div>
+    </div>
+  </section>
+  <section class="card chat">
+    <h2 id="chatTitle"></h2>
+    <p class="muted" id="chatIntro"></p>
+    <div class="chat-crisis" id="chatCrisis" role="alert" hidden></div>
+    <div class="chat-log" id="chatLog" aria-live="polite"></div>
+    <p class="muted" id="chatStatus" role="status" hidden></p>
+    <form class="chat-form" id="chatForm">
+      <label class="visually-hidden" for="chatInput" id="chatInputLabel"></label>
+      <textarea id="chatInput" rows="2" maxlength="500"></textarea>
+      <button type="submit" class="primary" id="chatSend"></button>
+    </form>
+  </section>
+</div>
+
+<div class="view" id="view-hospitals" hidden>
+  <section class="card">
+    <h2 id="hospitalsTitle"></h2>
+    <p class="muted" id="hospitalsIntro"></p>
+    <div id="hospitalList"></div>
+  </section>
+  <section class="card alert"><p class="numbers" id="hospitalsEmergency"></p></section>
+</div>
+
+<div class="view" id="view-cases" hidden>
+
+<section class="card" id="casesCard">
+  <div class="cases-head"><h2 id="casesTitle"></h2><button type="button" class="secondary" id="shareBtn" aria-expanded="false"></button></div>
+  <p class="muted" id="casesIntro"></p>
+  <form id="caseForm" novalidate hidden>
+    <label class="field"><span id="caseInjuryLabel"></span><select id="caseInjury"></select></label>
+    <div id="caseFields"></div>
+    <p class="muted" id="privacyNote"></p>
+    <button type="submit" class="primary" id="postBtn"></button>
+    <p class="error" id="caseError" role="alert" hidden></p>
+  </form>
+  <p class="success" id="casePosted" role="status" hidden></p>
+  <label class="field filter"><span id="filterLabel"></span><select id="caseFilter"></select></label>
+  <p class="muted" id="casesStatus" role="status"></p>
+  <div id="caseList"></div>
+</section>
 </div>
 
 <footer id="disclaimer"></footer>
 </main>
 
 <script src="triage.js"></script>
+<script src="share.js"></script>
+<script src="chat.js"></script>
 <script>
 // Interface text. Injury content lives in triage.js.
 var T = {
   en: {
     title: 'Sports Injury Helper',
+    welcomeTitle: 'Take a breath. You\'re not alone.',
+    welcomeText: 'Getting hurt is scary. We\'ll go through it step by step, and you\'ll know what to do next.',
     langGroup: 'Interface language',
     alertTitle: 'Call for help right away if:',
     numbers: 'Emergency: 911 (US) · 120 (China)',
@@ -148,6 +320,8 @@ var T = {
     firstAidTitle: 'Right now',
     whereTitle: 'Where to go',
     rehabTitle: 'Getting back to sport',
+    comfortTitle: 'Looking after how you feel',
+    counselingTitle: 'Talk to a counselor',
     restart: 'Start over',
     disclaimer: 'For reference only. This page cannot diagnose an injury and does not replace a doctor.',
     photoTitle: 'Add a photo (optional)',
@@ -163,10 +337,75 @@ var T = {
     photoUnsupported: 'This browser\'s AI cannot look at photos (it needs a recent desktop Chrome). Please answer the questions yourself.',
     photoBadImage: 'This image could not be read. Try a JPG or PNG.',
     photoError: 'The AI could not look at the photo. Please answer the questions yourself.',
-    photoTag: 'from photo'
+    photoTag: 'from photo',
+    seeCases: 'See other people\'s experiences',
+    seeComfort: 'Look after how you feel',
+    slogan: 'On your road back to sport, I\'m always here.',
+    coverIntro: 'Hurt while playing sport? Answer a few questions to learn how serious it is, what to do right now, where to go, and how to get back to training.',
+    startBtn: 'Start the check',
+    coverSos: 'Emergency? Call 911 (US) · 120 (China) now.',
+    featAssess: 'Check my injury',
+    featAssessText: 'A few questions, then clear next steps.',
+    featComfort: 'Comfort',
+    featComfortText: 'Words for each stage, and people to talk to.',
+    featCases: 'Shared cases',
+    featCasesText: 'Real stories from people who recovered.',
+    featHospitals: 'Nearby hospitals',
+    featHospitalsText: 'Find the right kind of place on a map.',
+    chatTitle: 'Talk to the AI',
+    chatIntro: 'Tell it how you feel. It answers with comfort and a few small things you can do. It is an AI, not a counselor, and the chat stays on this computer.',
+    chatInputLabel: 'Your message',
+    chatPlaceholder: 'For example: I feel really down right now',
+    chatSend: 'Send',
+    chatThinking: 'The AI is thinking…',
+    chatDownloading: 'Downloading Chrome\'s AI model (first time only)… {0}%',
+    chatUnsupported: 'This browser\'s AI cannot chat (it needs a recent desktop Chrome). The counselors above are always there for you.',
+    chatError: 'The AI could not answer. Please try again, or reach out to one of the counselors above.',
+    chatCrisis: 'You matter, and you deserve help right now. Please call or text 988 (US), call 12356 (China), or call emergency services. You can also tell someone near you.',
+    navAssess: 'Check my injury',
+    navComfort: 'Comfort',
+    navCases: 'Shared cases',
+    navHospitals: 'Nearby hospitals',
+    hospitalsTitle: 'Find care near you',
+    hospitalsIntro: 'Pick the kind of place you need. The map opens with your own location; this page never sees it.',
+    hospitalsEmergency: 'In an emergency, do not drive yourself: call 911 (US) · 120 (China).',
+    googleMaps: 'Google Maps',
+    amap: 'Amap (China)',
+    casesTitle: 'Shared cases',
+    casesIntro: 'Real experiences from other people. Personal stories, not medical advice.',
+    shareBtn: 'Share my experience',
+    shareCancel: 'Cancel',
+    caseInjuryLabel: 'Injury',
+    choose: 'Choose…',
+    caseLabels: {
+      nickname: 'Nickname (optional)',
+      story: 'How did it happen? (required)',
+      treatment: 'What did you do, and where did you go?',
+      recovery: 'How long did recovery take?',
+      lesson: 'What would you tell others?'
+    },
+    caseNames: {injury: 'Injury', nickname: 'Nickname', story: 'How it happened', treatment: 'Treatment', recovery: 'Recovery', lesson: 'Advice'},
+    privacyNote: 'Your post appears publicly right away and cannot be edited. Do not include your real name, contact details or anything that identifies you.',
+    postBtn: 'Post',
+    posting: 'Posting…',
+    posted: 'Posted! Thank you for sharing.',
+    problem_missing: '{0}: please fill this in.',
+    problem_tooShort: '{0}: please write at least {1} characters.',
+    problem_tooLong: '{0}: at most {1} characters.',
+    postFailed: 'Could not post. Check your internet connection and try again.',
+    filterLabel: 'Show',
+    filterAll: 'All injuries',
+    casesLoading: 'Loading cases…',
+    casesEmpty: 'No cases yet. Be the first to share!',
+    casesEmptyFilter: 'No cases for this injury yet.',
+    casesError: 'Cases could not be loaded. Check your internet connection and refresh the page.',
+    casesNotSetUp: 'Case sharing is not set up yet.',
+    anonymous: 'Anonymous'
   },
   zh: {
     title: '运动损伤急救助手',
+    welcomeTitle: '先深呼吸，别着急',
+    welcomeText: '受伤会让人慌张，这很正常。我们一步一步来，很快你就知道接下来该做什么。',
     langGroup: '界面语言',
     alertTitle: '出现以下情况，立刻求助：',
     numbers: '急救电话：120（中国）· 911（美国）',
@@ -178,6 +417,8 @@ var T = {
     firstAidTitle: '现在马上做',
     whereTitle: '去哪里看',
     rehabTitle: '康复训练',
+    comfortTitle: '照顾好你的心情',
+    counselingTitle: '找心理咨询师聊聊',
     restart: '重新开始',
     disclaimer: '仅供参考。本页面不能诊断伤情，也不能代替医生。',
     photoTitle: '用照片帮忙判断（可选）',
@@ -193,7 +434,70 @@ var T = {
     photoUnsupported: '这个浏览器的 AI 不能看图片（需要较新的电脑版 Chrome）。请自己回答下面的题。',
     photoBadImage: '读不了这张图片，换成 JPG 或 PNG 试试。',
     photoError: 'AI 看照片时出错了，请自己回答下面的题。',
-    photoTag: '照片建议'
+    photoTag: '照片建议',
+    seeCases: '看看别人的经历',
+    seeComfort: '照顾好你的心情',
+    slogan: '运动康复路上，我一直都在',
+    coverIntro: '运动中受伤了？回答几个问题，就能知道伤得多重、现在该怎么做、去哪里看，以及之后怎么一步步回到训练。',
+    startBtn: '开始自测',
+    coverSos: '紧急情况？马上打 120（中国）· 911（美国）',
+    featAssess: '急救自测',
+    featAssessText: '回答几个问题，告诉你下一步怎么做。',
+    featComfort: '心理安慰',
+    featComfortText: '每个恢复阶段的陪伴，还有可以聊聊的人。',
+    featCases: '分享案例',
+    featCasesText: '看看别人是怎么恢复的。',
+    featHospitals: '附近医院',
+    featHospitalsText: '在地图上找到合适的医院。',
+    chatTitle: '和 AI 聊聊',
+    chatIntro: '说说你现在的感受。它会安慰你，并给你几件能马上去做的小事。它是 AI，不是心理咨询师；聊天内容只留在这台电脑上。',
+    chatInputLabel: '你想说的话',
+    chatPlaceholder: '比如：我现在很难受',
+    chatSend: '发送',
+    chatThinking: 'AI 正在想…',
+    chatDownloading: '正在下载 Chrome 的 AI 模型（只有第一次需要）… {0}%',
+    chatUnsupported: '这个浏览器的 AI 还不能聊天（需要较新的电脑版 Chrome）。上面的心理咨询热线随时都在。',
+    chatError: 'AI 暂时没能回答。请再试一次，或者联系上面的心理咨询热线。',
+    chatCrisis: '你很重要，你值得马上得到帮助。请打 12356（中国），或打电话、发短信给 988（美国），也可以打急救电话。也可以告诉身边的人。',
+    navAssess: '急救自测',
+    navComfort: '心理安慰',
+    navCases: '分享案例',
+    navHospitals: '附近医院',
+    hospitalsTitle: '找附近的医院',
+    hospitalsIntro: '选你需要的地方，地图会用你自己的位置搜索，本页面不会看到你的位置。',
+    hospitalsEmergency: '紧急情况不要自己开车去：马上打 120（中国）· 911（美国）。',
+    googleMaps: 'Google 地图',
+    amap: '高德地图',
+    casesTitle: '案例分享',
+    casesIntro: '来自其他人的真实经历。仅是个人经历，不是医疗建议。',
+    shareBtn: '分享我的经历',
+    shareCancel: '取消',
+    caseInjuryLabel: '伤的种类',
+    choose: '请选择……',
+    caseLabels: {
+      nickname: '昵称（可选）',
+      story: '怎么受的伤？（必填）',
+      treatment: '当时怎么处理的？去了哪里看？',
+      recovery: '恢复用了多久？',
+      lesson: '有什么想提醒别人的？'
+    },
+    caseNames: {injury: '伤的种类', nickname: '昵称', story: '受伤经过', treatment: '处理和就医', recovery: '恢复时间', lesson: '提醒'},
+    privacyNote: '发布后会马上公开，而且不能修改。不要写真实姓名、联系方式或能认出你的信息。',
+    postBtn: '发布',
+    posting: '发布中……',
+    posted: '已发布！谢谢你的分享。',
+    problem_missing: '{0}：请填写。',
+    problem_tooShort: '{0}：至少写 {1} 个字。',
+    problem_tooLong: '{0}：最多 {1} 个字。',
+    postFailed: '发布失败。请检查网络后再试。',
+    filterLabel: '显示',
+    filterAll: '全部',
+    casesLoading: '正在加载案例……',
+    casesEmpty: '还没有案例，来分享第一个吧！',
+    casesEmptyFilter: '这种伤还没有案例。',
+    casesError: '案例加载失败。请检查网络后刷新页面。',
+    casesNotSetUp: '案例分享还没有设置好。',
+    anonymous: '匿名'
   }
 };
 
@@ -230,28 +534,119 @@ function fillList(listId, items) {
 function renderStatic() {
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
   document.title = t('title');
-  ['title', 'alertTitle', 'numbers', 'pickTitle', 'subTitle', 'questionsTitle', 'firstAidTitle', 'whereTitle', 'rehabTitle', 'disclaimer']
+  ['title', 'welcomeTitle', 'welcomeText', 'alertTitle', 'numbers', 'pickTitle', 'subTitle', 'questionsTitle', 'firstAidTitle', 'whereTitle', 'rehabTitle', 'comfortTitle', 'counselingTitle', 'disclaimer',
+   'navAssess', 'navComfort', 'navCases', 'navHospitals', 'hospitalsTitle', 'hospitalsIntro', 'hospitalsEmergency',
+   'slogan', 'coverIntro', 'startBtn', 'coverSos', 'featAssess', 'featAssessText', 'featComfort', 'featComfortText',
+   'featCases', 'featCasesText', 'featHospitals', 'featHospitalsText', 'chatTitle', 'chatIntro', 'chatInputLabel', 'chatSend', 'chatCrisis']
     .forEach(function (id) { $(id).textContent = t(id); });
   $('assessBtn').textContent = t('assess');
   $('restartBtn').textContent = t('restart');
+  $('seeCasesBtn').textContent = t('seeCases');
+  $('seeComfortBtn').textContent = t('seeComfort');
   $('langs').setAttribute('aria-label', t('langGroup'));
   document.querySelectorAll('#langs button').forEach(function (b) {
     b.classList.toggle('on', b.dataset.lang === lang);
     b.setAttribute('aria-pressed', b.dataset.lang === lang);
   });
   fillList('redFlags', RED_FLAGS);
+  renderComfort();
+  renderHospitals();
+  $('chatInput').placeholder = t('chatPlaceholder');
+  renderChatStatus();
+}
+
+function renderHospitals() {
+  var list = $('hospitalList');
+  list.innerHTML = '';
+  HOSPITAL_KINDS.forEach(function (kind) {
+    var row = document.createElement('div');
+    row.className = 'place';
+    row.innerHTML = '<div><strong></strong><div class="detail"></div></div><div class="links"></div>';
+    row.querySelector('strong').textContent = L(kind.name);
+    row.querySelector('.detail').textContent = L(kind.when);
+    var links = mapLinks(kind);
+    [['google', 'googleMaps'], ['amap', 'amap']].forEach(function (pair) {
+      var a = document.createElement('a');
+      a.href = links[pair[0]];
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.textContent = t(pair[1]);
+      row.querySelector('.links').appendChild(a);
+    });
+    list.appendChild(row);
+  });
+}
+
+// The menu shows one section at a time. The section is in the address
+// (#cases, ...), so the back button and shared links work. Without one,
+// the cover comes first.
+var VIEWS = ['home', 'assess', 'comfort', 'cases', 'hospitals'];
+
+function currentView() {
+  var name = location.hash.slice(1);
+  return VIEWS.indexOf(name) >= 0 ? name : 'home';
+}
+
+function showView() {
+  var view = currentView();
+  VIEWS.forEach(function (name) { $('view-' + name).hidden = name !== view; });
+  $('tabs').hidden = view === 'home';
+  document.querySelectorAll('#tabs a').forEach(function (a) {
+    if (a.dataset.view === view) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  });
+}
+
+window.addEventListener('hashchange', function () {
+  showView();
+  window.scrollTo(0, 0);
+});
+
+// The comfort card is the same for every injury, so it changes only with
+// the language.
+function renderComfort() {
+  var comfort = $('comfort');
+  comfort.innerHTML = '';
+  COMFORT_STAGES.forEach(function (stage) {
+    var div = document.createElement('div');
+    div.className = 'comfort-stage';
+    div.innerHTML = '<div class="when"></div><p></p><p class="try"></p>';
+    div.querySelector('.when').textContent = L(stage.when);
+    div.querySelector('p').textContent = L(stage.words);
+    div.querySelector('.try').textContent = '💜 ' + L(stage.tryThis);
+    comfort.appendChild(div);
+  });
+  var list = $('counselingList');
+  list.innerHTML = '';
+  COUNSELING.forEach(function (place) {
+    var row = document.createElement('div');
+    row.className = 'counselor';
+    row.innerHTML = '<div><strong></strong><div class="detail"></div></div><div class="links"></div>';
+    row.querySelector('strong').textContent = L(place.name);
+    row.querySelector('.detail').textContent = L(place.detail);
+    place.links.forEach(function (link) {
+      var a = document.createElement('a');
+      a.href = link.href;
+      a.textContent = L(link.label);
+      if (link.href.indexOf('https:') === 0) { a.target = '_blank'; a.rel = 'noopener'; }
+      row.querySelector('.links').appendChild(a);
+    });
+    list.appendChild(row);
+  });
 }
 
 // A big tappable card with a name and a hint underneath, used for both
 // categories and the injuries inside a category.
-function choiceButton(item, selected, onPick) {
+function choiceButton(item, selected, onPick, category) {
   var b = document.createElement('button');
   b.type = 'button';
   b.className = 'injury';
   b.setAttribute('aria-pressed', selected);
-  b.innerHTML = '<strong></strong><span></span>';
+  b.style.setProperty('--hue', category.hue);
+  b.innerHTML = '<span class="icon" aria-hidden="true"></span><span><strong></strong><small></small></span>';
+  b.querySelector('.icon').textContent = category.icon;
   b.querySelector('strong').textContent = L(item.name);
-  b.querySelector('span').textContent = L(item.hint);
+  b.querySelector('small').textContent = L(item.hint);
   b.addEventListener('click', onPick);
   return b;
 }
@@ -260,7 +655,7 @@ function renderCategories() {
   var box = $('categories');
   box.innerHTML = '';
   CATEGORIES.forEach(function (category) {
-    box.appendChild(choiceButton(category, currentCategory === category, function () { pickCategory(category); }));
+    box.appendChild(choiceButton(category, currentCategory === category, function () { pickCategory(category); }, category));
   });
   // Only categories with more than one injury ask which one.
   var showSub = currentCategory !== null && currentCategory.injuries.length > 1;
@@ -269,7 +664,7 @@ function renderCategories() {
   sub.innerHTML = '';
   if (!showSub) return;
   currentCategory.injuries.forEach(function (injury) {
-    sub.appendChild(choiceButton(injury, currentInjury === injury, function () { pickInjury(injury); }));
+    sub.appendChild(choiceButton(injury, currentInjury === injury, function () { pickInjury(injury); }, currentCategory));
   });
 }
 
@@ -368,12 +763,63 @@ async function photoOutputLanguage() {
   return availability === 'unavailable' ? 'en' : lang;
 }
 
-// When the model had to write English, translate its description with
-// Chrome's built-in Translator; keep the English if that is not possible.
-async function translateDescription(text, from) {
-  if (from === lang || !text || !window.Translator) return text;
+// ---- Comfort chat ----
+// One AI session per language, so it remembers the conversation. Messages
+// live only in this page and are gone after a refresh.
+var chat = {session: null, sessionLang: null, busy: false, status: null, statusArg: null};
+
+function setChatStatus(status, arg) {
+  chat.status = status;
+  chat.statusArg = arg;
+  renderChatStatus();
+}
+
+function renderChatStatus() {
+  $('chatStatus').hidden = !chat.status;
+  if (chat.status) $('chatStatus').textContent = t(chat.status).replace('{0}', chat.statusArg);
+  $('chatSend').disabled = chat.busy;
+}
+
+function addBubble(text, who) {
+  var bubble = document.createElement('div');
+  bubble.className = 'bubble ' + who;
+  bubble.textContent = text;
+  $('chatLog').appendChild(bubble);
+  bubble.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+}
+
+// The model reads and writes the page language when Chrome supports it, and
+// English otherwise, with the page translating both ways.
+async function chatSession() {
+  if (chat.session && chat.sessionLang === lang) return chat.session;
+  if (chat.session) chat.session.destroy();
+  var modelLang = 'en';
+  if (lang !== 'en') {
+    var availability = await LanguageModel.availability({
+      expectedInputs: [{type: 'text', languages: [lang]}],
+      expectedOutputs: [{type: 'text', languages: [lang]}]
+    });
+    if (availability !== 'unavailable') modelLang = lang;
+  }
+  chat.session = await LanguageModel.create({
+    initialPrompts: [{role: 'system', content: CHAT_SYSTEM_PROMPT}],
+    expectedInputs: [{type: 'text', languages: [modelLang]}],
+    expectedOutputs: [{type: 'text', languages: [modelLang]}],
+    monitor: function (m) {
+      m.addEventListener('downloadprogress', function (e) { setChatStatus('chatDownloading', Math.round(e.loaded * 100)); });
+    }
+  });
+  chat.sessionLang = lang;
+  chat.modelLang = modelLang;
+  return chat.session;
+}
+
+// Translate with Chrome's built-in Translator when the model had to use
+// another language; keep the original text if that is not possible.
+async function translateText(text, from, to) {
+  if (from === to || !text || !window.Translator) return text;
   try {
-    var translator = await Translator.create({sourceLanguage: from, targetLanguage: lang});
+    var translator = await Translator.create({sourceLanguage: from, targetLanguage: to});
     var translated = await translator.translate(text);
     translator.destroy();
     return translated;
@@ -381,6 +827,41 @@ async function translateDescription(text, from) {
     return text;
   }
 }
+
+async function sendChat(message) {
+  addBubble(message, 'me');
+  if (isCrisisMessage(message)) $('chatCrisis').hidden = false;
+  if (!window.LanguageModel) { setChatStatus('chatUnsupported'); return; }
+  chat.busy = true;
+  setChatStatus('chatThinking');
+  try {
+    var session = await chatSession();
+    setChatStatus('chatThinking');
+    var reply = await session.prompt(await translateText(message, lang, chat.modelLang));
+    addBubble(await translateText(reply.trim(), chat.modelLang, lang), 'ai');
+    chat.busy = false;
+    setChatStatus(null);
+  } catch (e) {
+    chat.busy = false;
+    setChatStatus('chatError');
+  }
+}
+
+$('chatForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var message = cleanChatMessage($('chatInput').value);
+  if (!message || chat.busy) return;
+  $('chatInput').value = '';
+  sendChat(message);
+});
+
+// Enter sends; Shift+Enter starts a new line.
+$('chatInput').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+    e.preventDefault();
+    $('chatForm').requestSubmit();
+  }
+});
 
 async function askModelAboutPhoto(injury, canvas) {
   var outputLanguage = await photoOutputLanguage();
@@ -397,7 +878,7 @@ async function askModelAboutPhoto(injury, canvas) {
       content: [{type: 'text', value: photoPrompt(injury, outputLanguage)}, {type: 'image', value: canvas}]
     }], {responseConstraint: photoSchema(injury)});
     var result = JSON.parse(json);
-    result.description = await translateDescription(result.description, outputLanguage);
+    result.description = await translateText(result.description, outputLanguage, lang);
     return result;
   } finally {
     session.destroy();
@@ -516,12 +997,190 @@ function pickInjury(injury) {
 
 function renderAll() {
   renderStatic();
+  renderCases();
   renderCategories();
   renderPhoto();
   renderQuestions();
   if (showingResults) renderResults();
   if (!$('error').hidden) showMissing();
 }
+
+// ---- Shared cases ----
+// window.caseStore comes from firebase-cases.js, a module that loads after
+// this script; until then the list shows "loading".
+var cases = {status: 'loading', list: [], filter: '', formOpen: false, posting: false, posted: false, problems: [], postFailed: false};
+
+function injuryOptions(select, firstLabel, selected) {
+  select.innerHTML = '';
+  var first = document.createElement('option');
+  first.value = '';
+  first.textContent = firstLabel;
+  select.appendChild(first);
+  INJURIES.forEach(function (injury) {
+    var option = document.createElement('option');
+    option.value = injury.id;
+    option.textContent = L(injury.name);
+    select.appendChild(option);
+  });
+  select.value = selected;
+}
+
+// Builds the text fields once; later renders only update labels, so typed
+// text survives a language switch.
+function buildCaseFields() {
+  var box = $('caseFields');
+  Object.keys(CASE_FIELDS).forEach(function (field) {
+    var label = document.createElement('label');
+    label.className = 'field';
+    var span = document.createElement('span');
+    span.id = 'caseLabel-' + field;
+    var input = document.createElement(CASE_FIELDS[field].max > 200 ? 'textarea' : 'input');
+    input.id = 'case-' + field;
+    input.maxLength = CASE_FIELDS[field].max;
+    if (input.tagName === 'TEXTAREA') input.rows = field === 'story' ? 4 : 3;
+    label.appendChild(span);
+    label.appendChild(input);
+    box.appendChild(label);
+  });
+}
+
+function problemText(p) {
+  var limits = CASE_FIELDS[p.field] || {};
+  return t('problem_' + p.problem)
+    .replace('{0}', t('caseNames')[p.field])
+    .replace('{1}', p.problem === 'tooShort' ? limits.min : limits.max);
+}
+
+function caseCard(c) {
+  var injury = findInjury(c.injury);
+  var article = document.createElement('article');
+  article.className = 'case';
+  var meta = document.createElement('div');
+  meta.className = 'case-meta';
+  var name = document.createElement('strong');
+  name.textContent = injury ? L(injury.name) : '';
+  meta.appendChild(name);
+  meta.appendChild(document.createTextNode(' · ' + (c.nickname || t('anonymous')) + ' · ' + formatCaseDate(c.createdAt)));
+  article.appendChild(meta);
+  var story = document.createElement('p');
+  story.textContent = c.story;
+  article.appendChild(story);
+  var details = document.createElement('dl');
+  ['treatment', 'recovery', 'lesson'].forEach(function (field) {
+    if (!c[field]) return;
+    var dt = document.createElement('dt');
+    dt.textContent = t('caseNames')[field];
+    var dd = document.createElement('dd');
+    dd.textContent = c[field];
+    details.appendChild(dt);
+    details.appendChild(dd);
+  });
+  if (details.children.length) article.appendChild(details);
+  return article;
+}
+
+function renderCases() {
+  ['casesTitle', 'casesIntro', 'caseInjuryLabel', 'privacyNote', 'filterLabel'].forEach(function (id) { $(id).textContent = t(id); });
+  Object.keys(CASE_FIELDS).forEach(function (field) { $('caseLabel-' + field).textContent = t('caseLabels')[field]; });
+  injuryOptions($('caseInjury'), t('choose'), $('caseInjury').value);
+  injuryOptions($('caseFilter'), t('filterAll'), cases.filter);
+
+  var canPost = cases.status === 'ready';
+  $('shareBtn').hidden = !canPost;
+  $('shareBtn').textContent = t(cases.formOpen ? 'shareCancel' : 'shareBtn');
+  $('shareBtn').setAttribute('aria-expanded', cases.formOpen);
+  $('caseForm').hidden = !(canPost && cases.formOpen);
+  $('postBtn').textContent = t(cases.posting ? 'posting' : 'postBtn');
+  $('postBtn').disabled = cases.posting;
+  var errors = cases.postFailed ? [t('postFailed')] : cases.problems.map(problemText);
+  $('caseError').textContent = errors.join(' ');
+  $('caseError').hidden = errors.length === 0;
+  $('casePosted').textContent = t('posted');
+  $('casePosted').hidden = !cases.posted;
+
+  var shown = filterCases(cases.list, cases.filter);
+  $('caseFilter').parentNode.hidden = !canPost || cases.list.length === 0;
+  var statusKey = {loading: 'casesLoading', error: 'casesError', notSetUp: 'casesNotSetUp'}[cases.status] ||
+    (cases.list.length === 0 ? 'casesEmpty' : shown.length === 0 ? 'casesEmptyFilter' : '');
+  $('casesStatus').textContent = statusKey ? t(statusKey) : '';
+  $('casesStatus').hidden = !statusKey;
+  var list = $('caseList');
+  list.innerHTML = '';
+  if (canPost) shown.forEach(function (c) { list.appendChild(caseCard(c)); });
+}
+
+function loadSharedCases() {
+  if (!window.caseStore.configured) {
+    cases.status = 'notSetUp';
+    renderCases();
+    return Promise.resolve();
+  }
+  return window.caseStore.loadCases().then(function (list) {
+    cases.list = list;
+    cases.status = 'ready';
+  }).catch(function () {
+    cases.status = 'error';
+  }).then(renderCases);
+}
+
+// Called by firebase-cases.js once it has loaded.
+window.onCaseStoreReady = loadSharedCases;
+// Called if firebase-cases.js or the Firebase library cannot be loaded.
+window.onCaseStoreFailed = function () {
+  cases.status = 'error';
+  renderCases();
+};
+
+buildCaseFields();
+
+$('shareBtn').addEventListener('click', function () {
+  cases.formOpen = !cases.formOpen;
+  cases.posted = false;
+  cases.problems = [];
+  cases.postFailed = false;
+  if (cases.formOpen && currentInjury) $('caseInjury').value = currentInjury.id;
+  renderCases();
+  if (cases.formOpen) $('caseInjury').focus();
+});
+
+$('caseFilter').addEventListener('change', function () {
+  cases.filter = $('caseFilter').value;
+  renderCases();
+});
+
+$('caseForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var input = {injury: $('caseInjury').value};
+  Object.keys(CASE_FIELDS).forEach(function (field) { input[field] = $('case-' + field).value; });
+  var sharedCase = caseFromForm(input, lang);
+  cases.problems = caseProblems(sharedCase);
+  cases.postFailed = false;
+  if (cases.problems.length > 0) { renderCases(); return; }
+  cases.posting = true;
+  renderCases();
+  window.caseStore.postCase(sharedCase).then(function () {
+    cases.formOpen = false;
+    cases.posted = true;
+    cases.filter = sharedCase.injury;
+    $('caseForm').reset();
+    return loadSharedCases();
+  }).catch(function () {
+    cases.postFailed = true;
+  }).then(function () {
+    cases.posting = false;
+    renderCases();
+  });
+});
+
+$('seeCasesBtn').addEventListener('click', function () {
+  cases.filter = currentInjury ? currentInjury.id : '';
+  renderCases();
+  location.hash = 'cases';
+});
+
+$('seeComfortBtn').addEventListener('click', function () {
+  location.hash = 'comfort';
+});
 
 $('questions').addEventListener('submit', function (e) {
   e.preventDefault();
@@ -552,6 +1211,8 @@ document.querySelectorAll('#langs button').forEach(function (b) {
 });
 
 renderAll();
+showView();
 </script>
+<script type="module" src="firebase-cases.js" onerror="onCaseStoreFailed()"></script>
 </body>
 </html>

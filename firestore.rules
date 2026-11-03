@@ -1,0 +1,32 @@
+rules_version = '2';
+
+// Shared cases are public: anyone can read them and post a new one, but no
+// one can change or delete a case from the website (only from the Firebase
+// console). Every field is checked here because posts appear immediately.
+// Limits and injury ids must match share.js and triage.js.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /cases/{caseId} {
+      allow read: if true;
+      allow create: if isValidCase(request.resource.data);
+      allow update, delete: if false;
+    }
+
+    function isText(value, min, max) {
+      return value is string && value.size() >= min && value.size() <= max;
+    }
+
+    function isValidCase(c) {
+      return c.keys().hasOnly(['injury', 'lang', 'nickname', 'story', 'treatment', 'recovery', 'lesson', 'createdAt'])
+        && c.keys().hasAll(['injury', 'lang', 'nickname', 'story', 'treatment', 'recovery', 'lesson', 'createdAt'])
+        && c.injury in ['ankle', 'patella', 'sprain', 'strain', 'dislocation', 'fracture', 'concussion', 'bruise', 'wound', 'cramp', 'overuse', 'heat']
+        && c.lang in ['zh', 'en']
+        && isText(c.nickname, 0, 30)
+        && isText(c.story, 10, 1000)
+        && isText(c.treatment, 0, 1000)
+        && isText(c.recovery, 0, 200)
+        && isText(c.lesson, 0, 500)
+        && c.createdAt == request.time;
+    }
+  }
+}

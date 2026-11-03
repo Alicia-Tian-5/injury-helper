@@ -13,6 +13,8 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <h1 id="summary">Running…</h1>
 <ul id="log"></ul>
 <script src="triage.js"></script>
+<script src="share.js"></script>
+<script src="chat.js"></script>
 <script>
 var results = [];
 function test(name, fn) {
@@ -100,6 +102,59 @@ test('categories have names in English and Chinese', function () {
     if (!c.name.en || !c.name.zh || !c.hint.en || !c.hint.zh) throw new Error('missing text in category ' + c.id);
   });
 });
+test('comfort: every recovery stage has words and a tip in both languages', function () {
+  equal(COMFORT_STAGES.length, 3);
+  COMFORT_STAGES.forEach(function (stage) {
+    [stage.when, stage.words, stage.tryThis].forEach(function (text) {
+      if (!text.en || !text.zh) throw new Error('missing comfort text in ' + stage.when.en);
+    });
+  });
+});
+test('comfort: every counseling entry has a name and a link that opens a phone, text or website', function () {
+  COUNSELING.forEach(function (place) {
+    if (!place.name.en || !place.name.zh || !place.detail.en || !place.detail.zh) throw new Error('missing text for ' + place.name.en);
+    if (place.links.length === 0) throw new Error('no link for ' + place.name.en);
+    place.links.forEach(function (link) {
+      if (!/^(tel:|sms:|https:\/\/)/.test(link.href)) throw new Error('bad link ' + link.href);
+    });
+  });
+});
+test('hospitals: every kind of place has text in both languages and https map links', function () {
+  HOSPITAL_KINDS.forEach(function (kind) {
+    if (!kind.name.en || !kind.name.zh || !kind.when.en || !kind.when.zh) throw new Error('missing text for ' + kind.name.en);
+    var links = mapLinks(kind);
+    if (links.google.indexOf('https://www.google.com/maps/') !== 0) throw new Error('bad Google link ' + links.google);
+    if (links.amap.indexOf('https://uri.amap.com/') !== 0) throw new Error('bad Amap link ' + links.amap);
+  });
+});
+test('hospitals: Amap searches in Chinese, Google Maps in English near the visitor', function () {
+  var links = mapLinks(HOSPITAL_KINDS[0]);
+  equal(links.amap, 'https://uri.amap.com/search?keyword=' + encodeURIComponent('医院急诊'));
+  equal(links.google, 'https://www.google.com/maps/search/?api=1&query=emergency%20room%20near%20me');
+});
+test('chat: messages about suicide or self-harm show the hotlines, in both languages', function () {
+  equal(isCrisisMessage('我现在不想活了'), true);
+  equal(isCrisisMessage('I want to die'), true);
+  equal(isCrisisMessage('I keep thinking I might HURT MYSELF'), true);
+});
+test('chat: an ordinary sad message does not show the crisis hotlines', function () {
+  equal(isCrisisMessage('我现在很难受'), false);
+  equal(isCrisisMessage('I miss playing soccer so much'), false);
+});
+test('chat: empty messages are not sent and long ones are cut to the limit', function () {
+  equal(cleanChatMessage('   '), null);
+  equal(cleanChatMessage('  我很难受 '), '我很难受');
+  equal(cleanChatMessage('a'.repeat(900)).length, CHAT_MAX_LENGTH);
+});
+test('categories each have an icon and their own color', function () {
+  var hues = {};
+  CATEGORIES.forEach(function (c) {
+    if (!c.icon) throw new Error('no icon for category ' + c.id);
+    if (!(c.hue >= 0 && c.hue < 360)) throw new Error('bad color for category ' + c.id);
+    if (hues[c.hue]) throw new Error(c.id + ' has the same color as ' + hues[c.hue]);
+    hues[c.hue] = c.id;
+  });
+});
 
 test('photo: fills unanswered questions from the AI result', function () {
   var answers = {};
@@ -141,6 +196,35 @@ test('photo: injuries with nothing visible get no photo checks', function () {
   equal(photoChecks(findInjury('concussion')).length, 0);
 });
 
+var goodCase = {injury: 'ankle', nickname: '', story: 'Rolled my ankle playing basketball.', treatment: '', recovery: '', lesson: ''};
+test('cases: a complete case has no problems', function () {
+  equal(caseProblems(caseFromForm(goodCase, 'en')).length, 0);
+});
+test('cases: the story is required and needs 10 characters', function () {
+  equal(caseProblems(caseFromForm(withAnswer(goodCase, 'story', '   '), 'en'))[0].problem, 'missing');
+  equal(caseProblems(caseFromForm(withAnswer(goodCase, 'story', 'Too short'), 'en'))[0].problem, 'tooShort');
+});
+test('cases: too long a field is rejected', function () {
+  equal(caseProblems(caseFromForm(withAnswer(goodCase, 'nickname', new Array(32).join('x')), 'en'))[0].field, 'nickname');
+});
+test('cases: an unknown injury is rejected', function () {
+  equal(caseProblems(caseFromForm(withAnswer(goodCase, 'injury', 'knee'), 'en'))[0].field, 'injury');
+});
+test('cases: caseFromForm trims text and drops unknown fields', function () {
+  var c = caseFromForm({injury: 'ankle', story: '  hello there friend  ', extra: 'x'}, 'zh');
+  equal(c.story, 'hello there friend');
+  equal(c.lang, 'zh');
+  equal(c.extra, undefined);
+});
+test('cases: filter by injury keeps the order', function () {
+  var list = [{id: 1, injury: 'ankle'}, {id: 2, injury: 'wound'}, {id: 3, injury: 'ankle'}];
+  equal(filterCases(list, 'ankle').map(function (c) { return c.id; }).join(','), '1,3');
+  equal(filterCases(list, '').length, 3);
+});
+test('cases: dates show as year-month-day', function () {
+  equal(formatCaseDate(new Date(2026, 9, 6)), '2026-10-06');
+});
+
 test('missingAnswers lists unanswered questions', function () {
   equal(missingAnswers(ankle, {walk: 'yes'}).join(','), 'deformity,bonePain,swelling');
 });
@@ -173,6 +257,7 @@ INJURIES.forEach(function (injury) {
   });
 });
 
+function showResults() {
 var failed = results.filter(function (r) { return !r.ok; }).length;
 document.getElementById('summary').textContent = failed ? failed + ' of ' + results.length + ' tests failed' : 'All ' + results.length + ' tests passed';
 document.getElementById('summary').className = failed ? 'fail' : 'pass';
@@ -182,6 +267,25 @@ results.forEach(function (r) {
   li.textContent = (r.ok ? '✓ ' : '✗ ') + r.name + (r.msg ? ': ' + r.msg : '');
   document.getElementById('log').appendChild(li);
 });
+}
+
+// firestore.rules must accept exactly what the page lets people post.
+fetch('firestore.rules').then(function (r) { return r.text(); }).then(function (rules) {
+  test('rules: list every injury id', function () {
+    INJURIES.forEach(function (injury) {
+      if (rules.indexOf("'" + injury.id + "'") === -1) throw new Error('rules miss ' + injury.id);
+    });
+  });
+  test('rules: use the same length limits as the form', function () {
+    Object.keys(CASE_FIELDS).forEach(function (field) {
+      var limits = CASE_FIELDS[field];
+      var expected = 'isText(c.' + field + ', ' + (limits.min || 0) + ', ' + limits.max + ')';
+      if (rules.indexOf(expected) === -1) throw new Error('rules should contain ' + expected);
+    });
+  });
+}).catch(function (e) {
+  results.push({name: 'rules: firestore.rules can be read', ok: false, msg: e.message});
+}).then(showResults);
 </script>
 </body>
 </html>
