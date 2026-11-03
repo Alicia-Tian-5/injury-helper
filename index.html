@@ -21,8 +21,8 @@
 /* Elements with display rules below must still disappear when hidden. */
 [hidden]{display:none !important}
 body{margin:0;background:linear-gradient(180deg,var(--bg-top) 0,var(--bg) 320px) no-repeat,var(--bg);color:var(--text);font:17px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+html,body{overflow-x:clip}
 main{max-width:680px;margin:0 auto;padding:16px 16px 48px}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
 h1{font-size:22px;margin:0;line-height:1.3}
 h2{font-size:19px;margin:0 0 10px}
 h3{font-size:17px;margin:0 0 6px}
@@ -116,7 +116,6 @@ ol.steps li,ul.points li{margin-bottom:6px}
 .phase .goal{color:var(--muted);font-size:15px;margin-bottom:4px}
 .phase ul{margin:0;padding-left:20px}
 .actions{display:flex;justify-content:center;margin-top:6px}
-footer{color:var(--muted);font-size:14px;text-align:center;margin-top:20px}
 .actions{gap:10px;flex-wrap:wrap}
 .cases-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
 .cases-head h2{margin:0}
@@ -136,7 +135,10 @@ footer{color:var(--muted);font-size:14px;text-align:center;margin-top:20px}
 .case dt{font-weight:600;font-size:15px;margin-top:6px}
 .case dd{margin:0;white-space:pre-wrap}
 #subPick{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
-.tabs{position:sticky;top:0;z-index:5;display:flex;gap:6px;overflow-x:auto;margin:0 -16px 14px;padding:8px 16px;background:var(--bg)}
+.site-header{position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.site-header .wrap{max-width:680px;margin:0 auto;padding:10px 16px 8px;display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap}
+.site-header h1{flex:1 1 auto}
+.tabs{order:3;width:100%;display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
 .tabs a{flex:0 0 auto;text-decoration:none;color:var(--muted);font-weight:600;border-radius:999px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line)}
 .tabs a[aria-current="page"]{background:var(--acc);border-color:var(--acc);color:#fff}
 .place{padding:12px 0}
@@ -144,8 +146,28 @@ footer{color:var(--muted);font-size:14px;text-align:center;margin-top:20px}
 .place .detail{color:var(--muted);font-size:15px}
 .place .links{display:flex;gap:8px;margin-top:8px}
 .place a{background:var(--acc);color:#fff;text-decoration:none;font-weight:600;border-radius:10px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center}
-.cover{text-align:center;padding:36px 12px 28px}
-.cover-icon{font-size:48px;line-height:1}
+/* Cover photo: a smiling doctor, by Vitaly Gariev on Unsplash (free under
+   the Unsplash License). */
+/* The photo is cropped (rect=) so the doctor stands on the right third. */
+.cover{--veil:253,241,232;--photo:url("https://images.unsplash.com/photo-1758691463582-11aea602cd4a?rect=0,150,2560,1440&w=1920&q=80&auto=format");
+  text-align:center;margin:-16px calc(50% - 50vw) 18px;padding:48px 16px;min-height:calc(100vh - 110px);display:flex;align-items:center;
+  background:linear-gradient(rgba(var(--veil),.8),rgba(var(--veil),.8)),var(--photo) 80% 25%/cover,#fbe4d4}
+/* Soft glow behind the words so they stay sharp over the photo. */
+.cover-text{text-shadow:0 0 18px rgba(var(--veil),.9)}
+.cover-inner{max-width:1180px;margin:0 auto}
+.cover-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+.facts div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center;box-shadow:var(--shadow)}
+.facts strong{display:block;font-size:28px;color:var(--acc);line-height:1.2}
+.facts span{color:var(--muted);font-size:15px}
+.section-title{font-size:22px;margin:0 0 12px}
+.row-2>.card{margin-bottom:14px}
+.site-footer{background:#3a2e28;color:#f0e2d6;margin-top:24px}
+.site-footer .wrap{max-width:1180px;margin:0 auto;padding:28px 16px;text-align:center}
+.site-footer p{margin:0 0 8px}
+.footer-name{font-weight:800;font-size:18px}
+.footer-note{color:#c9b6a8;font-size:14px}
+.footer-note a{color:inherit}
 .slogan{font-size:28px;font-weight:800;line-height:1.35;margin:14px 0 10px;color:var(--acc)}
 .cover-intro{color:var(--text);margin:0 auto 22px;max-width:460px}
 .start{display:inline-block;width:auto;text-decoration:none;padding:14px 36px;border-radius:999px}
@@ -164,24 +186,73 @@ h1 a{color:inherit;text-decoration:none}
 .chat-form .primary{width:auto;padding:12px 18px;font-size:17px}
 .chat-crisis{background:var(--red-soft);border:1.5px solid var(--red);border-radius:12px;padding:12px;color:var(--text);margin-top:10px}
 .chat-crisis a{color:var(--red);font-weight:700}
+.start{text-decoration:none}
+@media (prefers-color-scheme:dark){.cover{--veil:26,22,20}.site-footer{background:#100c0a}}
+/* Computers: a wide, full-window layout. Phones keep the single column. */
+@media (min-width:900px){
+  main,.site-header .wrap{max-width:1180px;padding-left:32px;padding-right:32px}
+  .site-header .wrap{flex-wrap:nowrap;padding-top:12px;padding-bottom:12px}
+  .site-header h1{flex:0 0 auto;margin-right:24px}
+  .tabs{order:0;width:auto;flex:1 1 auto;gap:4px}
+  .tabs a{background:none;border:0;border-radius:0;border-bottom:3px solid transparent;padding:8px 12px}
+  .tabs a[aria-current="page"]{background:none;color:var(--acc);border-bottom-color:var(--acc)}
+  .cover{text-align:left;padding:72px 32px;margin-bottom:28px;min-height:calc(100vh - 70px);
+    background:linear-gradient(90deg,rgba(var(--veil),.94) 0%,rgba(var(--veil),.86) 38%,rgba(var(--veil),.35) 68%,rgba(var(--veil),.25) 100%),var(--photo) center 25%/cover,#fbe4d4}
+  .cover-inner{width:100%}
+  .cover-text{max-width:700px}
+  .cover-actions{justify-content:flex-start}
+  .slogan{font-size:52px;margin-top:0}
+  .cover-intro{font-size:20px;margin-left:0;max-width:600px}
+  .facts{grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:36px}
+  .facts strong{font-size:40px}
+  .section-title{font-size:28px}
+  .features{grid-template-columns:repeat(4,1fr);gap:16px}
+  .feature{padding:22px}
+  .feature>span:first-child{font-size:36px}
+  .row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  .injuries{grid-template-columns:repeat(5,1fr)}
+  #view-comfort:not([hidden]){display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  #hospitalList{display:grid;grid-template-columns:1fr 1fr;column-gap:32px}
+  .place+.place{border-top:0}
+  .place{border-bottom:1px solid var(--line)}
+  #view-cases{max-width:860px;margin:0 auto}
+}
 @media (max-width:420px){.slogan{font-size:24px}h1{font-size:20px}.injury{padding:10px 12px}.injury strong{font-size:17px}}
 </style>
 </head>
 <body>
-<main>
-<header>
-  <h1><a href="#home" id="title"></a></h1>
-  <div class="langs" id="langs" role="group"><button data-lang="zh" lang="zh-CN">中</button><button data-lang="en" lang="en">EN</button></div>
+<header class="site-header">
+  <div class="wrap">
+    <h1><a href="#home" id="title"></a></h1>
+    <nav class="tabs" id="tabs">
+      <a href="#assess" data-view="assess">🩹 <span id="navAssess"></span></a>
+      <a href="#comfort" data-view="comfort">💜 <span id="navComfort"></span></a>
+      <a href="#cases" data-view="cases">💬 <span id="navCases"></span></a>
+      <a href="#hospitals" data-view="hospitals">🏥 <span id="navHospitals"></span></a>
+    </nav>
+    <div class="langs" id="langs" role="group"><button data-lang="zh" lang="zh-CN">中</button><button data-lang="en" lang="en">EN</button></div>
+  </div>
 </header>
+<main>
 
 <div class="view" id="view-home" hidden>
   <section class="cover">
-    <div class="cover-icon" aria-hidden="true">🤍</div>
-    <p class="slogan" id="slogan"></p>
-    <p class="cover-intro" id="coverIntro"></p>
-    <a class="primary start" href="#assess" id="startBtn"></a>
-    <p class="cover-sos" id="coverSos"></p>
+    <div class="cover-inner">
+      <div class="cover-text">
+        <p class="slogan" id="slogan"></p>
+        <p class="cover-intro" id="coverIntro"></p>
+        <div class="cover-actions"><a class="primary start" href="#assess" id="startBtn"></a><a class="secondary start" href="#comfort" id="chatCta"></a></div>
+        <p class="cover-sos" id="coverSos"></p>
+      </div>
+    </div>
   </section>
+  <section class="facts">
+    <div><strong>12</strong><span id="fact1"></span></div>
+    <div><strong>3</strong><span id="fact2"></span></div>
+    <div><strong>24h</strong><span id="fact3"></span></div>
+    <div><strong>中 / EN</strong><span id="fact4"></span></div>
+  </section>
+  <h2 class="section-title" id="featuresTitle"></h2>
   <div class="features">
     <a class="feature" href="#assess"><span aria-hidden="true">🩹</span><strong id="featAssess"></strong><span class="muted" id="featAssessText"></span></a>
     <a class="feature" href="#comfort"><span aria-hidden="true">💜</span><strong id="featComfort"></strong><span class="muted" id="featComfortText"></span></a>
@@ -190,14 +261,8 @@ h1 a{color:inherit;text-decoration:none}
   </div>
 </div>
 
-<nav class="tabs" id="tabs">
-  <a href="#assess" data-view="assess">🩹 <span id="navAssess"></span></a>
-  <a href="#comfort" data-view="comfort">💜 <span id="navComfort"></span></a>
-  <a href="#cases" data-view="cases">💬 <span id="navCases"></span></a>
-  <a href="#hospitals" data-view="hospitals">🏥 <span id="navHospitals"></span></a>
-</nav>
-
 <div class="view" id="view-assess">
+<div class="row-2">
 <section class="card welcome">
   <div class="hug" aria-hidden="true">🤍</div>
   <div><h2 id="welcomeTitle"></h2><p id="welcomeText"></p></div>
@@ -208,6 +273,7 @@ h1 a{color:inherit;text-decoration:none}
   <ul id="redFlags"></ul>
   <p class="numbers" id="numbers"></p>
 </section>
+</div>
 
 <section class="card">
   <h2 id="pickTitle"></h2>
@@ -238,8 +304,10 @@ h1 a{color:inherit;text-decoration:none}
 
 <div id="results" hidden>
   <section class="card level" id="levelCard"><h2 id="levelLabel"></h2><p id="levelSummary"></p></section>
+  <div class="row-2">
   <section class="card advice-now"><h2><span class="step-num">1</span><span id="firstAidTitle"></span></h2><ol class="steps" id="firstAid"></ol></section>
   <section class="card advice-where"><h2><span class="step-num">2</span><span id="whereTitle"></span></h2><ul class="points" id="where"></ul></section>
+  </div>
   <section class="card advice-rehab"><h2><span class="step-num">3</span><span id="rehabTitle"></span></h2><p class="muted" id="rehabNote"></p><div id="rehab"></div></section>
   <div class="actions"><button type="button" class="secondary" id="seeComfortBtn"></button><button type="button" class="secondary" id="seeCasesBtn"></button><button type="button" class="secondary" id="restartBtn"></button></div>
 </div>
@@ -296,8 +364,15 @@ h1 a{color:inherit;text-decoration:none}
 </section>
 </div>
 
-<footer id="disclaimer"></footer>
 </main>
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="footer-name" id="footerName"></p>
+    <p id="footerSos"></p>
+    <p class="footer-note" id="disclaimer"></p>
+    <p class="footer-note"><span id="photoCredit"></span> <a href="https://unsplash.com/photos/a-smiling-doctor-with-glasses-and-stethoscope-stands-arms-crossed-XqMo4OlBnh0" target="_blank" rel="noopener">Vitaly Gariev / Unsplash</a></p>
+  </div>
+</footer>
 
 <script src="triage.js"></script>
 <script src="share.js"></script>
@@ -341,7 +416,7 @@ var T = {
     seeCases: 'See other people\'s experiences',
     seeComfort: 'Look after how you feel',
     slogan: 'On your road back to sport, I\'m always here.',
-    coverIntro: 'Hurt while playing sport? Answer a few questions to learn how serious it is, what to do right now, where to go, and how to get back to training.',
+    coverIntro: 'Got hurt playing sport? That\'s okay. Take a deep breath. It is not your fault, and it is not the end of your sport. We\'ll help you work out what to do now and where to go, then walk with you, step by step, back to the game you love.',
     startBtn: 'Start the check',
     coverSos: 'Emergency? Call 911 (US) · 120 (China) now.',
     featAssess: 'Check my injury',
@@ -352,6 +427,15 @@ var T = {
     featCasesText: 'Real stories from people who recovered.',
     featHospitals: 'Nearby hospitals',
     featHospitalsText: 'Find the right kind of place on a map.',
+    chatCta: 'Talk to the AI',
+    fact1: 'common sports injuries covered',
+    fact2: 'steps: first aid, where to go, rehab',
+    fact3: 'counseling hotlines, any time',
+    fact4: 'the whole site in two languages',
+    featuresTitle: 'What you can do here',
+    footerName: 'Sports Injury Helper · On your road back to sport, I\'m always here.',
+    photoCredit: 'Cover photo:',
+    footerSos: 'Emergency: 911 (US) · 120 (China) · Crisis line: 988 (US) · 12356 (China)',
     chatTitle: 'Talk to the AI',
     chatIntro: 'Tell it how you feel. It answers with comfort and a few small things you can do. It is an AI, not a counselor, and the chat stays on this computer.',
     chatInputLabel: 'Your message',
@@ -438,7 +522,7 @@ var T = {
     seeCases: '看看别人的经历',
     seeComfort: '照顾好你的心情',
     slogan: '运动康复路上，我一直都在',
-    coverIntro: '运动中受伤了？回答几个问题，就能知道伤得多重、现在该怎么做、去哪里看，以及之后怎么一步步回到训练。',
+    coverIntro: '运动中受伤了？没关系，先深呼吸。受伤不是你的错，也不是终点。我们会陪你弄清楚现在该做什么、该去哪里，再一步一步，陪你回到热爱的赛场。',
     startBtn: '开始自测',
     coverSos: '紧急情况？马上打 120（中国）· 911（美国）',
     featAssess: '急救自测',
@@ -449,6 +533,15 @@ var T = {
     featCasesText: '看看别人是怎么恢复的。',
     featHospitals: '附近医院',
     featHospitalsText: '在地图上找到合适的医院。',
+    chatCta: '和 AI 聊聊',
+    fact1: '种常见运动损伤',
+    fact2: '步建议：急救、就医、康复',
+    fact3: '心理热线，随时可打',
+    fact4: '全站中英双语',
+    featuresTitle: '你可以在这里',
+    footerName: '运动损伤急救助手 · 运动康复路上，我一直都在',
+    photoCredit: '封面照片：',
+    footerSos: '急救：120（中国）· 911（美国）· 心理援助：12356（中国）· 988（美国）',
     chatTitle: '和 AI 聊聊',
     chatIntro: '说说你现在的感受。它会安慰你，并给你几件能马上去做的小事。它是 AI，不是心理咨询师；聊天内容只留在这台电脑上。',
     chatInputLabel: '你想说的话',
@@ -537,7 +630,8 @@ function renderStatic() {
   ['title', 'welcomeTitle', 'welcomeText', 'alertTitle', 'numbers', 'pickTitle', 'subTitle', 'questionsTitle', 'firstAidTitle', 'whereTitle', 'rehabTitle', 'comfortTitle', 'counselingTitle', 'disclaimer',
    'navAssess', 'navComfort', 'navCases', 'navHospitals', 'hospitalsTitle', 'hospitalsIntro', 'hospitalsEmergency',
    'slogan', 'coverIntro', 'startBtn', 'coverSos', 'featAssess', 'featAssessText', 'featComfort', 'featComfortText',
-   'featCases', 'featCasesText', 'featHospitals', 'featHospitalsText', 'chatTitle', 'chatIntro', 'chatInputLabel', 'chatSend', 'chatCrisis']
+   'featCases', 'featCasesText', 'featHospitals', 'featHospitalsText', 'chatTitle', 'chatIntro', 'chatInputLabel', 'chatSend', 'chatCrisis',
+   'chatCta', 'fact1', 'fact2', 'fact3', 'fact4', 'featuresTitle', 'footerName', 'footerSos', 'photoCredit']
     .forEach(function (id) { $(id).textContent = t(id); });
   $('assessBtn').textContent = t('assess');
   $('restartBtn').textContent = t('restart');
@@ -590,7 +684,6 @@ function currentView() {
 function showView() {
   var view = currentView();
   VIEWS.forEach(function (name) { $('view-' + name).hidden = name !== view; });
-  $('tabs').hidden = view === 'home';
   document.querySelectorAll('#tabs a').forEach(function (a) {
     if (a.dataset.view === view) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
