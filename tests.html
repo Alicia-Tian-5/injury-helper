@@ -17,6 +17,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="chat.js"></script>
 <script src="recovery-log.js"></script>
 <script src="knowledge.js"></script>
+<script src="city-hospitals.js"></script>
 <script>
 var results = [];
 function test(name, fn) {
@@ -133,6 +134,34 @@ test('hospitals: Amap searches in Chinese, Google Maps in English near the visit
   var links = mapLinks(HOSPITAL_KINDS[0]);
   equal(links.amap, 'https://uri.amap.com/search?keyword=' + encodeURIComponent('医院急诊'));
   equal(links.google, 'https://www.google.com/maps/search/?api=1&query=emergency%20room%20near%20me');
+});
+test('city hospitals: every listed hospital has a name, department and specialty in both languages, and https map links', function () {
+  CITY_HOSPITALS.forEach(function (city) {
+    if (!city.name.en || !city.name.zh || city.hospitals.length === 0) throw new Error('incomplete city ' + city.id);
+    city.hospitals.forEach(function (hospital) {
+      ['name', 'department', 'knownFor'].forEach(function (field) {
+        if (!hospital[field].en || !hospital[field].zh) throw new Error('missing ' + field + ' for ' + hospital.name.en);
+      });
+      var links = hospitalMapLinks(city, hospital);
+      if (links.google.indexOf('https://www.google.com/maps/') !== 0) throw new Error('bad Google link ' + links.google);
+      if (city.country === 'cn' && links.amap.indexOf('https://uri.amap.com/') !== 0) throw new Error('no Amap link for ' + hospital.name.en);
+    });
+  });
+});
+test('city hospitals: a city is found in Chinese or English, with spaces, capitals or a state', function () {
+  equal(findCity('北京').id, 'beijing');
+  equal(findCity('  Beijing ').id, 'beijing');
+  equal(findCity('上海市').id, 'shanghai');
+  equal(findCity('Chicago, IL').id, 'chicago');
+  equal(findCity('New York City').id, 'newyork');
+  equal(findCity('urbana').id, 'champaign');
+});
+test('city hospitals: an unlisted or empty city finds nothing but still gets a map search there', function () {
+  equal(findCity('Tokyo'), null);
+  equal(findCity('   '), null);
+  var links = cityMapLinks(' 杭州 ');
+  equal(links.amap, 'https://uri.amap.com/search?keyword=' + encodeURIComponent('杭州 运动医学科'));
+  equal(links.google, 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('sports medicine orthopedics in 杭州'));
 });
 test('chat: messages about suicide or self-harm show the hotlines, in both languages', function () {
   equal(isCrisisMessage('我现在不想活了'), true);

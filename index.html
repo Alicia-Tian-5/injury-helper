@@ -152,6 +152,11 @@ h1 a{color:var(--acc)}
 .place+.place{border-top:1px solid var(--line)}
 .place .detail{color:var(--muted);font-size:15px}
 .place .links{display:flex;gap:8px;margin-top:8px}
+.city-form{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.city-form .field{flex:1 1 220px;margin-bottom:0}
+.city-form .primary{width:auto;flex:0 0 auto}
+#cityResult h3{margin-top:16px}
+.city-note{font-size:14px;margin:12px 0 0}
 .place a{background:var(--acc);color:#fff;text-decoration:none;font-weight:600;border-radius:4px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center}
 /* Cover photo: a smiling doctor, by Vitaly Gariev on Unsplash (free under
    the Unsplash License). */
@@ -221,7 +226,7 @@ h1 a{text-decoration:none}
   .row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
   .injuries{grid-template-columns:repeat(5,1fr)}
   #view-comfort:not([hidden]),#view-log:not([hidden]),.learn-parts{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
-  #hospitalList{display:grid;grid-template-columns:1fr 1fr;column-gap:32px}
+  #hospitalList,#cityHospitals{display:grid;grid-template-columns:1fr 1fr;column-gap:32px}
   .place+.place{border-top:0}
   .place{border-bottom:1px solid var(--line)}
   #view-cases{max-width:860px;margin:0 auto}
@@ -348,6 +353,16 @@ h1 a{text-decoration:none}
 
 <div class="view" id="view-hospitals" hidden>
   <section class="card">
+    <h2 id="cityTitle"></h2>
+    <p class="muted" id="cityIntro"></p>
+    <form class="city-form" id="cityForm" novalidate>
+      <label class="field"><span id="cityLabel"></span><input id="cityInput" type="text" maxlength="40" autocomplete="address-level2"></label>
+      <button type="submit" class="primary" id="citySearch"></button>
+    </form>
+    <p class="error" id="cityError" role="alert" hidden></p>
+    <div id="cityResult" aria-live="polite"></div>
+  </section>
+  <section class="card">
     <h2 id="hospitalsTitle"></h2>
     <p class="muted" id="hospitalsIntro"></p>
     <div id="hospitalList"></div>
@@ -429,6 +444,7 @@ h1 a{text-decoration:none}
 <script src="chat.js"></script>
 <script src="recovery-log.js"></script>
 <script src="knowledge.js"></script>
+<script src="city-hospitals.js"></script>
 <script>
 // Interface text. Injury content lives in triage.js.
 var T = {
@@ -502,6 +518,18 @@ var T = {
     navComfort: 'Comfort',
     navCases: 'Shared cases',
     navHospitals: 'Nearby hospitals',
+    cityTitle: 'Find trusted hospitals by city',
+    cityIntro: 'Type your city to see hospitals known for treating sports injuries, and what each is best at.',
+    cityLabel: 'City',
+    cityPlaceholder: 'For example: Chicago, 北京',
+    citySearch: 'Search',
+    cityMissing: 'Please type a city first.',
+    cityTooLong: 'That is too long for a city name.',
+    cityFound: '{0}: hospitals for sports injuries',
+    cityKnownFor: 'Best at: ',
+    cityNotListed: 'Hospitals in "{0}" are not listed yet. Search the map for sports medicine there:',
+    cityListed: 'Cities listed so far: {0}.',
+    cityNote: 'Collected by this site for general guidance. Departments and hours change, so call before you go.',
     hospitalsTitle: 'Find care near you',
     hospitalsIntro: 'Pick the kind of place you need. The map opens with your own location; this page never sees it.',
     hospitalsEmergency: 'In an emergency, do not drive yourself: call 911 (US) · 120 (China).',
@@ -645,6 +673,18 @@ var T = {
     navComfort: 'Apoyo emocional',
     navCases: 'Casos compartidos',
     navHospitals: 'Hospitales cercanos',
+    cityTitle: 'Encuentra hospitales de confianza por ciudad',
+    cityIntro: 'Escribe tu ciudad para ver hospitales conocidos por tratar lesiones deportivas y en qué destaca cada uno.',
+    cityLabel: 'Ciudad',
+    cityPlaceholder: 'Por ejemplo: Chicago, 北京',
+    citySearch: 'Buscar',
+    cityMissing: 'Primero escribe una ciudad.',
+    cityTooLong: 'Es demasiado largo para el nombre de una ciudad.',
+    cityFound: '{0}: hospitales para lesiones deportivas',
+    cityKnownFor: 'Destaca en: ',
+    cityNotListed: 'Todavía no hay hospitales de "{0}". Busca medicina deportiva allí en el mapa:',
+    cityListed: 'Ciudades incluidas por ahora: {0}.',
+    cityNote: 'Información reunida por este sitio como orientación general. Los servicios y horarios cambian; llama antes de ir.',
     hospitalsTitle: 'Encuentra atención cerca de ti',
     hospitalsIntro: 'Elige el tipo de lugar que necesitas. El mapa se abre con tu propia ubicación; esta página nunca la ve.',
     hospitalsEmergency: 'En una emergencia, no conduzcas tú: llama al 911 (EE. UU.) · 120 (China).',
@@ -786,6 +826,18 @@ var T = {
     navComfort: '心理安慰',
     navCases: '分享案例',
     navHospitals: '附近医院',
+    cityTitle: '按城市找权威医院',
+    cityIntro: '输入你所在的城市，看看当地擅长治疗运动损伤的医院，以及每家擅长什么。',
+    cityLabel: '城市',
+    cityPlaceholder: '比如：北京、Chicago',
+    citySearch: '查找',
+    cityMissing: '请先输入城市名。',
+    cityTooLong: '城市名太长了。',
+    cityFound: '{0}：擅长运动损伤的医院',
+    cityKnownFor: '擅长：',
+    cityNotListed: '还没有收录"{0}"的医院。可以用地图搜索当地的运动医学科：',
+    cityListed: '目前收录的城市：{0}。',
+    cityNote: '信息由本网站整理，仅供参考；科室和门诊时间可能变化，去之前请先打电话确认。',
     hospitalsTitle: '找附近的医院',
     hospitalsIntro: '选你需要的地方，地图会用你自己的位置搜索，本页面不会看到你的位置。',
     hospitalsEmergency: '紧急情况不要自己开车去：马上打 120（中国）· 911（美国）。',
@@ -894,7 +946,7 @@ function renderStatic() {
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
   document.title = t('title');
   ['title', 'welcomeTitle', 'welcomeText', 'alertTitle', 'numbers', 'pickTitle', 'subTitle', 'questionsTitle', 'firstAidTitle', 'whereTitle', 'rehabTitle', 'comfortTitle', 'counselingTitle', 'disclaimer',
-   'navAssess', 'navComfort', 'navCases', 'navHospitals', 'navLog', 'navLearn', 'learnTitle', 'learnIntro', 'hospitalsTitle', 'hospitalsIntro', 'hospitalsEmergency',
+   'navAssess', 'navComfort', 'navCases', 'navHospitals', 'navLog', 'navLearn', 'learnTitle', 'learnIntro', 'cityTitle', 'cityIntro', 'cityLabel', 'citySearch', 'hospitalsTitle', 'hospitalsIntro', 'hospitalsEmergency',
    'slogan', 'coverIntro', 'startBtn', 'coverSos', 'featAssess', 'featAssessText', 'featComfort', 'featComfortText',
    'featCases', 'featCasesText', 'featHospitals', 'featHospitalsText', 'chatTitle', 'chatIntro', 'chatInputLabel', 'chatSend', 'chatCrisis',
    'chatCta', 'fact1', 'fact2', 'fact3', 'fact4', 'featuresTitle', 'footerName', 'footerSos', 'photoCredit']
@@ -949,7 +1001,80 @@ function renderKnowledge() {
   });
 }
 
+// The city the visitor last searched for, so a language change redraws it.
+var citySearchText = '';
+
+// Map buttons in a row, like the four kinds of place below.
+function mapButtons(links) {
+  var box = document.createElement('div');
+  box.className = 'links';
+  [['google', 'googleMaps'], ['amap', 'amap']].forEach(function (pair) {
+    if (!links[pair[0]]) return;
+    var a = document.createElement('a');
+    a.href = links[pair[0]];
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = t(pair[1]);
+    box.appendChild(a);
+  });
+  return box;
+}
+
+function renderCityResult() {
+  var box = $('cityResult');
+  box.innerHTML = '';
+  $('cityInput').placeholder = t('cityPlaceholder');
+  if (!citySearchText) {
+    var listed = document.createElement('p');
+    listed.className = 'muted';
+    listed.textContent = t('cityListed').replace('{0}', CITY_HOSPITALS.map(function (city) { return L(city.name); }).join(lang === 'zh' ? '、' : ', '));
+    box.appendChild(listed);
+    return;
+  }
+  var city = findCity(citySearchText);
+  var title = document.createElement('h3');
+  box.appendChild(title);
+  if (!city) {
+    title.textContent = t('cityNotListed').replace('{0}', citySearchText);
+    var row = document.createElement('div');
+    row.className = 'place';
+    row.appendChild(mapButtons(cityMapLinks(citySearchText)));
+    box.appendChild(row);
+    return;
+  }
+  title.textContent = t('cityFound').replace('{0}', L(city.name));
+  var list = document.createElement('div');
+  list.id = 'cityHospitals';
+  city.hospitals.forEach(function (hospital) {
+    var row = document.createElement('div');
+    row.className = 'place';
+    row.innerHTML = '<div><strong></strong><div class="detail department"></div><div class="detail known"></div></div>';
+    row.querySelector('strong').textContent = L(hospital.name);
+    row.querySelector('.department').textContent = L(hospital.department);
+    row.querySelector('.known').textContent = t('cityKnownFor') + L(hospital.knownFor);
+    row.appendChild(mapButtons(hospitalMapLinks(city, hospital)));
+    list.appendChild(row);
+  });
+  box.appendChild(list);
+  var note = document.createElement('p');
+  note.className = 'muted city-note';
+  note.textContent = t('cityNote');
+  box.appendChild(note);
+}
+
+$('cityForm').addEventListener('submit', function (event) {
+  event.preventDefault();
+  var text = $('cityInput').value.trim();
+  var problem = !text ? 'cityMissing' : text.length > CITY_INPUT_MAX ? 'cityTooLong' : null;
+  $('cityError').hidden = !problem;
+  $('cityError').textContent = problem ? t(problem) : '';
+  if (problem) return;
+  citySearchText = text;
+  renderCityResult();
+});
+
 function renderHospitals() {
+  renderCityResult();
   var list = $('hospitalList');
   list.innerHTML = '';
   HOSPITAL_KINDS.forEach(function (kind) {
@@ -958,15 +1083,7 @@ function renderHospitals() {
     row.innerHTML = '<div><strong></strong><div class="detail"></div></div><div class="links"></div>';
     row.querySelector('strong').textContent = L(kind.name);
     row.querySelector('.detail').textContent = L(kind.when);
-    var links = mapLinks(kind);
-    [['google', 'googleMaps'], ['amap', 'amap']].forEach(function (pair) {
-      var a = document.createElement('a');
-      a.href = links[pair[0]];
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.textContent = t(pair[1]);
-      row.querySelector('.links').appendChild(a);
-    });
+    row.replaceChild(mapButtons(mapLinks(kind)), row.querySelector('.links'));
     list.appendChild(row);
   });
 }
