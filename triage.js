@@ -1,38 +1,42 @@
 // Injury questions, how answers map to an urgency level, and the advice for
-// each level. Every piece of text is {en, zh}. No page code here, so the
+// each level. Every piece of text is {en, es, zh}. No page code here, so the
 // assessment rules can be tested on their own (see tests.html).
 
 // Urgency levels, most urgent first.
 var LEVELS = {
   emergency: {
     rank: 0,
-    label: {en: 'Emergency', zh: '紧急'},
+    label: {en: 'Emergency', es: 'Emergencia', zh: '紧急'},
     summary: {
       en: 'Call emergency services or go to the emergency room now.',
+      es: 'Llama a emergencias o ve a urgencias ahora.',
       zh: '立刻拨打急救电话或去急诊。'
     }
   },
   today: {
     rank: 1,
-    label: {en: 'See a doctor today', zh: '今天就医'},
+    label: {en: 'See a doctor today', es: 'Ve al médico hoy', zh: '今天就医'},
     summary: {
       en: 'This needs an X-ray or exam today. Do not wait to see if it gets better.',
+      es: 'Necesita una radiografía o una revisión hoy. No esperes a ver si mejora.',
       zh: '今天就需要拍片或检查，不要等着看会不会好转。'
     }
   },
   soon: {
     rank: 2,
-    label: {en: 'See a doctor within a few days', zh: '几天内就医'},
+    label: {en: 'See a doctor within a few days', es: 'Ve al médico en unos días', zh: '几天内就医'},
     summary: {
       en: 'Take care of it yourself for now, and book a visit in the next few days.',
+      es: 'Por ahora cuídalo tú, y pide cita para los próximos días.',
       zh: '先自己处理，几天内去医院看一下。'
     }
   },
   selfCare: {
     rank: 3,
-    label: {en: 'Self-care and watch', zh: '自己处理，继续观察'},
+    label: {en: 'Self-care and watch', es: 'Cuidados en casa y vigilar', zh: '自己处理，继续观察'},
     summary: {
       en: 'Most likely a mild injury. See a doctor if it is not clearly better in a week.',
+      es: 'Lo más probable es que sea una lesión leve. Ve al médico si no mejora claramente en una semana.',
       zh: '大概率是轻度损伤。如果一周内没有明显好转，再去看医生。'
     }
   }
@@ -40,63 +44,66 @@ var LEVELS = {
 
 // Answers and first-aid steps that several injuries share.
 var YES_NO = [
-  {value: 'yes', text: {en: 'Yes', zh: '是'}},
-  {value: 'no', text: {en: 'No', zh: '否'}}
+  {value: 'yes', text: {en: 'Yes', es: 'Sí', zh: '是'}},
+  {value: 'no', text: {en: 'No', es: 'No', zh: '否'}}
 ];
-var STOP = {en: 'Stop playing right away. Do not try to play through it.', zh: '马上停止运动，不要硬撑着继续。'};
-var ICE = {en: 'Ice for 15–20 minutes every 2–3 hours, with a cloth between the ice and the skin.', zh: '冰敷 15–20 分钟，每 2–3 小时一次。冰袋外面包一层毛巾，不要直接贴皮肤。'};
-var COMPRESS = {en: 'Wrap with an elastic bandage, firm but not tight. Loosen it if it tingles or turns pale.', zh: '用弹力绷带包扎，紧但不要太紧。如果发麻或发白，就松一点。'};
-var ELEVATE = {en: 'Raise the injured part above the level of the heart when you can.', zh: '尽量把受伤部位垫高到比心脏高。'};
-var NO_HEAT = {en: 'For the first 2–3 days: no heat, no massage, no alcohol. They increase swelling.', zh: '前 2–3 天不要热敷、不要按摩、不要喝酒，这些会让肿胀更严重。'};
-var NO_PUSH_BACK = {en: 'Do not push the joint back yourself, and do not let others try.', zh: '不要自己把关节推回去，也不要让别人帮你推。'};
-var CALL_EMERGENCY = {en: 'Call 911 (US) / 120 (China), or go to the emergency room (ER) now.', zh: '马上打 120（中国）/ 911（美国），或者直接去急诊。'};
+var STOP = {en: 'Stop playing right away. Do not try to play through it.', es: 'Deja de jugar ahora mismo. No intentes seguir con dolor.', zh: '马上停止运动，不要硬撑着继续。'};
+var ICE = {en: 'Ice for 15–20 minutes every 2–3 hours, with a cloth between the ice and the skin.', es: 'Pon hielo 15–20 minutos cada 2–3 horas, con un paño entre el hielo y la piel.', zh: '冰敷 15–20 分钟，每 2–3 小时一次。冰袋外面包一层毛巾，不要直接贴皮肤。'};
+var COMPRESS = {en: 'Wrap with an elastic bandage, firm but not tight. Loosen it if it tingles or turns pale.', es: 'Venda con una venda elástica, firme pero no apretada. Aflójala si hormiguea o se pone pálido.', zh: '用弹力绷带包扎，紧但不要太紧。如果发麻或发白，就松一点。'};
+var ELEVATE = {en: 'Raise the injured part above the level of the heart when you can.', es: 'Cuando puedas, levanta la zona lesionada por encima del corazón.', zh: '尽量把受伤部位垫高到比心脏高。'};
+var NO_HEAT = {en: 'For the first 2–3 days: no heat, no massage, no alcohol. They increase swelling.', es: 'Los primeros 2–3 días: nada de calor, masajes ni alcohol. Aumentan la hinchazón.', zh: '前 2–3 天不要热敷、不要按摩、不要喝酒，这些会让肿胀更严重。'};
+var NO_PUSH_BACK = {en: 'Do not push the joint back yourself, and do not let others try.', es: 'No vuelvas a meter la articulación en su sitio tú mismo, y no dejes que otros lo intenten.', zh: '不要自己把关节推回去，也不要让别人帮你推。'};
+var CALL_EMERGENCY = {en: 'Call 911 (US) / 120 (China), or go to the emergency room (ER) now.', es: 'Llama al 911 (EE. UU.) / 120 (China), o ve a urgencias ahora.', zh: '马上打 120（中国）/ 911（美国），或者直接去急诊。'};
 
 var ANKLE_SPRAIN = {
   id: 'ankle',
-  name: {en: 'Ankle sprain', zh: '脚踝扭伤'},
-  hint: {en: 'Rolled or twisted ankle', zh: '崴脚、脚踝扭到'},
+  name: {en: 'Ankle sprain', es: 'Esguince de tobillo', zh: '脚踝扭伤'},
+  hint: {en: 'Rolled or twisted ankle', es: 'Tobillo torcido o doblado', zh: '崴脚、脚踝扭到'},
   questions: [
     {
       id: 'deformity',
       text: {
         en: 'Does the ankle look out of shape, or is the foot numb, cold or pale?',
+        es: '¿El tobillo se ve deformado, o el pie está dormido, frío o pálido?',
         zh: '脚踝看起来变形了吗？或者脚发麻、发凉、发白？'
       },
       options: [
-        {value: 'yes', text: {en: 'Yes', zh: '是'}},
-        {value: 'no', text: {en: 'No', zh: '没有'}}
+        {value: 'yes', text: {en: 'Yes', es: 'Sí', zh: '是'}},
+        {value: 'no', text: {en: 'No', es: 'No', zh: '没有'}}
       ]
     },
     {
       id: 'walk',
       text: {
         en: 'Can you take four steps on the injured foot?',
+        es: '¿Puedes dar cuatro pasos con el pie lesionado?',
         zh: '受伤的脚能走四步吗？'
       },
       options: [
-        {value: 'yes', text: {en: 'Yes, almost normally', zh: '能，差不多正常'}},
-        {value: 'pain', text: {en: 'Yes, but it hurts or I limp', zh: '能，但很疼或一瘸一拐'}},
-        {value: 'no', text: {en: 'No', zh: '不能'}}
+        {value: 'yes', text: {en: 'Yes, almost normally', es: 'Sí, casi con normalidad', zh: '能，差不多正常'}},
+        {value: 'pain', text: {en: 'Yes, but it hurts or I limp', es: 'Sí, pero me duele o cojeo', zh: '能，但很疼或一瘸一拐'}},
+        {value: 'no', text: {en: 'No', es: 'No', zh: '不能'}}
       ]
     },
     {
       id: 'bonePain',
       text: {
         en: 'Press the bony bumps on either side of the ankle, and the bone on the outer edge of the foot halfway to the little toe. Does pressing on bone hurt?',
+        es: 'Presiona los bultos de hueso a cada lado del tobillo, y el hueso del borde externo del pie a mitad de camino hacia el dedo pequeño. ¿Duele al presionar el hueso?',
         zh: '按一按脚踝两侧突出的骨头，以及脚外侧中间（往小脚趾方向）的骨头。按骨头的时候疼吗？'
       },
       options: [
-        {value: 'yes', text: {en: 'Yes', zh: '疼'}},
-        {value: 'no', text: {en: 'No, only the soft part hurts', zh: '不疼，只有软的地方疼'}}
+        {value: 'yes', text: {en: 'Yes', es: 'Sí', zh: '疼'}},
+        {value: 'no', text: {en: 'No, only the soft part hurts', es: 'No, solo duele la parte blanda', zh: '不疼，只有软的地方疼'}}
       ]
     },
     {
       id: 'swelling',
-      text: {en: 'How much swelling or bruising is there?', zh: '肿胀或淤青有多严重？'},
+      text: {en: 'How much swelling or bruising is there?', es: '¿Cuánta hinchazón o moratón hay?', zh: '肿胀或淤青有多严重？'},
       options: [
-        {value: 'mild', text: {en: 'Little or none', zh: '很轻或没有'}},
-        {value: 'moderate', text: {en: 'Clearly swollen', zh: '明显肿了'}},
-        {value: 'severe', text: {en: 'Very swollen or bruised', zh: '肿得很厉害或大片淤青'}}
+        {value: 'mild', text: {en: 'Little or none', es: 'Poco o nada', zh: '很轻或没有'}},
+        {value: 'moderate', text: {en: 'Clearly swollen', es: 'Claramente hinchado', zh: '明显肿了'}},
+        {value: 'severe', text: {en: 'Very swollen or bruised', es: 'Muy hinchado o amoratado', zh: '肿得很厉害或大片淤青'}}
       ]
     }
   ],
@@ -109,67 +116,68 @@ var ANKLE_SPRAIN = {
     return 'selfCare';
   },
   firstAid: [
-    {en: 'Stop playing. Do not "walk it off".', zh: '马上停止运动，不要硬撑着继续走。'},
-    {en: 'Ice for 15–20 minutes every 2–3 hours, with a cloth between the ice and the skin.', zh: '冰敷 15–20 分钟，每 2–3 小时一次。冰袋外面包一层毛巾，不要直接贴皮肤。'},
-    {en: 'Wrap with an elastic bandage from the toes up. Loosen it if the toes tingle or turn pale.', zh: '用弹力绷带从脚趾往上包扎。如果脚趾发麻或发白，就松一点。'},
-    {en: 'Raise the ankle above the level of the heart when sitting or lying down.', zh: '坐着或躺着时，把脚踝垫高到比心脏高。'},
-    {en: 'For the first 2–3 days: no heat, no massage, no alcohol. They increase swelling.', zh: '前 2–3 天不要热敷、不要按摩、不要喝酒，这些会让肿胀更严重。'}
+    {en: 'Stop playing. Do not "walk it off".', es: 'Deja de jugar. No intentes "caminarlo" para que se pase.', zh: '马上停止运动，不要硬撑着继续走。'},
+    {en: 'Ice for 15–20 minutes every 2–3 hours, with a cloth between the ice and the skin.', es: 'Pon hielo 15–20 minutos cada 2–3 horas, con un paño entre el hielo y la piel.', zh: '冰敷 15–20 分钟，每 2–3 小时一次。冰袋外面包一层毛巾，不要直接贴皮肤。'},
+    {en: 'Wrap with an elastic bandage from the toes up. Loosen it if the toes tingle or turn pale.', es: 'Venda con una venda elástica desde los dedos hacia arriba. Aflójala si los dedos hormiguean o se ponen pálidos.', zh: '用弹力绷带从脚趾往上包扎。如果脚趾发麻或发白，就松一点。'},
+    {en: 'Raise the ankle above the level of the heart when sitting or lying down.', es: 'Levanta el tobillo por encima del corazón cuando estés sentado o acostado.', zh: '坐着或躺着时，把脚踝垫高到比心脏高。'},
+    {en: 'For the first 2–3 days: no heat, no massage, no alcohol. They increase swelling.', es: 'Los primeros 2–3 días: nada de calor, masajes ni alcohol. Aumentan la hinchazón.', zh: '前 2–3 天不要热敷、不要按摩、不要喝酒，这些会让肿胀更严重。'}
   ],
   where: {
     emergency: [
-      {en: 'Emergency room (ER) now. Call 911 (US) / 120 (China) if you cannot get there safely.', zh: '马上去急诊。如果没办法安全到达，打 120（中国）/ 911（美国）。'},
-      {en: 'Do not try to straighten the ankle yourself.', zh: '不要自己尝试把脚踝掰正。'}
+      {en: 'Emergency room (ER) now. Call 911 (US) / 120 (China) if you cannot get there safely.', es: 'Urgencias ahora. Llama al 911 (EE. UU.) / 120 (China) si no puedes llegar de forma segura.', zh: '马上去急诊。如果没办法安全到达，打 120（中国）/ 911（美国）。'},
+      {en: 'Do not try to straighten the ankle yourself.', es: 'No intentes enderezar el tobillo tú mismo.', zh: '不要自己尝试把脚踝掰正。'}
     ],
     today: [
-      {en: 'Today: urgent care or the ER for an X-ray, to rule out a broken bone.', zh: '今天去急诊或骨科门诊拍 X 光片，排除骨折。'},
-      {en: 'Use crutches or have someone help you. Do not put weight on it until it has been checked.', zh: '用拐杖或让别人扶着，检查之前不要让受伤的脚承重。'}
+      {en: 'Today: urgent care or the ER for an X-ray, to rule out a broken bone.', es: 'Hoy: una clínica de atención inmediata o urgencias para una radiografía, para descartar una fractura.', zh: '今天去急诊或骨科门诊拍 X 光片，排除骨折。'},
+      {en: 'Use crutches or have someone help you. Do not put weight on it until it has been checked.', es: 'Usa muletas o pide ayuda. No apoyes peso hasta que lo revisen.', zh: '用拐杖或让别人扶着，检查之前不要让受伤的脚承重。'}
     ],
     soon: [
-      {en: 'Within a few days: a sports medicine doctor or orthopedics.', zh: '几天内挂运动医学科或骨科。'},
-      {en: 'Go sooner if the pain gets worse or you cannot walk on it.', zh: '如果越来越疼或者没法走路，要提前去。'}
+      {en: 'Within a few days: a sports medicine doctor or orthopedics.', es: 'En unos días: un médico de medicina deportiva o traumatología.', zh: '几天内挂运动医学科或骨科。'},
+      {en: 'Go sooner if the pain gets worse or you cannot walk on it.', es: 'Ve antes si el dolor empeora o no puedes caminar.', zh: '如果越来越疼或者没法走路，要提前去。'}
     ],
     selfCare: [
-      {en: 'No visit needed right now.', zh: '现在不需要去医院。'},
-      {en: 'If it is not clearly better in a week, see a sports medicine doctor.', zh: '如果一周内没有明显好转，挂运动医学科。'}
+      {en: 'No visit needed right now.', es: 'Ahora no hace falta ir al médico.', zh: '现在不需要去医院。'},
+      {en: 'If it is not clearly better in a week, see a sports medicine doctor.', es: 'Si no mejora claramente en una semana, ve a un médico de medicina deportiva.', zh: '如果一周内没有明显好转，挂运动医学科。'}
     ]
   },
   rehabNote: {
     en: 'If a doctor has not ruled out a fracture yet, wait for their go-ahead before starting.',
+    es: 'Si un médico aún no ha descartado una fractura, espera a que te dé el visto bueno antes de empezar.',
     zh: '如果还没排除骨折，要等医生同意后再开始。'
   },
   rehab: [
     {
-      when: {en: 'Days 0–3', zh: '第 0–3 天'},
-      goal: {en: 'Calm the swelling', zh: '消肿'},
+      when: {en: 'Days 0–3', es: 'Días 0–3', zh: '第 0–3 天'},
+      goal: {en: 'Calm the swelling', es: 'Calmar la hinchazón', zh: '消肿'},
       moves: [
-        {en: 'Rest, ice and raise the ankle (see above).', zh: '休息、冰敷、抬高（见上面）。'},
-        {en: 'Ankle pumps: point and flex the foot 20 times, several times a day, only where it does not hurt.', zh: '勾脚绷脚：每次 20 下，一天几次，只在不疼的范围内做。'}
+        {en: 'Rest, ice and raise the ankle (see above).', es: 'Reposo, hielo y tobillo elevado (ver arriba).', zh: '休息、冰敷、抬高（见上面）。'},
+        {en: 'Ankle pumps: point and flex the foot 20 times, several times a day, only where it does not hurt.', es: 'Bombeo de tobillo: estira y flexiona el pie 20 veces, varias veces al día, solo hasta donde no duela.', zh: '勾脚绷脚：每次 20 下，一天几次，只在不疼的范围内做。'}
       ]
     },
     {
-      when: {en: 'Days 3–14', zh: '第 3–14 天'},
-      goal: {en: 'Move normally again', zh: '恢复正常活动'},
+      when: {en: 'Days 3–14', es: 'Días 3–14', zh: '第 3–14 天'},
+      goal: {en: 'Move normally again', es: 'Volver a moverse con normalidad', zh: '恢复正常活动'},
       moves: [
-        {en: 'Walk normally as far as pain allows.', zh: '在疼痛允许的范围内正常走路。'},
-        {en: 'Trace the alphabet in the air with your toes.', zh: '用脚趾在空中写字母。'},
-        {en: 'Resistance band: push the foot down, up, in and out, 10–15 times each.', zh: '弹力带练习：脚往下、往上、往里、往外各推 10–15 下。'}
+        {en: 'Walk normally as far as pain allows.', es: 'Camina con normalidad hasta donde el dolor lo permita.', zh: '在疼痛允许的范围内正常走路。'},
+        {en: 'Trace the alphabet in the air with your toes.', es: 'Dibuja el abecedario en el aire con los dedos del pie.', zh: '用脚趾在空中写字母。'},
+        {en: 'Resistance band: push the foot down, up, in and out, 10–15 times each.', es: 'Banda elástica: empuja el pie hacia abajo, arriba, adentro y afuera, 10–15 veces cada uno.', zh: '弹力带练习：脚往下、往上、往里、往外各推 10–15 下。'}
       ]
     },
     {
-      when: {en: 'Weeks 2–6', zh: '第 2–6 周'},
-      goal: {en: 'Strength and balance', zh: '力量和平衡'},
+      when: {en: 'Weeks 2–6', es: 'Semanas 2–6', zh: '第 2–6 周'},
+      goal: {en: 'Strength and balance', es: 'Fuerza y equilibrio', zh: '力量和平衡'},
       moves: [
-        {en: 'Stand on the injured foot for 30 seconds. When easy, close your eyes.', zh: '单脚站在受伤的脚上 30 秒，觉得容易了就闭上眼睛做。'},
-        {en: 'Heel raises: 3 sets of 15.', zh: '提踵：3 组，每组 15 下。'},
-        {en: 'Start light jogging once walking does not hurt.', zh: '走路不疼以后，开始慢跑。'}
+        {en: 'Stand on the injured foot for 30 seconds. When easy, close your eyes.', es: 'Apóyate sobre el pie lesionado 30 segundos. Cuando sea fácil, cierra los ojos.', zh: '单脚站在受伤的脚上 30 秒，觉得容易了就闭上眼睛做。'},
+        {en: 'Heel raises: 3 sets of 15.', es: 'Elevaciones de talones: 3 series de 15.', zh: '提踵：3 组，每组 15 下。'},
+        {en: 'Start light jogging once walking does not hurt.', es: 'Empieza a trotar suave cuando caminar ya no duela.', zh: '走路不疼以后，开始慢跑。'}
       ]
     },
     {
-      when: {en: 'Back to sport', zh: '恢复运动'},
-      goal: {en: 'Ready when you can hop on the injured foot without pain', zh: '受伤的脚能单脚跳且不疼，就可以恢复运动'},
+      when: {en: 'Back to sport', es: 'Volver al deporte', zh: '恢复运动'},
+      goal: {en: 'Ready when you can hop on the injured foot without pain', es: 'Listo cuando puedas saltar sobre el pie lesionado sin dolor', zh: '受伤的脚能单脚跳且不疼，就可以恢复运动'},
       moves: [
-        {en: 'Hopping, side-to-side jumps, quick changes of direction.', zh: '单脚跳、左右跳、快速变向。'},
-        {en: 'Tape or a brace for the first few months back.', zh: '恢复运动的前几个月，用肌贴或护踝保护。'}
+        {en: 'Hopping, side-to-side jumps, quick changes of direction.', es: 'Saltos a la pata coja, saltos de lado a lado, cambios rápidos de dirección.', zh: '单脚跳、左右跳、快速变向。'},
+        {en: 'Tape or a brace for the first few months back.', es: 'Vendaje o tobillera durante los primeros meses de vuelta.', zh: '恢复运动的前几个月，用肌贴或护踝保护。'}
       ]
     }
   ]
@@ -177,46 +185,48 @@ var ANKLE_SPRAIN = {
 
 var PATELLA_DISLOCATION = {
   id: 'patella',
-  name: {en: 'Kneecap dislocation', zh: '髌骨脱位'},
-  hint: {en: 'Kneecap slipped out to the side', zh: '膝盖骨滑到侧面去了'},
+  name: {en: 'Kneecap dislocation', es: 'Luxación de rótula', zh: '髌骨脱位'},
+  hint: {en: 'Kneecap slipped out to the side', es: 'La rótula se salió hacia un lado', zh: '膝盖骨滑到侧面去了'},
   questions: [
     {
       id: 'inPlace',
       text: {
         en: 'Is the kneecap still out of place (a bump on the outer side, the knee stuck bent)?',
+        es: '¿La rótula sigue fuera de su sitio (un bulto en la parte externa, la rodilla atascada doblada)?',
         zh: '膝盖骨现在还在外面吗？（膝盖外侧鼓起来，腿伸不直）'
       },
       options: [
-        {value: 'out', text: {en: 'Yes, still out', zh: '是，还在外面'}},
-        {value: 'back', text: {en: 'No, it went back by itself', zh: '没有，已经自己回去了'}},
-        {value: 'unsure', text: {en: 'Not sure', zh: '不确定'}}
+        {value: 'out', text: {en: 'Yes, still out', es: 'Sí, sigue fuera', zh: '是，还在外面'}},
+        {value: 'back', text: {en: 'No, it went back by itself', es: 'No, volvió sola a su sitio', zh: '没有，已经自己回去了'}},
+        {value: 'unsure', text: {en: 'Not sure', es: 'No lo sé', zh: '不确定'}}
       ]
     },
     {
       id: 'swelling',
-      text: {en: 'Did the knee swell up a lot within a few hours?', zh: '几小时内膝盖肿得很厉害吗？'},
+      text: {en: 'Did the knee swell up a lot within a few hours?', es: '¿La rodilla se hinchó mucho en pocas horas?', zh: '几小时内膝盖肿得很厉害吗？'},
       options: [
-        {value: 'yes', text: {en: 'Yes', zh: '是'}},
-        {value: 'no', text: {en: 'No, only a little', zh: '没有，只肿了一点'}}
+        {value: 'yes', text: {en: 'Yes', es: 'Sí', zh: '是'}},
+        {value: 'no', text: {en: 'No, only a little', es: 'No, solo un poco', zh: '没有，只肿了一点'}}
       ]
     },
     {
       id: 'locking',
       text: {
         en: 'Does the knee lock, catch, or feel like something loose is inside?',
+        es: '¿La rodilla se bloquea, se engancha o parece que hay algo suelto dentro?',
         zh: '膝盖会卡住、弹响，或者感觉里面有东西松了吗？'
       },
       options: [
-        {value: 'yes', text: {en: 'Yes', zh: '会'}},
-        {value: 'no', text: {en: 'No', zh: '不会'}}
+        {value: 'yes', text: {en: 'Yes', es: 'Sí', zh: '会'}},
+        {value: 'no', text: {en: 'No', es: 'No', zh: '不会'}}
       ]
     },
     {
       id: 'before',
-      text: {en: 'Has your kneecap dislocated before?', zh: '以前髌骨脱位过吗？'},
+      text: {en: 'Has your kneecap dislocated before?', es: '¿Se te ha salido la rótula antes?', zh: '以前髌骨脱位过吗？'},
       options: [
-        {value: 'first', text: {en: 'No, this is the first time', zh: '没有，这是第一次'}},
-        {value: 'again', text: {en: 'Yes, it has happened before', zh: '有，以前发生过'}}
+        {value: 'first', text: {en: 'No, this is the first time', es: 'No, es la primera vez', zh: '没有，这是第一次'}},
+        {value: 'again', text: {en: 'Yes, it has happened before', es: 'Sí, ya me pasó antes', zh: '有，以前发生过'}}
       ]
     }
   ],
@@ -229,23 +239,23 @@ var PATELLA_DISLOCATION = {
     return 'soon';
   },
   firstAid: [
-    {en: 'Stop playing and sit or lie down.', zh: '马上停止运动，坐下或躺下。'},
-    {en: 'Do not push the kneecap back yourself, and do not let others try.', zh: '不要自己把膝盖骨推回去，也不要让别人帮你推。'},
-    {en: 'Support the knee in the position that hurts least, with a pillow or rolled jacket.', zh: '用枕头或卷起来的衣服垫着，让膝盖保持在最不疼的姿势。'},
-    {en: 'Ice for 15–20 minutes with a cloth between the ice and the skin.', zh: '冰敷 15–20 分钟，冰袋外面包一层毛巾。'},
-    {en: 'Do not walk on it. Use crutches or get help.', zh: '不要用这条腿走路，用拐杖或让别人扶。'}
+    {en: 'Stop playing and sit or lie down.', es: 'Deja de jugar y siéntate o acuéstate.', zh: '马上停止运动，坐下或躺下。'},
+    {en: 'Do not push the kneecap back yourself, and do not let others try.', es: 'No vuelvas a meter la rótula tú mismo, y no dejes que otros lo intenten.', zh: '不要自己把膝盖骨推回去，也不要让别人帮你推。'},
+    {en: 'Support the knee in the position that hurts least, with a pillow or rolled jacket.', es: 'Sujeta la rodilla en la posición que menos duela, con una almohada o una chaqueta enrollada.', zh: '用枕头或卷起来的衣服垫着，让膝盖保持在最不疼的姿势。'},
+    {en: 'Ice for 15–20 minutes with a cloth between the ice and the skin.', es: 'Pon hielo 15–20 minutos con un paño entre el hielo y la piel.', zh: '冰敷 15–20 分钟，冰袋外面包一层毛巾。'},
+    {en: 'Do not walk on it. Use crutches or get help.', es: 'No camines con ella. Usa muletas o pide ayuda.', zh: '不要用这条腿走路，用拐杖或让别人扶。'}
   ],
   where: {
     emergency: [
-      {en: 'Emergency room (ER) now. Call 911 (US) / 120 (China) if you cannot get there without walking on the leg.', zh: '马上去急诊。如果不走路就没法到医院，打 120（中国）/ 911（美国）。'},
-      {en: 'A doctor will put the kneecap back and take an X-ray.', zh: '医生会把膝盖骨复位，并拍 X 光片。'}
+      {en: 'Emergency room (ER) now. Call 911 (US) / 120 (China) if you cannot get there without walking on the leg.', es: 'Urgencias ahora. Llama al 911 (EE. UU.) / 120 (China) si no puedes llegar sin caminar con esa pierna.', zh: '马上去急诊。如果不走路就没法到医院，打 120（中国）/ 911（美国）。'},
+      {en: 'A doctor will put the kneecap back and take an X-ray.', es: 'Un médico volverá a colocar la rótula y hará una radiografía.', zh: '医生会把膝盖骨复位，并拍 X 光片。'}
     ],
     today: [
-      {en: 'Today: the ER or orthopedics for an X-ray. Big swelling or locking can mean a piece of bone or cartilage broke off.', zh: '今天去急诊或骨科拍 X 光片。肿得厉害或膝盖卡住，可能是有骨头或软骨碎片掉下来了。'},
-      {en: 'You may need an MRI. Ask to be seen by sports medicine or a knee specialist.', zh: '可能需要做核磁共振（MRI）。可以要求挂运动医学科或膝关节专科。'}
+      {en: 'Today: the ER or orthopedics for an X-ray. Big swelling or locking can mean a piece of bone or cartilage broke off.', es: 'Hoy: urgencias o traumatología para una radiografía. Mucha hinchazón o bloqueo puede significar que se rompió un trozo de hueso o cartílago.', zh: '今天去急诊或骨科拍 X 光片。肿得厉害或膝盖卡住，可能是有骨头或软骨碎片掉下来了。'},
+      {en: 'You may need an MRI. Ask to be seen by sports medicine or a knee specialist.', es: 'Puede que necesites una resonancia magnética. Pide que te vea medicina deportiva o un especialista de rodilla.', zh: '可能需要做核磁共振（MRI）。可以要求挂运动医学科或膝关节专科。'}
     ],
     soon: [
-      {en: 'Within 1–2 days: orthopedics or sports medicine, even if the knee feels fine. It still needs an X-ray.', zh: '1–2 天内挂骨科或运动医学科，就算膝盖感觉没事也要去，还是需要拍 X 光片。'}
+      {en: 'Within 1–2 days: orthopedics or sports medicine, even if the knee feels fine. It still needs an X-ray.', es: 'En 1–2 días: traumatología o medicina deportiva, aunque la rodilla se sienta bien. Igual necesita una radiografía.', zh: '1–2 天内挂骨科或运动医学科，就算膝盖感觉没事也要去，还是需要拍 X 光片。'}
     ]
   },
   // Extra advice that depends on a specific answer rather than the level.
@@ -253,46 +263,48 @@ var PATELLA_DISLOCATION = {
     if (a.before !== 'again') return [];
     return [{
       en: 'Because it has happened before, ask a sports medicine surgeon whether surgery to stabilize the kneecap makes sense.',
+      es: 'Como ya te pasó antes, pregunta a un cirujano de medicina deportiva si conviene una operación para estabilizar la rótula.',
       zh: '因为不是第一次了，可以问问运动医学科的医生，是否需要做稳定髌骨的手术。'
     }];
   },
   rehabNote: {
     en: 'Start only after a doctor has checked the knee. Timing varies a lot; follow your doctor or physical therapist.',
+    es: 'Empieza solo después de que un médico revise la rodilla. Los tiempos varían mucho; sigue a tu médico o fisioterapeuta.',
     zh: '要等医生检查过膝盖以后再开始。每个人恢复时间差别很大，以医生或康复师的安排为准。'
   },
   rehab: [
     {
-      when: {en: 'Weeks 0–2', zh: '第 0–2 周'},
-      goal: {en: 'Protect the knee, keep the thigh working', zh: '保护膝盖，保持大腿肌肉不萎缩'},
+      when: {en: 'Weeks 0–2', es: 'Semanas 0–2', zh: '第 0–2 周'},
+      goal: {en: 'Protect the knee, keep the thigh working', es: 'Proteger la rodilla, mantener el muslo activo', zh: '保护膝盖，保持大腿肌肉不萎缩'},
       moves: [
-        {en: 'Wear the brace and use crutches as the doctor says.', zh: '按医生说的戴护具、用拐杖。'},
-        {en: 'Quad sets: tighten the front of the thigh for 5 seconds, 20 times.', zh: '股四头肌收缩：绷紧大腿前侧 5 秒，做 20 次。'},
-        {en: 'Straight leg raises lying down: 3 sets of 10.', zh: '躺着直腿抬高：3 组，每组 10 下。'}
+        {en: 'Wear the brace and use crutches as the doctor says.', es: 'Usa la rodillera y las muletas como diga el médico.', zh: '按医生说的戴护具、用拐杖。'},
+        {en: 'Quad sets: tighten the front of the thigh for 5 seconds, 20 times.', es: 'Contracciones de cuádriceps: aprieta la parte delantera del muslo 5 segundos, 20 veces.', zh: '股四头肌收缩：绷紧大腿前侧 5 秒，做 20 次。'},
+        {en: 'Straight leg raises lying down: 3 sets of 10.', es: 'Elevaciones de pierna recta acostado: 3 series de 10.', zh: '躺着直腿抬高：3 组，每组 10 下。'}
       ]
     },
     {
-      when: {en: 'Weeks 2–6', zh: '第 2–6 周'},
-      goal: {en: 'Bend the knee again', zh: '恢复弯曲角度'},
+      when: {en: 'Weeks 2–6', es: 'Semanas 2–6', zh: '第 2–6 周'},
+      goal: {en: 'Bend the knee again', es: 'Volver a doblar la rodilla', zh: '恢复弯曲角度'},
       moves: [
-        {en: 'Bend the knee a little more each day, only as far as it does not hurt.', zh: '每天多弯一点，只弯到不疼的位置。'},
-        {en: 'Glute bridges and side-lying leg raises to strengthen the hips.', zh: '臀桥、侧躺抬腿，加强髋部力量。'},
-        {en: 'Stationary bike with low resistance.', zh: '低阻力骑固定自行车。'}
+        {en: 'Bend the knee a little more each day, only as far as it does not hurt.', es: 'Dobla la rodilla un poco más cada día, solo hasta donde no duela.', zh: '每天多弯一点，只弯到不疼的位置。'},
+        {en: 'Glute bridges and side-lying leg raises to strengthen the hips.', es: 'Puentes de glúteo y elevaciones de pierna de lado para fortalecer las caderas.', zh: '臀桥、侧躺抬腿，加强髋部力量。'},
+        {en: 'Stationary bike with low resistance.', es: 'Bicicleta estática con poca resistencia.', zh: '低阻力骑固定自行车。'}
       ]
     },
     {
-      when: {en: 'Weeks 6–12', zh: '第 6–12 周'},
-      goal: {en: 'Build strength', zh: '增强力量'},
+      when: {en: 'Weeks 6–12', es: 'Semanas 6–12', zh: '第 6–12 周'},
+      goal: {en: 'Build strength', es: 'Ganar fuerza', zh: '增强力量'},
       moves: [
-        {en: 'Mini squats, step-ups, wall sits.', zh: '小幅度深蹲、上台阶、靠墙静蹲。'},
-        {en: 'Stand on the injured leg for 30 seconds.', zh: '受伤的腿单脚站 30 秒。'}
+        {en: 'Mini squats, step-ups, wall sits.', es: 'Mini sentadillas, subir escalones, sentadilla en la pared.', zh: '小幅度深蹲、上台阶、靠墙静蹲。'},
+        {en: 'Stand on the injured leg for 30 seconds.', es: 'Apóyate sobre la pierna lesionada 30 segundos.', zh: '受伤的腿单脚站 30 秒。'}
       ]
     },
     {
-      when: {en: 'Month 3 onward', zh: '第 3 个月以后'},
-      goal: {en: 'Back to sport when the injured leg is about as strong as the other and your doctor agrees', zh: '受伤的腿力量接近另一条腿，并且医生同意后，再恢复运动'},
+      when: {en: 'Month 3 onward', es: 'Desde el mes 3', zh: '第 3 个月以后'},
+      goal: {en: 'Back to sport when the injured leg is about as strong as the other and your doctor agrees', es: 'Vuelve al deporte cuando la pierna lesionada tenga casi la misma fuerza que la otra y tu médico esté de acuerdo', zh: '受伤的腿力量接近另一条腿，并且医生同意后，再恢复运动'},
       moves: [
-        {en: 'Jogging, then jumping and quick changes of direction.', zh: '先慢跑，再练跳跃和快速变向。'},
-        {en: 'Keep doing hip and thigh strength work, which helps stop it from happening again.', zh: '继续练髋部和大腿力量，可以减少再次脱位。'}
+        {en: 'Jogging, then jumping and quick changes of direction.', es: 'Trotar, después saltos y cambios rápidos de dirección.', zh: '先慢跑，再练跳跃和快速变向。'},
+        {en: 'Keep doing hip and thigh strength work, which helps stop it from happening again.', es: 'Sigue trabajando la fuerza de cadera y muslo; ayuda a que no vuelva a pasar.', zh: '继续练髋部和大腿力量，可以减少再次脱位。'}
       ]
     }
   ]
@@ -300,35 +312,35 @@ var PATELLA_DISLOCATION = {
 
 var OTHER_SPRAIN = {
   id: 'sprain',
-  name: {en: 'Other sprain', zh: '其他部位扭伤'},
-  hint: {en: 'Knee, wrist, thumb, elbow…', zh: '膝盖、手腕、拇指、手肘……'},
+  name: {en: 'Other sprain', es: 'Otro esguince', zh: '其他部位扭伤'},
+  hint: {en: 'Knee, wrist, thumb, elbow…', es: 'Rodilla, muñeca, pulgar, codo…', zh: '膝盖、手腕、拇指、手肘……'},
   questions: [
     {
       id: 'deformity',
-      text: {en: 'Does the joint look out of shape, or is the hand or foot beyond it numb, cold or pale?', zh: '关节看起来变形了吗？或者远端的手脚发麻、发凉、发白？'},
+      text: {en: 'Does the joint look out of shape, or is the hand or foot beyond it numb, cold or pale?', es: '¿La articulación se ve deformada, o la mano o el pie de más allá está dormido, frío o pálido?', zh: '关节看起来变形了吗？或者远端的手脚发麻、发凉、发白？'},
       options: YES_NO
     },
     {
       id: 'use',
-      text: {en: 'Can you use it (stand on the leg, grip with the hand)?', zh: '还能用吗？（腿能站、手能握）'},
+      text: {en: 'Can you use it (stand on the leg, grip with the hand)?', es: '¿Puedes usarla (apoyarte en la pierna, agarrar con la mano)?', zh: '还能用吗？（腿能站、手能握）'},
       options: [
-        {value: 'yes', text: {en: 'Yes, almost normally', zh: '能，差不多正常'}},
-        {value: 'pain', text: {en: 'Yes, but it hurts', zh: '能，但很疼'}},
-        {value: 'no', text: {en: 'No', zh: '不能'}}
+        {value: 'yes', text: {en: 'Yes, almost normally', es: 'Sí, casi con normalidad', zh: '能，差不多正常'}},
+        {value: 'pain', text: {en: 'Yes, but it hurts', es: 'Sí, pero duele', zh: '能，但很疼'}},
+        {value: 'no', text: {en: 'No', es: 'No', zh: '不能'}}
       ]
     },
     {
       id: 'pop',
-      text: {en: 'Did you hear or feel a "pop" when it happened, or does the joint give way?', zh: '受伤时听到或感觉到“啪”的一声吗？或者关节会突然软掉、站不稳？'},
+      text: {en: 'Did you hear or feel a "pop" when it happened, or does the joint give way?', es: '¿Oíste o sentiste un "pop" cuando pasó, o la articulación falla?', zh: '受伤时听到或感觉到“啪”的一声吗？或者关节会突然软掉、站不稳？'},
       options: YES_NO
     },
     {
       id: 'swelling',
-      text: {en: 'How much swelling or bruising is there?', zh: '肿胀或淤青有多严重？'},
+      text: {en: 'How much swelling or bruising is there?', es: '¿Cuánta hinchazón o moratón hay?', zh: '肿胀或淤青有多严重？'},
       options: [
-        {value: 'mild', text: {en: 'Little or none', zh: '很轻或没有'}},
-        {value: 'moderate', text: {en: 'Clearly swollen', zh: '明显肿了'}},
-        {value: 'severe', text: {en: 'Very swollen within hours', zh: '几小时内肿得很厉害'}}
+        {value: 'mild', text: {en: 'Little or none', es: 'Poco o nada', zh: '很轻或没有'}},
+        {value: 'moderate', text: {en: 'Clearly swollen', es: 'Claramente hinchado', zh: '明显肿了'}},
+        {value: 'severe', text: {en: 'Very swollen within hours', es: 'Muy hinchado en pocas horas', zh: '几小时内肿得很厉害'}}
       ]
     }
   ],
@@ -342,52 +354,52 @@ var OTHER_SPRAIN = {
   },
   firstAid: [STOP, ICE, COMPRESS, ELEVATE, NO_HEAT],
   where: {
-    emergency: [CALL_EMERGENCY, {en: 'Do not try to straighten the joint yourself.', zh: '不要自己尝试把关节掰正。'}],
+    emergency: [CALL_EMERGENCY, {en: 'Do not try to straighten the joint yourself.', es: 'No intentes enderezar la articulación tú mismo.', zh: '不要自己尝试把关节掰正。'}],
     today: [
-      {en: 'Today: urgent care or the ER for an X-ray, to rule out a broken bone.', zh: '今天去急诊或骨科门诊拍 X 光片，排除骨折。'},
-      {en: 'Support it with a sling or crutches until it has been checked.', zh: '检查之前，用三角巾吊着手臂或用拐杖，不要让它受力。'}
+      {en: 'Today: urgent care or the ER for an X-ray, to rule out a broken bone.', es: 'Hoy: una clínica de atención inmediata o urgencias para una radiografía, para descartar una fractura.', zh: '今天去急诊或骨科门诊拍 X 光片，排除骨折。'},
+      {en: 'Support it with a sling or crutches until it has been checked.', es: 'Sujétala con un cabestrillo o usa muletas hasta que la revisen.', zh: '检查之前，用三角巾吊着手臂或用拐杖，不要让它受力。'}
     ],
     soon: [
-      {en: 'Within a few days: a sports medicine doctor or orthopedics.', zh: '几天内挂运动医学科或骨科。'},
-      {en: 'A pop with fast swelling, especially in the knee, can mean a torn ligament such as the ACL. Ask whether you need an MRI.', zh: '“啪”的一声加上很快肿起来，尤其是在膝盖，可能是韧带撕裂（比如前交叉韧带）。问医生是否需要做核磁共振（MRI）。'}
+      {en: 'Within a few days: a sports medicine doctor or orthopedics.', es: 'En unos días: un médico de medicina deportiva o traumatología.', zh: '几天内挂运动医学科或骨科。'},
+      {en: 'A pop with fast swelling, especially in the knee, can mean a torn ligament such as the ACL. Ask whether you need an MRI.', es: 'Un pop con hinchazón rápida, sobre todo en la rodilla, puede significar un ligamento roto como el LCA. Pregunta si necesitas una resonancia.', zh: '“啪”的一声加上很快肿起来，尤其是在膝盖，可能是韧带撕裂（比如前交叉韧带）。问医生是否需要做核磁共振（MRI）。'}
     ],
     selfCare: [
-      {en: 'No visit needed right now.', zh: '现在不需要去医院。'},
-      {en: 'If it is not clearly better in a week, see a sports medicine doctor.', zh: '如果一周内没有明显好转，挂运动医学科。'}
+      {en: 'No visit needed right now.', es: 'Ahora no hace falta ir al médico.', zh: '现在不需要去医院。'},
+      {en: 'If it is not clearly better in a week, see a sports medicine doctor.', es: 'Si no mejora claramente en una semana, ve a un médico de medicina deportiva.', zh: '如果一周内没有明显好转，挂运动医学科。'}
     ]
   },
-  rehabNote: {en: 'A torn knee ligament needs its own plan from a doctor or physical therapist.', zh: '如果是膝盖韧带撕裂，需要医生或康复师单独制定计划。'},
+  rehabNote: {en: 'A torn knee ligament needs its own plan from a doctor or physical therapist.', es: 'Un ligamento de rodilla roto necesita un plan propio de un médico o fisioterapeuta.', zh: '如果是膝盖韧带撕裂，需要医生或康复师单独制定计划。'},
   rehab: [
     {
-      when: {en: 'Days 0–3', zh: '第 0–3 天'},
-      goal: {en: 'Calm the swelling', zh: '消肿'},
+      when: {en: 'Days 0–3', es: 'Días 0–3', zh: '第 0–3 天'},
+      goal: {en: 'Calm the swelling', es: 'Calmar la hinchazón', zh: '消肿'},
       moves: [
-        {en: 'Rest, ice and raise it (see above).', zh: '休息、冰敷、抬高（见上面）。'},
-        {en: 'Gently move the joint where it does not hurt, several times a day.', zh: '在不疼的范围内轻轻活动关节，一天几次。'}
+        {en: 'Rest, ice and raise it (see above).', es: 'Reposo, hielo y elevación (ver arriba).', zh: '休息、冰敷、抬高（见上面）。'},
+        {en: 'Gently move the joint where it does not hurt, several times a day.', es: 'Mueve la articulación con suavidad donde no duela, varias veces al día.', zh: '在不疼的范围内轻轻活动关节，一天几次。'}
       ]
     },
     {
-      when: {en: 'Days 3–14', zh: '第 3–14 天'},
-      goal: {en: 'Get the full range of motion back', zh: '恢复活动范围'},
+      when: {en: 'Days 3–14', es: 'Días 3–14', zh: '第 3–14 天'},
+      goal: {en: 'Get the full range of motion back', es: 'Recuperar todo el movimiento', zh: '恢复活动范围'},
       moves: [
-        {en: 'Bend and straighten the joint a little further each day.', zh: '每天多弯一点、多伸直一点。'},
-        {en: 'Use it for daily tasks as pain allows.', zh: '在疼痛允许的范围内，日常生活正常使用。'}
+        {en: 'Bend and straighten the joint a little further each day.', es: 'Dobla y estira la articulación un poco más cada día.', zh: '每天多弯一点、多伸直一点。'},
+        {en: 'Use it for daily tasks as pain allows.', es: 'Úsala en las tareas diarias según lo permita el dolor.', zh: '在疼痛允许的范围内，日常生活正常使用。'}
       ]
     },
     {
-      when: {en: 'Weeks 2–6', zh: '第 2–6 周'},
-      goal: {en: 'Strength and control', zh: '力量和控制'},
+      when: {en: 'Weeks 2–6', es: 'Semanas 2–6', zh: '第 2–6 周'},
+      goal: {en: 'Strength and control', es: 'Fuerza y control', zh: '力量和控制'},
       moves: [
-        {en: 'Resistance band exercises in every direction the joint moves, 3 sets of 10–15.', zh: '用弹力带往关节能动的每个方向练习，每个方向 3 组，每组 10–15 下。'},
-        {en: 'Balance work: single-leg stance for the knee, weight-bearing on hands for the wrist.', zh: '平衡练习：膝盖练单脚站，手腕练撑地承重。'}
+        {en: 'Resistance band exercises in every direction the joint moves, 3 sets of 10–15.', es: 'Ejercicios con banda elástica en todas las direcciones en que se mueve la articulación, 3 series de 10–15.', zh: '用弹力带往关节能动的每个方向练习，每个方向 3 组，每组 10–15 下。'},
+        {en: 'Balance work: single-leg stance for the knee, weight-bearing on hands for the wrist.', es: 'Trabajo de equilibrio: apoyo en una pierna para la rodilla, apoyar peso en las manos para la muñeca.', zh: '平衡练习：膝盖练单脚站，手腕练撑地承重。'}
       ]
     },
     {
-      when: {en: 'Back to sport', zh: '恢复运动'},
-      goal: {en: 'Ready when it is pain-free and about as strong as the other side', zh: '不疼了、力量接近另一侧，就可以恢复运动'},
+      when: {en: 'Back to sport', es: 'Volver al deporte', zh: '恢复运动'},
+      goal: {en: 'Ready when it is pain-free and about as strong as the other side', es: 'Listo cuando no duela y tenga casi la misma fuerza que el otro lado', zh: '不疼了、力量接近另一侧，就可以恢复运动'},
       moves: [
-        {en: 'Sport-specific drills at increasing speed.', zh: '做专项动作练习，逐渐加快速度。'},
-        {en: 'Tape or a brace for the first weeks back.', zh: '恢复运动的前几周，用肌贴或护具保护。'}
+        {en: 'Sport-specific drills at increasing speed.', es: 'Ejercicios propios de tu deporte cada vez más rápidos.', zh: '做专项动作练习，逐渐加快速度。'},
+        {en: 'Tape or a brace for the first weeks back.', es: 'Vendaje o rodillera/muñequera las primeras semanas de vuelta.', zh: '恢复运动的前几周，用肌贴或护具保护。'}
       ]
     }
   ]
@@ -395,35 +407,35 @@ var OTHER_SPRAIN = {
 
 var MUSCLE_STRAIN = {
   id: 'strain',
-  name: {en: 'Muscle strain', zh: '拉伤'},
-  hint: {en: 'Pulled muscle or tendon: thigh, calf, groin…', zh: '肌肉或肌腱拉伤：大腿、小腿、腹股沟……'},
+  name: {en: 'Muscle strain', es: 'Distensión muscular', zh: '拉伤'},
+  hint: {en: 'Pulled muscle or tendon: thigh, calf, groin…', es: 'Tirón de músculo o tendón: muslo, pantorrilla, ingle…', zh: '肌肉或肌腱拉伤：大腿、小腿、腹股沟……'},
   questions: [
     {
       id: 'achilles',
-      text: {en: 'Is it at the back of the ankle (Achilles tendon), and you cannot rise up on your toes on that leg?', zh: '是脚后跟上方（跟腱）的位置，而且这条腿踮不起脚尖吗？'},
+      text: {en: 'Is it at the back of the ankle (Achilles tendon), and you cannot rise up on your toes on that leg?', es: '¿Es en la parte de atrás del tobillo (tendón de Aquiles) y no puedes ponerte de puntillas con esa pierna?', zh: '是脚后跟上方（跟腱）的位置，而且这条腿踮不起脚尖吗？'},
       options: YES_NO
     },
     {
       id: 'gap',
-      text: {en: 'Can you see or feel a dent or gap in the muscle?', zh: '肌肉上能看到或摸到凹陷、断开的地方吗？'},
+      text: {en: 'Can you see or feel a dent or gap in the muscle?', es: '¿Puedes ver o notar un hundimiento o hueco en el músculo?', zh: '肌肉上能看到或摸到凹陷、断开的地方吗？'},
       options: YES_NO
     },
     {
       id: 'use',
-      text: {en: 'Can you walk or use the muscle?', zh: '还能走路或使用这块肌肉吗？'},
+      text: {en: 'Can you walk or use the muscle?', es: '¿Puedes caminar o usar el músculo?', zh: '还能走路或使用这块肌肉吗？'},
       options: [
-        {value: 'yes', text: {en: 'Yes, almost normally', zh: '能，差不多正常'}},
-        {value: 'pain', text: {en: 'Yes, but it hurts', zh: '能，但很疼'}},
-        {value: 'no', text: {en: 'No', zh: '不能'}}
+        {value: 'yes', text: {en: 'Yes, almost normally', es: 'Sí, casi con normalidad', zh: '能，差不多正常'}},
+        {value: 'pain', text: {en: 'Yes, but it hurts', es: 'Sí, pero duele', zh: '能，但很疼'}},
+        {value: 'no', text: {en: 'No', es: 'No', zh: '不能'}}
       ]
     },
     {
       id: 'bruise',
-      text: {en: 'How much swelling or bruising is there?', zh: '肿胀或淤青有多严重？'},
+      text: {en: 'How much swelling or bruising is there?', es: '¿Cuánta hinchazón o moratón hay?', zh: '肿胀或淤青有多严重？'},
       options: [
-        {value: 'mild', text: {en: 'Little or none', zh: '很轻或没有'}},
-        {value: 'clear', text: {en: 'Clearly swollen or bruised', zh: '明显肿了或有淤青'}},
-        {value: 'severe', text: {en: 'Large bruise spreading', zh: '大片淤青在扩散'}}
+        {value: 'mild', text: {en: 'Little or none', es: 'Poco o nada', zh: '很轻或没有'}},
+        {value: 'clear', text: {en: 'Clearly swollen or bruised', es: 'Claramente hinchado o amoratado', zh: '明显肿了或有淤青'}},
+        {value: 'severe', text: {en: 'Large bruise spreading', es: 'Moratón grande que se extiende', zh: '大片淤青在扩散'}}
       ]
     }
   ],
@@ -434,52 +446,52 @@ var MUSCLE_STRAIN = {
     if (a.use === 'pain' || a.bruise !== 'mild') return 'soon';
     return 'selfCare';
   },
-  firstAid: [STOP, ICE, COMPRESS, ELEVATE, NO_HEAT, {en: 'Do not stretch it hard for the first few days.', zh: '前几天不要用力拉伸受伤的肌肉。'}],
+  firstAid: [STOP, ICE, COMPRESS, ELEVATE, NO_HEAT, {en: 'Do not stretch it hard for the first few days.', es: 'No lo estires con fuerza los primeros días.', zh: '前几天不要用力拉伸受伤的肌肉。'}],
   where: {
     today: [
-      {en: 'Today: urgent care, the ER, or orthopedics. A complete tear (especially the Achilles) may need early treatment.', zh: '今天去急诊或骨科。完全断裂（尤其是跟腱）可能需要尽早处理。'},
-      {en: 'Use crutches and keep weight off it until it has been checked.', zh: '检查之前用拐杖，不要让它受力。'}
+      {en: 'Today: urgent care, the ER, or orthopedics. A complete tear (especially the Achilles) may need early treatment.', es: 'Hoy: una clínica de atención inmediata, urgencias o traumatología. Una rotura completa (sobre todo del Aquiles) puede necesitar tratamiento pronto.', zh: '今天去急诊或骨科。完全断裂（尤其是跟腱）可能需要尽早处理。'},
+      {en: 'Use crutches and keep weight off it until it has been checked.', es: 'Usa muletas y no apoyes peso hasta que lo revisen.', zh: '检查之前用拐杖，不要让它受力。'}
     ],
     soon: [
-      {en: 'Within a few days: a sports medicine doctor or a physical therapist.', zh: '几天内挂运动医学科，或找康复师（物理治疗师）。'}
+      {en: 'Within a few days: a sports medicine doctor or a physical therapist.', es: 'En unos días: un médico de medicina deportiva o un fisioterapeuta.', zh: '几天内挂运动医学科，或找康复师（物理治疗师）。'}
     ],
     selfCare: [
-      {en: 'No visit needed right now.', zh: '现在不需要去医院。'},
-      {en: 'If it is not clearly better in 1–2 weeks, see a sports medicine doctor.', zh: '如果 1–2 周内没有明显好转，挂运动医学科。'}
+      {en: 'No visit needed right now.', es: 'Ahora no hace falta ir al médico.', zh: '现在不需要去医院。'},
+      {en: 'If it is not clearly better in 1–2 weeks, see a sports medicine doctor.', es: 'Si no mejora claramente en 1–2 semanas, ve a un médico de medicina deportiva.', zh: '如果 1–2 周内没有明显好转，挂运动医学科。'}
     ]
   },
-  rehabNote: {en: 'Strains come back easily if you return too fast. Move on only when the current stage is pain-free.', zh: '拉伤恢复太快很容易再次受伤。当前阶段完全不疼了，再进入下一阶段。'},
+  rehabNote: {en: 'Strains come back easily if you return too fast. Move on only when the current stage is pain-free.', es: 'Las distensiones vuelven fácilmente si regresas demasiado rápido. Pasa a la siguiente etapa solo cuando la actual no duela.', zh: '拉伤恢复太快很容易再次受伤。当前阶段完全不疼了，再进入下一阶段。'},
   rehab: [
     {
-      when: {en: 'Days 0–3', zh: '第 0–3 天'},
-      goal: {en: 'Protect it', zh: '保护'},
+      when: {en: 'Days 0–3', es: 'Días 0–3', zh: '第 0–3 天'},
+      goal: {en: 'Protect it', es: 'Protegerlo', zh: '保护'},
       moves: [
-        {en: 'Rest, ice and gentle walking if it does not hurt.', zh: '休息、冰敷，不疼的话可以慢慢走路。'},
-        {en: 'Tighten the muscle gently without moving (5 seconds, 10 times).', zh: '不动关节，轻轻收紧这块肌肉（5 秒，10 次）。'}
+        {en: 'Rest, ice and gentle walking if it does not hurt.', es: 'Reposo, hielo y caminar suave si no duele.', zh: '休息、冰敷，不疼的话可以慢慢走路。'},
+        {en: 'Tighten the muscle gently without moving (5 seconds, 10 times).', es: 'Aprieta el músculo suavemente sin moverlo (5 segundos, 10 veces).', zh: '不动关节，轻轻收紧这块肌肉（5 秒，10 次）。'}
       ]
     },
     {
-      when: {en: 'Days 3–14', zh: '第 3–14 天'},
-      goal: {en: 'Light movement and stretching', zh: '轻度活动和拉伸'},
+      when: {en: 'Days 3–14', es: 'Días 3–14', zh: '第 3–14 天'},
+      goal: {en: 'Light movement and stretching', es: 'Movimiento suave y estiramientos', zh: '轻度活动和拉伸'},
       moves: [
-        {en: 'Gentle stretches held 20–30 seconds, never into pain.', zh: '轻柔拉伸，每次 20–30 秒，不要拉到疼。'},
-        {en: 'Light exercise like a stationary bike or swimming.', zh: '骑固定自行车或游泳这类轻运动。'}
+        {en: 'Gentle stretches held 20–30 seconds, never into pain.', es: 'Estiramientos suaves de 20–30 segundos, nunca hasta el dolor.', zh: '轻柔拉伸，每次 20–30 秒，不要拉到疼。'},
+        {en: 'Light exercise like a stationary bike or swimming.', es: 'Ejercicio ligero como bicicleta estática o natación.', zh: '骑固定自行车或游泳这类轻运动。'}
       ]
     },
     {
-      when: {en: 'Weeks 2–6', zh: '第 2–6 周'},
-      goal: {en: 'Rebuild strength', zh: '恢复力量'},
+      when: {en: 'Weeks 2–6', es: 'Semanas 2–6', zh: '第 2–6 周'},
+      goal: {en: 'Rebuild strength', es: 'Recuperar la fuerza', zh: '恢复力量'},
       moves: [
-        {en: 'Thigh: bridges, then slow hamstring curls. Calf: heel raises. Groin: squeezing a ball between the knees.', zh: '大腿：臀桥，再做慢速腿弯举。小腿：提踵。腹股沟：双膝夹球。'},
-        {en: 'Jog, then run faster, as long as it stays pain-free.', zh: '先慢跑，不疼的话再逐渐加速。'}
+        {en: 'Thigh: bridges, then slow hamstring curls. Calf: heel raises. Groin: squeezing a ball between the knees.', es: 'Muslo: puentes, después curl de isquiotibiales lento. Pantorrilla: elevaciones de talones. Ingle: apretar una pelota entre las rodillas.', zh: '大腿：臀桥，再做慢速腿弯举。小腿：提踵。腹股沟：双膝夹球。'},
+        {en: 'Jog, then run faster, as long as it stays pain-free.', es: 'Trota, después corre más rápido, siempre que no duela.', zh: '先慢跑，不疼的话再逐渐加速。'}
       ]
     },
     {
-      when: {en: 'Back to sport', zh: '恢复运动'},
-      goal: {en: 'Ready when you can sprint and change direction without pain', zh: '能全速冲刺、变向都不疼，就可以恢复运动'},
+      when: {en: 'Back to sport', es: 'Volver al deporte', zh: '恢复运动'},
+      goal: {en: 'Ready when you can sprint and change direction without pain', es: 'Listo cuando puedas esprintar y cambiar de dirección sin dolor', zh: '能全速冲刺、变向都不疼，就可以恢复运动'},
       moves: [
-        {en: 'Keep doing strength work twice a week to prevent it happening again.', zh: '每周继续做两次力量训练，防止再次拉伤。'},
-        {en: 'Warm up properly before every session.', zh: '每次运动前好好热身。'}
+        {en: 'Keep doing strength work twice a week to prevent it happening again.', es: 'Sigue con ejercicios de fuerza dos veces por semana para que no vuelva a pasar.', zh: '每周继续做两次力量训练，防止再次拉伤。'},
+        {en: 'Warm up properly before every session.', es: 'Calienta bien antes de cada sesión.', zh: '每次运动前好好热身。'}
       ]
     }
   ]
@@ -487,37 +499,37 @@ var MUSCLE_STRAIN = {
 
 var OTHER_DISLOCATION = {
   id: 'dislocation',
-  name: {en: 'Other dislocation', zh: '其他关节脱位'},
-  hint: {en: 'Shoulder, elbow, finger…', zh: '肩膀、手肘、手指……'},
+  name: {en: 'Other dislocation', es: 'Otra luxación', zh: '其他关节脱位'},
+  hint: {en: 'Shoulder, elbow, finger…', es: 'Hombro, codo, dedo…', zh: '肩膀、手肘、手指……'},
   questions: [
     {
       id: 'part',
-      text: {en: 'Which joint?', zh: '哪个关节？'},
+      text: {en: 'Which joint?', es: '¿Qué articulación?', zh: '哪个关节？'},
       options: [
-        {value: 'shoulder', text: {en: 'Shoulder or elbow', zh: '肩膀或手肘'}},
-        {value: 'finger', text: {en: 'Finger or toe', zh: '手指或脚趾'}}
+        {value: 'shoulder', text: {en: 'Shoulder or elbow', es: 'Hombro o codo', zh: '肩膀或手肘'}},
+        {value: 'finger', text: {en: 'Finger or toe', es: 'Dedo de la mano o del pie', zh: '手指或脚趾'}}
       ]
     },
     {
       id: 'inPlace',
-      text: {en: 'Is the joint still out of place?', zh: '关节现在还错位着吗？'},
+      text: {en: 'Is the joint still out of place?', es: '¿La articulación sigue fuera de su sitio?', zh: '关节现在还错位着吗？'},
       options: [
-        {value: 'out', text: {en: 'Yes, still out', zh: '是，还错位着'}},
-        {value: 'back', text: {en: 'No, it went back', zh: '没有，已经回去了'}},
-        {value: 'unsure', text: {en: 'Not sure', zh: '不确定'}}
+        {value: 'out', text: {en: 'Yes, still out', es: 'Sí, sigue fuera', zh: '是，还错位着'}},
+        {value: 'back', text: {en: 'No, it went back', es: 'No, volvió a su sitio', zh: '没有，已经回去了'}},
+        {value: 'unsure', text: {en: 'Not sure', es: 'No lo sé', zh: '不确定'}}
       ]
     },
     {
       id: 'numb',
-      text: {en: 'Is the arm, hand or finger beyond it numb, cold or pale?', zh: '远端的手臂、手或手指发麻、发凉、发白吗？'},
+      text: {en: 'Is the arm, hand or finger beyond it numb, cold or pale?', es: '¿El brazo, la mano o el dedo de más allá está dormido, frío o pálido?', zh: '远端的手臂、手或手指发麻、发凉、发白吗？'},
       options: YES_NO
     },
     {
       id: 'before',
-      text: {en: 'Has this joint dislocated before?', zh: '这个关节以前脱位过吗？'},
+      text: {en: 'Has this joint dislocated before?', es: '¿Se te ha salido esta articulación antes?', zh: '这个关节以前脱位过吗？'},
       options: [
-        {value: 'first', text: {en: 'No, this is the first time', zh: '没有，这是第一次'}},
-        {value: 'again', text: {en: 'Yes, it has happened before', zh: '有，以前发生过'}}
+        {value: 'first', text: {en: 'No, this is the first time', es: 'No, es la primera vez', zh: '没有，这是第一次'}},
+        {value: 'again', text: {en: 'Yes, it has happened before', es: 'Sí, ya me pasó antes', zh: '有，以前发生过'}}
       ]
     }
   ],
@@ -531,56 +543,57 @@ var OTHER_DISLOCATION = {
   firstAid: [
     STOP,
     NO_PUSH_BACK,
-    {en: 'Keep it still in the position that hurts least. Support an arm with a sling or against the body.', zh: '保持在最不疼的姿势不要动。手臂可以用三角巾吊起来，或者贴着身体托住。'},
-    {en: 'Take off rings or watches before it swells.', zh: '趁还没肿，摘掉戒指和手表。'},
+    {en: 'Keep it still in the position that hurts least. Support an arm with a sling or against the body.', es: 'Mantenla quieta en la posición que menos duela. Sujeta el brazo con un cabestrillo o pegado al cuerpo.', zh: '保持在最不疼的姿势不要动。手臂可以用三角巾吊起来，或者贴着身体托住。'},
+    {en: 'Take off rings or watches before it swells.', es: 'Quítate anillos o relojes antes de que se hinche.', zh: '趁还没肿，摘掉戒指和手表。'},
     ICE
   ],
   where: {
-    emergency: [CALL_EMERGENCY, {en: 'A doctor will put the joint back and take an X-ray.', zh: '医生会把关节复位，并拍 X 光片。'}],
+    emergency: [CALL_EMERGENCY, {en: 'A doctor will put the joint back and take an X-ray.', es: 'Un médico volverá a colocar la articulación y hará una radiografía.', zh: '医生会把关节复位，并拍 X 光片。'}],
     today: [
-      {en: 'Today: urgent care or the ER to put it back and take an X-ray, since a small bone can break too.', zh: '今天去急诊复位并拍 X 光片，因为小骨头也可能一起骨折。'}
+      {en: 'Today: urgent care or the ER to put it back and take an X-ray, since a small bone can break too.', es: 'Hoy: una clínica de atención inmediata o urgencias para colocarla y hacer una radiografía, porque también puede romperse un hueso pequeño.', zh: '今天去急诊复位并拍 X 光片，因为小骨头也可能一起骨折。'}
     ],
     soon: [
-      {en: 'Within 1–2 days: orthopedics or sports medicine, even if it feels fine. It still needs an X-ray.', zh: '1–2 天内挂骨科或运动医学科，就算感觉没事也要去，还是需要拍 X 光片。'}
+      {en: 'Within 1–2 days: orthopedics or sports medicine, even if it feels fine. It still needs an X-ray.', es: 'En 1–2 días: traumatología o medicina deportiva, aunque se sienta bien. Igual necesita una radiografía.', zh: '1–2 天内挂骨科或运动医学科，就算感觉没事也要去，还是需要拍 X 光片。'}
     ]
   },
   extraWhere: function (a) {
     if (a.before !== 'again') return [];
     return [{
       en: 'Because it has happened before, ask a sports medicine surgeon whether surgery to stabilize the joint makes sense.',
+      es: 'Como ya te pasó antes, pregunta a un cirujano de medicina deportiva si conviene una operación para estabilizar la articulación.',
       zh: '因为不是第一次了，可以问问运动医学科的医生，是否需要做稳定关节的手术。'
     }];
   },
-  rehabNote: {en: 'Start only after a doctor has checked it. A finger usually takes weeks; a shoulder takes months.', zh: '要等医生检查过以后再开始。手指一般要几周，肩膀要几个月。'},
+  rehabNote: {en: 'Start only after a doctor has checked it. A finger usually takes weeks; a shoulder takes months.', es: 'Empieza solo después de que un médico la revise. Un dedo suele tardar semanas; un hombro, meses.', zh: '要等医生检查过以后再开始。手指一般要几周，肩膀要几个月。'},
   rehab: [
     {
-      when: {en: 'Weeks 0–2', zh: '第 0–2 周'},
-      goal: {en: 'Let it settle', zh: '让关节稳定下来'},
+      when: {en: 'Weeks 0–2', es: 'Semanas 0–2', zh: '第 0–2 周'},
+      goal: {en: 'Let it settle', es: 'Dejar que se asiente', zh: '让关节稳定下来'},
       moves: [
-        {en: 'Shoulder: sling as the doctor says; move the hand and wrist. Finger: tape it to the next finger.', zh: '肩膀：按医生说的戴三角巾，活动手和手腕。手指：和旁边的手指绑在一起。'}
+        {en: 'Shoulder: sling as the doctor says; move the hand and wrist. Finger: tape it to the next finger.', es: 'Hombro: cabestrillo como diga el médico; mueve la mano y la muñeca. Dedo: sujétalo con cinta al dedo de al lado.', zh: '肩膀：按医生说的戴三角巾，活动手和手腕。手指：和旁边的手指绑在一起。'}
       ]
     },
     {
-      when: {en: 'Weeks 2–6', zh: '第 2–6 周'},
-      goal: {en: 'Get movement back', zh: '恢复活动范围'},
+      when: {en: 'Weeks 2–6', es: 'Semanas 2–6', zh: '第 2–6 周'},
+      goal: {en: 'Get movement back', es: 'Recuperar el movimiento', zh: '恢复活动范围'},
       moves: [
-        {en: 'Shoulder: let the arm swing like a pendulum, then slide the hand up a wall.', zh: '肩膀：手臂自然下垂、像钟摆一样晃动，然后练手沿着墙往上爬。'},
-        {en: 'Finger: bend and straighten gently many times a day.', zh: '手指：一天多次轻轻弯曲、伸直。'}
+        {en: 'Shoulder: let the arm swing like a pendulum, then slide the hand up a wall.', es: 'Hombro: deja que el brazo se balancee como un péndulo, después desliza la mano hacia arriba por una pared.', zh: '肩膀：手臂自然下垂、像钟摆一样晃动，然后练手沿着墙往上爬。'},
+        {en: 'Finger: bend and straighten gently many times a day.', es: 'Dedo: dóblalo y estíralo con suavidad muchas veces al día.', zh: '手指：一天多次轻轻弯曲、伸直。'}
       ]
     },
     {
-      when: {en: 'Weeks 6–12', zh: '第 6–12 周'},
-      goal: {en: 'Build strength', zh: '增强力量'},
+      when: {en: 'Weeks 6–12', es: 'Semanas 6–12', zh: '第 6–12 周'},
+      goal: {en: 'Build strength', es: 'Ganar fuerza', zh: '增强力量'},
       moves: [
-        {en: 'Shoulder: resistance band rotations in and out, shoulder blade squeezes.', zh: '肩膀：弹力带内旋、外旋，夹肩胛骨。'},
-        {en: 'Finger: squeeze a soft ball.', zh: '手指：捏软球。'}
+        {en: 'Shoulder: resistance band rotations in and out, shoulder blade squeezes.', es: 'Hombro: rotaciones hacia dentro y hacia fuera con banda elástica, juntar los omóplatos.', zh: '肩膀：弹力带内旋、外旋，夹肩胛骨。'},
+        {en: 'Finger: squeeze a soft ball.', es: 'Dedo: aprieta una pelota blanda.', zh: '手指：捏软球。'}
       ]
     },
     {
-      when: {en: 'Back to sport', zh: '恢复运动'},
-      goal: {en: 'Ready when it is strong and stable and your doctor agrees', zh: '力量够了、关节稳定，并且医生同意后，再恢复运动'},
+      when: {en: 'Back to sport', es: 'Volver al deporte', zh: '恢复运动'},
+      goal: {en: 'Ready when it is strong and stable and your doctor agrees', es: 'Listo cuando esté fuerte y estable y tu médico esté de acuerdo', zh: '力量够了、关节稳定，并且医生同意后，再恢复运动'},
       moves: [
-        {en: 'Start with non-contact drills. Tape a finger for the first weeks.', zh: '先做没有身体接触的练习。手指在前几周要贴扎保护。'}
+        {en: 'Start with non-contact drills. Tape a finger for the first weeks.', es: 'Empieza con ejercicios sin contacto. Venda el dedo las primeras semanas.', zh: '先做没有身体接触的练习。手指在前几周要贴扎保护。'}
       ]
     }
   ]
@@ -588,30 +601,30 @@ var OTHER_DISLOCATION = {
 
 var FRACTURE = {
   id: 'fracture',
-  name: {en: 'Broken bone', zh: '骨折'},
-  hint: {en: 'A bone might be cracked or broken', zh: '骨头可能裂了或断了'},
+  name: {en: 'Broken bone', es: 'Hueso roto', zh: '骨折'},
+  hint: {en: 'A bone might be cracked or broken', es: 'Un hueso puede estar fisurado o roto', zh: '骨头可能裂了或断了'},
   questions: [
     {
       id: 'open',
-      text: {en: 'Is a bone poking through the skin, is the limb bent the wrong way, or is the hand or foot beyond it numb, cold or pale?', zh: '骨头刺破皮肤了吗？肢体弯成了不正常的形状吗？或者远端的手脚发麻、发凉、发白？'},
+      text: {en: 'Is a bone poking through the skin, is the limb bent the wrong way, or is the hand or foot beyond it numb, cold or pale?', es: '¿Sale un hueso por la piel, el brazo o la pierna está doblado hacia donde no debe, o la mano o el pie de más allá está dormido, frío o pálido?', zh: '骨头刺破皮肤了吗？肢体弯成了不正常的形状吗？或者远端的手脚发麻、发凉、发白？'},
       options: YES_NO
     },
     {
       id: 'spine',
-      text: {en: 'Is it the neck, back, hip or thigh?', zh: '伤的是脖子、背、髋部或大腿吗？'},
+      text: {en: 'Is it the neck, back, hip or thigh?', es: '¿Es el cuello, la espalda, la cadera o el muslo?', zh: '伤的是脖子、背、髋部或大腿吗？'},
       options: YES_NO
     },
     {
       id: 'bonePain',
-      text: {en: 'Does pressing on one spot of the bone hurt sharply?', zh: '按骨头上的某一个点，会剧烈疼痛吗？'},
+      text: {en: 'Does pressing on one spot of the bone hurt sharply?', es: '¿Duele mucho al presionar un punto del hueso?', zh: '按骨头上的某一个点，会剧烈疼痛吗？'},
       options: YES_NO
     },
     {
       id: 'use',
-      text: {en: 'Can you move it or put weight on it?', zh: '还能活动，或者能承重吗？'},
+      text: {en: 'Can you move it or put weight on it?', es: '¿Puedes moverlo o apoyar peso?', zh: '还能活动，或者能承重吗？'},
       options: [
-        {value: 'yes', text: {en: 'Yes, almost normally', zh: '能，差不多正常'}},
-        {value: 'no', text: {en: 'No, or only with a lot of pain', zh: '不能，或者非常疼'}}
+        {value: 'yes', text: {en: 'Yes, almost normally', es: 'Sí, casi con normalidad', zh: '能，差不多正常'}},
+        {value: 'no', text: {en: 'No, or only with a lot of pain', es: 'No, o solo con mucho dolor', zh: '不能，或者非常疼'}}
       ]
     }
   ],
@@ -623,51 +636,51 @@ var FRACTURE = {
     return 'soon';
   },
   firstAid: [
-    {en: 'Do not move the injured part. If the neck or back might be hurt, do not move the person at all.', zh: '不要移动受伤的部位。如果可能伤到脖子或背，完全不要移动伤者。'},
-    {en: 'Splint it in the position you found it, using something stiff (a board, rolled magazine), covering the joint above and below.', zh: '用硬的东西（木板、卷起来的杂志）按原来的姿势固定，要连同上下两个关节一起固定。'},
-    {en: 'If bone is through the skin, cover it with a clean cloth. Do not push it back.', zh: '如果骨头刺破了皮肤，用干净的布盖住，不要把它推回去。'},
+    {en: 'Do not move the injured part. If the neck or back might be hurt, do not move the person at all.', es: 'No muevas la parte lesionada. Si el cuello o la espalda pueden estar lesionados, no muevas a la persona en absoluto.', zh: '不要移动受伤的部位。如果可能伤到脖子或背，完全不要移动伤者。'},
+    {en: 'Splint it in the position you found it, using something stiff (a board, rolled magazine), covering the joint above and below.', es: 'Inmovilízalo en la posición en que lo encontraste con algo rígido (una tabla, una revista enrollada), cubriendo la articulación de arriba y la de abajo.', zh: '用硬的东西（木板、卷起来的杂志）按原来的姿势固定，要连同上下两个关节一起固定。'},
+    {en: 'If bone is through the skin, cover it with a clean cloth. Do not push it back.', es: 'Si el hueso sale por la piel, cúbrelo con un paño limpio. No lo empujes hacia dentro.', zh: '如果骨头刺破了皮肤，用干净的布盖住，不要把它推回去。'},
     ICE,
-    {en: 'Do not eat or drink until a doctor says so, in case surgery is needed.', zh: '医生同意之前不要吃东西、喝水，以防需要手术。'}
+    {en: 'Do not eat or drink until a doctor says so, in case surgery is needed.', es: 'No comas ni bebas hasta que un médico lo diga, por si hace falta operar.', zh: '医生同意之前不要吃东西、喝水，以防需要手术。'}
   ],
   where: {
-    emergency: [CALL_EMERGENCY, {en: 'Wait for the ambulance rather than moving the person yourself.', zh: '等救护车来，不要自己搬动伤者。'}],
+    emergency: [CALL_EMERGENCY, {en: 'Wait for the ambulance rather than moving the person yourself.', es: 'Espera a la ambulancia en vez de mover tú a la persona.', zh: '等救护车来，不要自己搬动伤者。'}],
     today: [
-      {en: 'Today: urgent care or the ER for an X-ray.', zh: '今天去急诊或骨科拍 X 光片。'},
-      {en: 'Keep it splinted on the way. Have someone drive you.', zh: '路上保持固定，让别人开车送你去。'}
+      {en: 'Today: urgent care or the ER for an X-ray.', es: 'Hoy: una clínica de atención inmediata o urgencias para una radiografía.', zh: '今天去急诊或骨科拍 X 光片。'},
+      {en: 'Keep it splinted on the way. Have someone drive you.', es: 'Mantenlo inmovilizado en el camino. Que otra persona conduzca.', zh: '路上保持固定，让别人开车送你去。'}
     ],
     soon: [
-      {en: 'Probably not broken, but if pain is still there in a few days, see orthopedics for an X-ray.', zh: '大概率没有骨折。但如果几天后还疼，挂骨科拍 X 光片。'}
+      {en: 'Probably not broken, but if pain is still there in a few days, see orthopedics for an X-ray.', es: 'Probablemente no está roto, pero si el dolor sigue en unos días, ve a traumatología para una radiografía.', zh: '大概率没有骨折。但如果几天后还疼，挂骨科拍 X 光片。'}
     ]
   },
-  rehabNote: {en: 'Only after a doctor confirms the bone is healing. Most bones take 6–12 weeks.', zh: '要等医生确认骨头在愈合以后。大部分骨折需要 6–12 周愈合。'},
+  rehabNote: {en: 'Only after a doctor confirms the bone is healing. Most bones take 6–12 weeks.', es: 'Solo después de que un médico confirme que el hueso se está curando. La mayoría de los huesos tardan 6–12 semanas.', zh: '要等医生确认骨头在愈合以后。大部分骨折需要 6–12 周愈合。'},
   rehab: [
     {
-      when: {en: 'In the cast or brace', zh: '打石膏或戴护具期间'},
-      goal: {en: 'Keep the rest of the body working', zh: '保持身体其他部位的活动'},
+      when: {en: 'In the cast or brace', es: 'Con yeso o férula', zh: '打石膏或戴护具期间'},
+      goal: {en: 'Keep the rest of the body working', es: 'Mantener activo el resto del cuerpo', zh: '保持身体其他部位的活动'},
       moves: [
-        {en: 'Move the joints that are not in the cast, like the fingers or toes.', zh: '活动没被石膏固定的关节，比如手指、脚趾。'},
-        {en: 'Train the uninjured parts if your doctor agrees.', zh: '医生同意的话，可以锻炼没受伤的部位。'}
+        {en: 'Move the joints that are not in the cast, like the fingers or toes.', es: 'Mueve las articulaciones que no están en el yeso, como los dedos de las manos o de los pies.', zh: '活动没被石膏固定的关节，比如手指、脚趾。'},
+        {en: 'Train the uninjured parts if your doctor agrees.', es: 'Entrena las partes no lesionadas si tu médico está de acuerdo.', zh: '医生同意的话，可以锻炼没受伤的部位。'}
       ]
     },
     {
-      when: {en: 'Cast off', zh: '拆石膏以后'},
-      goal: {en: 'Get movement back', zh: '恢复活动范围'},
+      when: {en: 'Cast off', es: 'Sin yeso', zh: '拆石膏以后'},
+      goal: {en: 'Get movement back', es: 'Recuperar el movimiento', zh: '恢复活动范围'},
       moves: [
-        {en: 'Gentle range-of-motion exercises, ideally with a physical therapist.', zh: '做轻柔的关节活动练习，最好在康复师指导下做。'}
+        {en: 'Gentle range-of-motion exercises, ideally with a physical therapist.', es: 'Ejercicios suaves de movilidad, mejor con un fisioterapeuta.', zh: '做轻柔的关节活动练习，最好在康复师指导下做。'}
       ]
     },
     {
-      when: {en: 'Weeks after', zh: '之后几周'},
-      goal: {en: 'Rebuild strength', zh: '恢复力量'},
+      when: {en: 'Weeks after', es: 'Semanas después', zh: '之后几周'},
+      goal: {en: 'Rebuild strength', es: 'Recuperar la fuerza', zh: '恢复力量'},
       moves: [
-        {en: 'Strength work for the muscles around the bone, increasing slowly.', zh: '锻炼骨头周围的肌肉，慢慢加量。'}
+        {en: 'Strength work for the muscles around the bone, increasing slowly.', es: 'Ejercicios de fuerza para los músculos alrededor del hueso, aumentando poco a poco.', zh: '锻炼骨头周围的肌肉，慢慢加量。'}
       ]
     },
     {
-      when: {en: 'Back to sport', zh: '恢复运动'},
-      goal: {en: 'When your doctor confirms the bone has healed', zh: '医生确认骨头愈合以后'},
+      when: {en: 'Back to sport', es: 'Volver al deporte', zh: '恢复运动'},
+      goal: {en: 'When your doctor confirms the bone has healed', es: 'Cuando tu médico confirme que el hueso se ha curado', zh: '医生确认骨头愈合以后'},
       moves: [
-        {en: 'Build back up gradually. Contact sports usually come last.', zh: '慢慢恢复训练量。有身体对抗的运动通常最后才恢复。'}
+        {en: 'Build back up gradually. Contact sports usually come last.', es: 'Vuelve poco a poco. Los deportes de contacto suelen ser lo último.', zh: '慢慢恢复训练量。有身体对抗的运动通常最后才恢复。'}
       ]
     }
   ]
@@ -675,22 +688,22 @@ var FRACTURE = {
 
 var CONCUSSION = {
   id: 'concussion',
-  name: {en: 'Head injury (concussion)', zh: '脑震荡'},
-  hint: {en: 'A hit to the head', zh: '头部被撞'},
+  name: {en: 'Head injury (concussion)', es: 'Golpe en la cabeza (conmoción)', zh: '脑震荡'},
+  hint: {en: 'A hit to the head', es: 'Un golpe en la cabeza', zh: '头部被撞'},
   questions: [
     {
       id: 'danger',
-      text: {en: 'Any of these: passed out, vomiting more than once, a headache that keeps getting worse, a seizure, weak or numb arms or legs, slurred speech, getting more confused or drowsy?', zh: '有没有以下任何一种：昏迷过、吐了不止一次、头越来越疼、抽搐、手脚无力或发麻、说话不清、越来越糊涂或想睡？'},
+      text: {en: 'Any of these: passed out, vomiting more than once, a headache that keeps getting worse, a seizure, weak or numb arms or legs, slurred speech, getting more confused or drowsy?', es: '¿Alguno de estos: desmayo, vomitar más de una vez, un dolor de cabeza que empeora, una convulsión, brazos o piernas débiles o dormidos, hablar arrastrando las palabras, cada vez más confusión o somnolencia?', zh: '有没有以下任何一种：昏迷过、吐了不止一次、头越来越疼、抽搐、手脚无力或发麻、说话不清、越来越糊涂或想睡？'},
       options: YES_NO
     },
     {
       id: 'neck',
-      text: {en: 'Is there neck pain, or tingling in the arms or legs?', zh: '脖子疼吗？或者手脚有刺痛感？'},
+      text: {en: 'Is there neck pain, or tingling in the arms or legs?', es: '¿Hay dolor de cuello u hormigueo en brazos o piernas?', zh: '脖子疼吗？或者手脚有刺痛感？'},
       options: YES_NO
     },
     {
       id: 'symptoms',
-      text: {en: 'Any headache, dizziness, nausea, blurry vision, feeling foggy, or trouble remembering what happened?', zh: '有没有头疼、头晕、恶心、看东西模糊、脑子发懵，或者想不起刚才发生了什么？'},
+      text: {en: 'Any headache, dizziness, nausea, blurry vision, feeling foggy, or trouble remembering what happened?', es: '¿Hay dolor de cabeza, mareo, náuseas, visión borrosa, sensación de niebla mental o problemas para recordar lo que pasó?', zh: '有没有头疼、头晕、恶心、看东西模糊、脑子发懵，或者想不起刚才发生了什么？'},
       options: YES_NO
     }
   ],
@@ -702,50 +715,50 @@ var CONCUSSION = {
     return 'selfCare';
   },
   firstAid: [
-    {en: 'Stop playing and do not go back in today, even if you feel fine.', zh: '马上停止运动，今天不要再上场，就算感觉没事也不行。'},
-    {en: 'If the neck might be hurt, do not move the person.', zh: '如果可能伤到脖子，不要移动伤者。'},
-    {en: 'Someone should stay with the injured person for the next few hours and watch for the danger signs above.', zh: '接下来几个小时要有人陪着，留意上面提到的危险信号。'},
-    {en: 'Rest. No alcohol. Ask a doctor before taking pain medicine.', zh: '休息，不要喝酒。吃止痛药之前先问医生。'}
+    {en: 'Stop playing and do not go back in today, even if you feel fine.', es: 'Deja de jugar y no vuelvas hoy, aunque te sientas bien.', zh: '马上停止运动，今天不要再上场，就算感觉没事也不行。'},
+    {en: 'If the neck might be hurt, do not move the person.', es: 'Si el cuello puede estar lesionado, no muevas a la persona.', zh: '如果可能伤到脖子，不要移动伤者。'},
+    {en: 'Someone should stay with the injured person for the next few hours and watch for the danger signs above.', es: 'Alguien debe quedarse con la persona lesionada las próximas horas y vigilar las señales de peligro de arriba.', zh: '接下来几个小时要有人陪着，留意上面提到的危险信号。'},
+    {en: 'Rest. No alcohol. Ask a doctor before taking pain medicine.', es: 'Descansa. Nada de alcohol. Pregunta a un médico antes de tomar analgésicos.', zh: '休息，不要喝酒。吃止痛药之前先问医生。'}
   ],
   where: {
-    emergency: [CALL_EMERGENCY, {en: 'Keep the head and neck still until help arrives.', zh: '救护人员到之前，保持头和脖子不动。'}],
+    emergency: [CALL_EMERGENCY, {en: 'Keep the head and neck still until help arrives.', es: 'Mantén quietos la cabeza y el cuello hasta que llegue la ayuda.', zh: '救护人员到之前，保持头和脖子不动。'}],
     today: [
-      {en: 'Today: a doctor (urgent care, the ER, or sports medicine) to check for a concussion.', zh: '今天去看医生（急诊或运动医学科），检查是不是脑震荡。'},
-      {en: 'Go to the ER right away if any danger sign appears later.', zh: '之后如果出现任何危险信号，马上去急诊。'}
+      {en: 'Today: a doctor (urgent care, the ER, or sports medicine) to check for a concussion.', es: 'Hoy: un médico (atención inmediata, urgencias o medicina deportiva) para revisar si hay conmoción.', zh: '今天去看医生（急诊或运动医学科），检查是不是脑震荡。'},
+      {en: 'Go to the ER right away if any danger sign appears later.', es: 'Ve a urgencias enseguida si aparece alguna señal de peligro más tarde.', zh: '之后如果出现任何危险信号，马上去急诊。'}
     ],
     selfCare: [
-      {en: 'No visit needed right now, but watch closely for 24–48 hours.', zh: '现在不需要去医院，但接下来 24–48 小时要密切观察。'},
-      {en: 'See a doctor if any symptom appears, and go to the ER for any danger sign.', zh: '出现任何症状就去看医生，出现危险信号马上去急诊。'}
+      {en: 'No visit needed right now, but watch closely for 24–48 hours.', es: 'Ahora no hace falta ir al médico, pero vigila de cerca durante 24–48 horas.', zh: '现在不需要去医院，但接下来 24–48 小时要密切观察。'},
+      {en: 'See a doctor if any symptom appears, and go to the ER for any danger sign.', es: 'Ve al médico si aparece algún síntoma, y a urgencias ante cualquier señal de peligro.', zh: '出现任何症状就去看医生，出现危险信号马上去急诊。'}
     ]
   },
-  rehabNote: {en: 'Spend at least 24 hours on each step. If symptoms come back, go back one step. Return to contact sport only with a doctor\'s OK.', zh: '每一步至少 24 小时。如果症状又出现了，退回上一步。要等医生同意才能恢复有身体对抗的运动。'},
+  rehabNote: {en: 'Spend at least 24 hours on each step. If symptoms come back, go back one step. Return to contact sport only with a doctor\'s OK.', es: 'Pasa al menos 24 horas en cada paso. Si vuelven los síntomas, retrocede un paso. Vuelve al deporte de contacto solo con el visto bueno de un médico.', zh: '每一步至少 24 小时。如果症状又出现了，退回上一步。要等医生同意才能恢复有身体对抗的运动。'},
   rehab: [
     {
-      when: {en: 'Days 1–2', zh: '第 1–2 天'},
-      goal: {en: 'Rest the brain', zh: '让大脑休息'},
+      when: {en: 'Days 1–2', es: 'Días 1–2', zh: '第 1–2 天'},
+      goal: {en: 'Rest the brain', es: 'Descansar el cerebro', zh: '让大脑休息'},
       moves: [
-        {en: 'Light daily activity only. Short breaks from screens and reading.', zh: '只做轻度日常活动，少看屏幕、少读书。'}
+        {en: 'Light daily activity only. Short breaks from screens and reading.', es: 'Solo actividad diaria ligera. Descansos cortos de pantallas y lectura.', zh: '只做轻度日常活动，少看屏幕、少读书。'}
       ]
     },
     {
-      when: {en: 'Step 2', zh: '第 2 步'},
-      goal: {en: 'Light exercise', zh: '轻度运动'},
+      when: {en: 'Step 2', es: 'Paso 2', zh: '第 2 步'},
+      goal: {en: 'Light exercise', es: 'Ejercicio ligero', zh: '轻度运动'},
       moves: [
-        {en: 'Walking or a stationary bike, as long as symptoms do not get worse.', zh: '散步或骑固定自行车，只要症状不加重。'}
+        {en: 'Walking or a stationary bike, as long as symptoms do not get worse.', es: 'Caminar o bicicleta estática, siempre que los síntomas no empeoren.', zh: '散步或骑固定自行车，只要症状不加重。'}
       ]
     },
     {
-      when: {en: 'Step 3', zh: '第 3 步'},
-      goal: {en: 'Sport drills without contact', zh: '没有身体接触的专项练习'},
+      when: {en: 'Step 3', es: 'Paso 3', zh: '第 3 步'},
+      goal: {en: 'Sport drills without contact', es: 'Ejercicios de tu deporte sin contacto', zh: '没有身体接触的专项练习'},
       moves: [
-        {en: 'Running and ball drills, no heading and no contact.', zh: '跑步、球类练习，不顶球、不对抗。'}
+        {en: 'Running and ball drills, no heading and no contact.', es: 'Correr y ejercicios con balón, sin cabezazos ni contacto.', zh: '跑步、球类练习，不顶球、不对抗。'}
       ]
     },
     {
-      when: {en: 'Back to sport', zh: '恢复运动'},
-      goal: {en: 'Full practice, then games, after a doctor clears you', zh: '医生同意后，先参加完整训练，再参加比赛'},
+      when: {en: 'Back to sport', es: 'Volver al deporte', zh: '恢复运动'},
+      goal: {en: 'Full practice, then games, after a doctor clears you', es: 'Entrenamiento completo y después partidos, cuando un médico te dé el alta', zh: '医生同意后，先参加完整训练，再参加比赛'},
       moves: [
-        {en: 'Full-contact practice first, then return to games.', zh: '先做有身体接触的完整训练，再恢复比赛。'}
+        {en: 'Full-contact practice first, then return to games.', es: 'Primero entrenamiento con contacto completo, después vuelta a los partidos.', zh: '先做有身体接触的完整训练，再恢复比赛。'}
       ]
     }
   ]
@@ -753,34 +766,34 @@ var CONCUSSION = {
 
 var BRUISE = {
   id: 'bruise',
-  name: {en: 'Bruise', zh: '撞伤淤青'},
-  hint: {en: 'Hit by a ball, knee or elbow', zh: '被球、膝盖、手肘撞到'},
+  name: {en: 'Bruise', es: 'Contusión', zh: '撞伤淤青'},
+  hint: {en: 'Hit by a ball, knee or elbow', es: 'Golpe de un balón, una rodilla o un codo', zh: '被球、膝盖、手肘撞到'},
   questions: [
     {
       id: 'tense',
-      text: {en: 'Is the area rock-hard and tight, with pain that keeps getting worse, or numbness and tingling?', zh: '受伤的地方变得硬邦邦、绷得很紧，疼得越来越厉害，或者发麻、刺痛吗？'},
+      text: {en: 'Is the area rock-hard and tight, with pain that keeps getting worse, or numbness and tingling?', es: '¿La zona está dura como una piedra y tensa, con dolor que no para de empeorar, o adormecimiento y hormigueo?', zh: '受伤的地方变得硬邦邦、绷得很紧，疼得越来越厉害，或者发麻、刺痛吗？'},
       options: YES_NO
     },
     {
       id: 'trunk',
-      text: {en: 'Was it a hit to the chest, belly or lower back, with trouble breathing, belly pain or blood in the urine?', zh: '是胸口、肚子或腰被撞，并且呼吸困难、肚子疼或者尿里有血吗？'},
+      text: {en: 'Was it a hit to the chest, belly or lower back, with trouble breathing, belly pain or blood in the urine?', es: '¿Fue un golpe en el pecho, el vientre o la parte baja de la espalda, con dificultad para respirar, dolor de vientre o sangre en la orina?', zh: '是胸口、肚子或腰被撞，并且呼吸困难、肚子疼或者尿里有血吗？'},
       options: YES_NO
     },
     {
       id: 'use',
-      text: {en: 'Can you move it normally?', zh: '还能正常活动吗？'},
+      text: {en: 'Can you move it normally?', es: '¿Puedes moverlo con normalidad?', zh: '还能正常活动吗？'},
       options: [
-        {value: 'yes', text: {en: 'Yes', zh: '能'}},
-        {value: 'pain', text: {en: 'Yes, but it hurts', zh: '能，但很疼'}},
-        {value: 'no', text: {en: 'No', zh: '不能'}}
+        {value: 'yes', text: {en: 'Yes', es: 'Sí', zh: '能'}},
+        {value: 'pain', text: {en: 'Yes, but it hurts', es: 'Sí, pero duele', zh: '能，但很疼'}},
+        {value: 'no', text: {en: 'No', es: 'No', zh: '不能'}}
       ]
     },
     {
       id: 'swelling',
-      text: {en: 'How big is the swelling?', zh: '肿得有多大？'},
+      text: {en: 'How big is the swelling?', es: '¿Qué tamaño tiene la hinchazón?', zh: '肿得有多大？'},
       options: [
-        {value: 'small', text: {en: 'Small', zh: '一小块'}},
-        {value: 'large', text: {en: 'Large', zh: '一大片'}}
+        {value: 'small', text: {en: 'Small', es: 'Pequeña', zh: '一小块'}},
+        {value: 'large', text: {en: 'Large', es: 'Grande', zh: '一大片'}}
       ]
     }
   ],
@@ -796,49 +809,49 @@ var BRUISE = {
     STOP,
     ICE,
     COMPRESS,
-    {en: 'For a bruised thigh, keep the knee bent as far as is comfortable while icing for the first day.', zh: '如果是大腿被撞，第一天冰敷时让膝盖尽量弯着（不疼的程度）。'},
+    {en: 'For a bruised thigh, keep the knee bent as far as is comfortable while icing for the first day.', es: 'Para una contusión en el muslo, mantén la rodilla doblada todo lo que sea cómodo mientras pones hielo el primer día.', zh: '如果是大腿被撞，第一天冰敷时让膝盖尽量弯着（不疼的程度）。'},
     NO_HEAT
   ],
   where: {
     emergency: [CALL_EMERGENCY],
     today: [
-      {en: 'Today: urgent care or the ER for an X-ray, in case a bone is broken.', zh: '今天去急诊或骨科拍 X 光片，以防骨折。'}
+      {en: 'Today: urgent care or the ER for an X-ray, in case a bone is broken.', es: 'Hoy: una clínica de atención inmediata o urgencias para una radiografía, por si hay un hueso roto.', zh: '今天去急诊或骨科拍 X 光片，以防骨折。'}
     ],
     soon: [
-      {en: 'Within a few days: a sports medicine doctor, especially if a hard lump stays in the muscle.', zh: '几天内挂运动医学科，尤其是肌肉里一直有硬块的话。'}
+      {en: 'Within a few days: a sports medicine doctor, especially if a hard lump stays in the muscle.', es: 'En unos días: un médico de medicina deportiva, sobre todo si queda un bulto duro en el músculo.', zh: '几天内挂运动医学科，尤其是肌肉里一直有硬块的话。'}
     ],
     selfCare: [
-      {en: 'No visit needed. Bruises usually fade in 1–2 weeks.', zh: '不需要去医院。淤青一般 1–2 周会消退。'}
+      {en: 'No visit needed. Bruises usually fade in 1–2 weeks.', es: 'No hace falta ir al médico. Los moratones suelen desaparecer en 1–2 semanas.', zh: '不需要去医院。淤青一般 1–2 周会消退。'}
     ]
   },
-  rehabNote: {en: 'Never massage a deep bruise hard; it can cause bone to form in the muscle.', zh: '深层淤青不要用力按摩，可能导致肌肉里长出骨化的硬块。'},
+  rehabNote: {en: 'Never massage a deep bruise hard; it can cause bone to form in the muscle.', es: 'Nunca masajees con fuerza una contusión profunda; puede hacer que se forme hueso dentro del músculo.', zh: '深层淤青不要用力按摩，可能导致肌肉里长出骨化的硬块。'},
   rehab: [
     {
-      when: {en: 'Days 0–2', zh: '第 0–2 天'},
-      goal: {en: 'Limit bleeding under the skin', zh: '减少皮下出血'},
+      when: {en: 'Days 0–2', es: 'Días 0–2', zh: '第 0–2 天'},
+      goal: {en: 'Limit bleeding under the skin', es: 'Limitar el sangrado bajo la piel', zh: '减少皮下出血'},
       moves: [
-        {en: 'Rest, ice and compression (see above).', zh: '休息、冰敷、加压包扎（见上面）。'}
+        {en: 'Rest, ice and compression (see above).', es: 'Reposo, hielo y compresión (ver arriba).', zh: '休息、冰敷、加压包扎（见上面）。'}
       ]
     },
     {
-      when: {en: 'Days 2–7', zh: '第 2–7 天'},
-      goal: {en: 'Get movement back', zh: '恢复活动'},
+      when: {en: 'Days 2–7', es: 'Días 2–7', zh: '第 2–7 天'},
+      goal: {en: 'Get movement back', es: 'Recuperar el movimiento', zh: '恢复活动'},
       moves: [
-        {en: 'Gentle stretching and walking. Warmth is fine now.', zh: '轻柔拉伸和散步。这时可以热敷了。'}
+        {en: 'Gentle stretching and walking. Warmth is fine now.', es: 'Estiramientos suaves y caminar. Ahora ya se puede aplicar calor.', zh: '轻柔拉伸和散步。这时可以热敷了。'}
       ]
     },
     {
-      when: {en: 'Weeks 1–3', zh: '第 1–3 周'},
-      goal: {en: 'Rebuild strength', zh: '恢复力量'},
+      when: {en: 'Weeks 1–3', es: 'Semanas 1–3', zh: '第 1–3 周'},
+      goal: {en: 'Rebuild strength', es: 'Recuperar la fuerza', zh: '恢复力量'},
       moves: [
-        {en: 'Light strength exercises for the bruised muscle, then jogging.', zh: '对受伤的肌肉做轻度力量练习，然后慢跑。'}
+        {en: 'Light strength exercises for the bruised muscle, then jogging.', es: 'Ejercicios de fuerza ligeros para el músculo golpeado, después trotar.', zh: '对受伤的肌肉做轻度力量练习，然后慢跑。'}
       ]
     },
     {
-      when: {en: 'Back to sport', zh: '恢复运动'},
-      goal: {en: 'Ready when movement and strength are back to normal', zh: '活动范围和力量恢复正常，就可以恢复运动'},
+      when: {en: 'Back to sport', es: 'Volver al deporte', zh: '恢复运动'},
+      goal: {en: 'Ready when movement and strength are back to normal', es: 'Listo cuando el movimiento y la fuerza vuelvan a la normalidad', zh: '活动范围和力量恢复正常，就可以恢复运动'},
       moves: [
-        {en: 'Wear padding over the spot for a while.', zh: '一段时间内在受伤部位戴护垫。'}
+        {en: 'Wear padding over the spot for a while.', es: 'Lleva protección acolchada sobre la zona durante un tiempo.', zh: '一段时间内在受伤部位戴护垫。'}
       ]
     }
   ]
@@ -846,30 +859,30 @@ var BRUISE = {
 
 var WOUND = {
   id: 'wound',
-  name: {en: 'Cuts and scrapes', zh: '擦伤、割伤'},
-  hint: {en: 'Skin broken, bleeding', zh: '皮肤破了、流血'},
+  name: {en: 'Cuts and scrapes', es: 'Cortes y raspones', zh: '擦伤、割伤'},
+  hint: {en: 'Skin broken, bleeding', es: 'Piel abierta, sangrado', zh: '皮肤破了、流血'},
   questions: [
     {
       id: 'bleeding',
-      text: {en: 'Is blood spurting, or is it still bleeding after 10 minutes of firm pressure?', zh: '血是喷出来的吗？或者用力按压 10 分钟后还在流血？'},
+      text: {en: 'Is blood spurting, or is it still bleeding after 10 minutes of firm pressure?', es: '¿La sangre sale a chorros, o sigue sangrando después de 10 minutos de presión firme?', zh: '血是喷出来的吗？或者用力按压 10 分钟后还在流血？'},
       options: YES_NO
     },
     {
       id: 'deep',
-      text: {en: 'Is it deep or gaping, longer than about 1–2 cm, or on the face or over a joint?', zh: '伤口深或者张开着、长度超过 1–2 厘米，或者在脸上、关节上吗？'},
+      text: {en: 'Is it deep or gaping, longer than about 1–2 cm, or on the face or over a joint?', es: '¿Es profunda o abierta, de más de 1–2 cm, o en la cara o sobre una articulación?', zh: '伤口深或者张开着、长度超过 1–2 厘米，或者在脸上、关节上吗？'},
       options: YES_NO
     },
     {
       id: 'dirty',
-      text: {en: 'Is it very dirty, from something rusty, or with dirt you cannot rinse out?', zh: '伤口很脏、是被生锈的东西弄伤的，或者有冲不掉的脏东西吗？'},
+      text: {en: 'Is it very dirty, from something rusty, or with dirt you cannot rinse out?', es: '¿Está muy sucia, la hizo algo oxidado, o tiene tierra que no sale al enjuagar?', zh: '伤口很脏、是被生锈的东西弄伤的，或者有冲不掉的脏东西吗？'},
       options: YES_NO
     },
     {
       id: 'infected',
-      text: {en: 'If it happened days ago: is it getting redder, warmer, more swollen, or oozing pus?', zh: '如果是几天前受的伤：伤口越来越红、发热、更肿，或者流脓吗？'},
+      text: {en: 'If it happened days ago: is it getting redder, warmer, more swollen, or oozing pus?', es: 'Si pasó hace días: ¿se está poniendo más roja, más caliente, más hinchada o sale pus?', zh: '如果是几天前受的伤：伤口越来越红、发热、更肿，或者流脓吗？'},
       options: [
-        {value: 'no', text: {en: 'No / it just happened', zh: '没有 / 刚受伤'}},
-        {value: 'yes', text: {en: 'Yes', zh: '是'}}
+        {value: 'no', text: {en: 'No / it just happened', es: 'No / acaba de pasar', zh: '没有 / 刚受伤'}},
+        {value: 'yes', text: {en: 'Yes', es: 'Sí', zh: '是'}}
       ]
     }
   ],
@@ -881,50 +894,50 @@ var WOUND = {
     return 'selfCare';
   },
   firstAid: [
-    {en: 'Press firmly on the wound with a clean cloth for 10 minutes without lifting it.', zh: '用干净的布用力按住伤口 10 分钟，中间不要松开看。'},
-    {en: 'Rinse it under clean running water and remove dirt.', zh: '用干净的流动水冲洗伤口，把脏东西冲掉。'},
-    {en: 'Cover with a clean bandage. A thin layer of antibiotic ointment helps.', zh: '用干净的纱布或创可贴盖好，可以薄涂一层抗生素药膏。'},
-    {en: 'If something is stuck deep in the wound, leave it in and pad around it.', zh: '如果有东西扎在伤口深处，不要拔出来，在周围垫上纱布固定。'}
+    {en: 'Press firmly on the wound with a clean cloth for 10 minutes without lifting it.', es: 'Presiona firmemente la herida con un paño limpio durante 10 minutos sin levantarlo.', zh: '用干净的布用力按住伤口 10 分钟，中间不要松开看。'},
+    {en: 'Rinse it under clean running water and remove dirt.', es: 'Enjuágala con agua limpia corriente y quita la suciedad.', zh: '用干净的流动水冲洗伤口，把脏东西冲掉。'},
+    {en: 'Cover with a clean bandage. A thin layer of antibiotic ointment helps.', es: 'Cúbrela con un apósito limpio. Una capa fina de pomada antibiótica ayuda.', zh: '用干净的纱布或创可贴盖好，可以薄涂一层抗生素药膏。'},
+    {en: 'If something is stuck deep in the wound, leave it in and pad around it.', es: 'Si hay algo clavado profundo en la herida, déjalo y pon acolchado alrededor.', zh: '如果有东西扎在伤口深处，不要拔出来，在周围垫上纱布固定。'}
   ],
   where: {
-    emergency: [CALL_EMERGENCY, {en: 'Keep pressing on the wound until help arrives.', zh: '救护人员到之前，一直按住伤口。'}],
+    emergency: [CALL_EMERGENCY, {en: 'Keep pressing on the wound until help arrives.', es: 'Sigue presionando la herida hasta que llegue la ayuda.', zh: '救护人员到之前，一直按住伤口。'}],
     today: [
-      {en: 'Today, within 6–8 hours if possible: urgent care or the ER for cleaning and stitches.', zh: '今天去，最好在 6–8 小时内：去急诊或外科清创、缝针。'},
-      {en: 'Ask about a tetanus shot if your last one was more than 5 years ago.', zh: '如果上次打破伤风针已经超过 5 年，问医生要不要打。'}
+      {en: 'Today, within 6–8 hours if possible: urgent care or the ER for cleaning and stitches.', es: 'Hoy, si es posible en 6–8 horas: una clínica de atención inmediata o urgencias para limpiarla y poner puntos.', zh: '今天去，最好在 6–8 小时内：去急诊或外科清创、缝针。'},
+      {en: 'Ask about a tetanus shot if your last one was more than 5 years ago.', es: 'Pregunta por la vacuna del tétanos si la última fue hace más de 5 años.', zh: '如果上次打破伤风针已经超过 5 年，问医生要不要打。'}
     ],
     selfCare: [
-      {en: 'No visit needed. Keep it clean and covered.', zh: '不需要去医院，保持伤口干净、盖好。'},
-      {en: 'See a doctor if it gets redder, warmer or oozes pus.', zh: '如果伤口越来越红、发热或流脓，去看医生。'}
+      {en: 'No visit needed. Keep it clean and covered.', es: 'No hace falta ir al médico. Mantenla limpia y cubierta.', zh: '不需要去医院，保持伤口干净、盖好。'},
+      {en: 'See a doctor if it gets redder, warmer or oozes pus.', es: 'Ve al médico si se pone más roja, más caliente o sale pus.', zh: '如果伤口越来越红、发热或流脓，去看医生。'}
     ]
   },
-  rehabNote: {en: 'Most scrapes heal in 1–2 weeks.', zh: '大部分擦伤 1–2 周能长好。'},
+  rehabNote: {en: 'Most scrapes heal in 1–2 weeks.', es: 'La mayoría de los raspones se curan en 1–2 semanas.', zh: '大部分擦伤 1–2 周能长好。'},
   rehab: [
     {
-      when: {en: 'Days 0–2', zh: '第 0–2 天'},
-      goal: {en: 'Keep it clean', zh: '保持干净'},
+      when: {en: 'Days 0–2', es: 'Días 0–2', zh: '第 0–2 天'},
+      goal: {en: 'Keep it clean', es: 'Mantenerla limpia', zh: '保持干净'},
       moves: [
-        {en: 'Change the bandage daily or when it gets wet or dirty.', zh: '每天换药，弄湿或弄脏了也要换。'}
+        {en: 'Change the bandage daily or when it gets wet or dirty.', es: 'Cambia el apósito cada día o cuando se moje o ensucie.', zh: '每天换药，弄湿或弄脏了也要换。'}
       ]
     },
     {
-      when: {en: 'Days 2–7', zh: '第 2–7 天'},
-      goal: {en: 'Watch for infection', zh: '留意感染'},
+      when: {en: 'Days 2–7', es: 'Días 2–7', zh: '第 2–7 天'},
+      goal: {en: 'Watch for infection', es: 'Vigilar la infección', zh: '留意感染'},
       moves: [
-        {en: 'Check for spreading redness, heat, pus or fever.', zh: '检查有没有红肿扩散、发热、流脓或发烧。'}
+        {en: 'Check for spreading redness, heat, pus or fever.', es: 'Revisa si hay enrojecimiento que se extiende, calor, pus o fiebre.', zh: '检查有没有红肿扩散、发热、流脓或发烧。'}
       ]
     },
     {
-      when: {en: 'Healing', zh: '愈合期'},
-      goal: {en: 'Let the skin close', zh: '让皮肤长好'},
+      when: {en: 'Healing', es: 'Cicatrización', zh: '愈合期'},
+      goal: {en: 'Let the skin close', es: 'Dejar que la piel se cierre', zh: '让皮肤长好'},
       moves: [
-        {en: 'Do not pick the scab. Stitches come out after 5–14 days, at a clinic.', zh: '不要抠痂。缝的针一般 5–14 天后去医院拆。'}
+        {en: 'Do not pick the scab. Stitches come out after 5–14 days, at a clinic.', es: 'No te quites la costra. Los puntos se quitan a los 5–14 días, en una clínica.', zh: '不要抠痂。缝的针一般 5–14 天后去医院拆。'}
       ]
     },
     {
-      when: {en: 'Back to sport', zh: '恢复运动'},
-      goal: {en: 'When the wound is closed, or well covered', zh: '伤口长好，或者能被保护好以后'},
+      when: {en: 'Back to sport', es: 'Volver al deporte', zh: '恢复运动'},
+      goal: {en: 'When the wound is closed, or well covered', es: 'Cuando la herida esté cerrada o bien cubierta', zh: '伤口长好，或者能被保护好以后'},
       moves: [
-        {en: 'Cover it during sport, and avoid swimming pools until it has closed.', zh: '运动时盖好伤口，长好之前不要去游泳池。'}
+        {en: 'Cover it during sport, and avoid swimming pools until it has closed.', es: 'Cúbrela durante el deporte y evita las piscinas hasta que se cierre.', zh: '运动时盖好伤口，长好之前不要去游泳池。'}
       ]
     }
   ]
@@ -932,27 +945,27 @@ var WOUND = {
 
 var CRAMP = {
   id: 'cramp',
-  name: {en: 'Muscle cramp', zh: '抽筋'},
-  hint: {en: 'Muscle suddenly locks tight', zh: '肌肉突然绷紧、抽搐'},
+  name: {en: 'Muscle cramp', es: 'Calambre muscular', zh: '抽筋'},
+  hint: {en: 'Muscle suddenly locks tight', es: 'El músculo se agarrota de golpe', zh: '肌肉突然绷紧、抽搐'},
   questions: [
     {
       id: 'heat',
-      text: {en: 'Is the person also confused, very hot, or vomiting?', zh: '同时有意识不清、身体很烫，或者呕吐吗？'},
+      text: {en: 'Is the person also confused, very hot, or vomiting?', es: '¿La persona además está confundida, muy caliente o vomitando?', zh: '同时有意识不清、身体很烫，或者呕吐吗？'},
       options: YES_NO
     },
     {
       id: 'swollen',
-      text: {en: 'Is the leg swollen, red and warm, and does it hurt even at rest?', zh: '腿肿、发红、发热，而且不动的时候也疼吗？'},
+      text: {en: 'Is the leg swollen, red and warm, and does it hurt even at rest?', es: '¿La pierna está hinchada, roja y caliente, y duele incluso en reposo?', zh: '腿肿、发红、发热，而且不动的时候也疼吗？'},
       options: YES_NO
     },
     {
       id: 'eased',
-      text: {en: 'Did it ease within about 10 minutes of stretching?', zh: '拉伸后大约 10 分钟内缓解了吗？'},
+      text: {en: 'Did it ease within about 10 minutes of stretching?', es: '¿Se alivió en unos 10 minutos de estiramiento?', zh: '拉伸后大约 10 分钟内缓解了吗？'},
       options: YES_NO
     },
     {
       id: 'often',
-      text: {en: 'Does this happen to you often?', zh: '经常抽筋吗？'},
+      text: {en: 'Does this happen to you often?', es: '¿Te pasa a menudo?', zh: '经常抽筋吗？'},
       options: YES_NO
     }
   ],
@@ -965,46 +978,46 @@ var CRAMP = {
     return 'selfCare';
   },
   firstAid: [
-    {en: 'Stop and gently stretch the muscle. For a calf, straighten the knee and pull the toes toward you.', zh: '停下来，轻轻拉伸抽筋的肌肉。小腿抽筋就把腿伸直，把脚尖往自己方向拉。'},
-    {en: 'Rub the muscle gently.', zh: '轻轻揉一揉这块肌肉。'},
-    {en: 'Drink water, or a sports drink if you have been sweating a lot.', zh: '喝水；如果出了很多汗，喝运动饮料。'},
-    {en: 'Warmth helps soreness afterwards.', zh: '之后如果肌肉酸痛，可以热敷。'}
+    {en: 'Stop and gently stretch the muscle. For a calf, straighten the knee and pull the toes toward you.', es: 'Para y estira el músculo con suavidad. Para la pantorrilla, estira la rodilla y tira de los dedos del pie hacia ti.', zh: '停下来，轻轻拉伸抽筋的肌肉。小腿抽筋就把腿伸直，把脚尖往自己方向拉。'},
+    {en: 'Rub the muscle gently.', es: 'Frota el músculo con suavidad.', zh: '轻轻揉一揉这块肌肉。'},
+    {en: 'Drink water, or a sports drink if you have been sweating a lot.', es: 'Bebe agua, o una bebida deportiva si has sudado mucho.', zh: '喝水；如果出了很多汗，喝运动饮料。'},
+    {en: 'Warmth helps soreness afterwards.', es: 'El calor ayuda con las molestias después.', zh: '之后如果肌肉酸痛，可以热敷。'}
   ],
   where: {
-    emergency: [CALL_EMERGENCY, {en: 'This may be heat stroke: see Heat illness and start cooling now.', zh: '这可能是中暑：看“中暑”那一类，马上开始降温。'}],
+    emergency: [CALL_EMERGENCY, {en: 'This may be heat stroke: see Heat illness and start cooling now.', es: 'Puede ser un golpe de calor: mira Enfermedad por calor y empieza a enfriar ahora.', zh: '这可能是中暑：看“中暑”那一类，马上开始降温。'}],
     today: [
-      {en: 'Today: a doctor or the ER, to check for a blood clot in the leg.', zh: '今天去看医生或急诊，检查腿里是不是有血栓。'}
+      {en: 'Today: a doctor or the ER, to check for a blood clot in the leg.', es: 'Hoy: un médico o urgencias, para descartar un coágulo de sangre en la pierna.', zh: '今天去看医生或急诊，检查腿里是不是有血栓。'}
     ],
     soon: [
-      {en: 'Within a few days: a general or sports medicine doctor, to check for a cause.', zh: '几天内去看全科或运动医学科，查一下原因。'}
+      {en: 'Within a few days: a general or sports medicine doctor, to check for a cause.', es: 'En unos días: un médico de cabecera o de medicina deportiva, para buscar la causa.', zh: '几天内去看全科或运动医学科，查一下原因。'}
     ],
     selfCare: [
-      {en: 'No visit needed.', zh: '不需要去医院。'}
+      {en: 'No visit needed.', es: 'No hace falta ir al médico.', zh: '不需要去医院。'}
     ]
   },
-  rehabNote: {en: 'Cramps usually pass quickly; these steps help prevent the next one.', zh: '抽筋一般很快就好，下面这些方法可以预防下一次。'},
+  rehabNote: {en: 'Cramps usually pass quickly; these steps help prevent the next one.', es: 'Los calambres suelen pasar rápido; estos pasos ayudan a prevenir el siguiente.', zh: '抽筋一般很快就好，下面这些方法可以预防下一次。'},
   rehab: [
     {
-      when: {en: 'Right after', zh: '刚缓解以后'},
-      goal: {en: 'Let the muscle recover', zh: '让肌肉恢复'},
+      when: {en: 'Right after', es: 'Justo después', zh: '刚缓解以后'},
+      goal: {en: 'Let the muscle recover', es: 'Dejar que el músculo se recupere', zh: '让肌肉恢复'},
       moves: [
-        {en: 'Light stretching. Stop for the day if it keeps coming back.', zh: '轻柔拉伸。如果反复抽筋，今天就不要再练了。'}
+        {en: 'Light stretching. Stop for the day if it keeps coming back.', es: 'Estiramientos ligeros. Para por hoy si sigue volviendo.', zh: '轻柔拉伸。如果反复抽筋，今天就不要再练了。'}
       ]
     },
     {
-      when: {en: 'Next 1–2 days', zh: '之后 1–2 天'},
-      goal: {en: 'Ease soreness', zh: '缓解酸痛'},
+      when: {en: 'Next 1–2 days', es: 'Los próximos 1–2 días', zh: '之后 1–2 天'},
+      goal: {en: 'Ease soreness', es: 'Aliviar las molestias', zh: '缓解酸痛'},
       moves: [
-        {en: 'Light activity, gentle stretching, drink enough.', zh: '轻度活动、轻柔拉伸、多喝水。'}
+        {en: 'Light activity, gentle stretching, drink enough.', es: 'Actividad ligera, estiramientos suaves, bebe lo suficiente.', zh: '轻度活动、轻柔拉伸、多喝水。'}
       ]
     },
     {
-      when: {en: 'Prevention', zh: '预防'},
-      goal: {en: 'Stop it happening again', zh: '防止再次抽筋'},
+      when: {en: 'Prevention', es: 'Prevención', zh: '预防'},
+      goal: {en: 'Stop it happening again', es: 'Evitar que vuelva a pasar', zh: '防止再次抽筋'},
       moves: [
-        {en: 'Warm up properly and stretch the calves and thighs.', zh: '好好热身，拉伸小腿和大腿。'},
-        {en: 'Drink before and during long or hot sessions.', zh: '长时间或高温下运动，运动前和运动中都要喝水。'},
-        {en: 'Build up training gradually.', zh: '训练量慢慢增加。'}
+        {en: 'Warm up properly and stretch the calves and thighs.', es: 'Calienta bien y estira pantorrillas y muslos.', zh: '好好热身，拉伸小腿和大腿。'},
+        {en: 'Drink before and during long or hot sessions.', es: 'Bebe antes y durante las sesiones largas o con calor.', zh: '长时间或高温下运动，运动前和运动中都要喝水。'},
+        {en: 'Build up training gradually.', es: 'Aumenta el entrenamiento poco a poco.', zh: '训练量慢慢增加。'}
       ]
     }
   ]
@@ -1012,30 +1025,30 @@ var CRAMP = {
 
 var OVERUSE = {
   id: 'overuse',
-  name: {en: 'Overuse pain', zh: '劳损'},
-  hint: {en: 'Pain that built up over time: shins, Achilles, knee, elbow…', zh: '慢慢累积的疼：胫骨、跟腱、膝盖、手肘……'},
+  name: {en: 'Overuse pain', es: 'Dolor por sobrecarga', zh: '劳损'},
+  hint: {en: 'Pain that built up over time: shins, Achilles, knee, elbow…', es: 'Dolor que fue apareciendo con el tiempo: espinillas, Aquiles, rodilla, codo…', zh: '慢慢累积的疼：胫骨、跟腱、膝盖、手肘……'},
   questions: [
     {
       id: 'boneSpot',
-      text: {en: 'Is there one spot on a bone that hurts to press and gets worse with every step or jump?', zh: '骨头上有一个点按着疼，而且每走一步、每跳一下都更疼吗？'},
+      text: {en: 'Is there one spot on a bone that hurts to press and gets worse with every step or jump?', es: '¿Hay un punto en un hueso que duele al presionarlo y empeora con cada paso o salto?', zh: '骨头上有一个点按着疼，而且每走一步、每跳一下都更疼吗？'},
       options: YES_NO
     },
     {
       id: 'rest',
-      text: {en: 'Does it hurt even at rest or at night?', zh: '休息或晚上睡觉时也疼吗？'},
+      text: {en: 'Does it hurt even at rest or at night?', es: '¿Duele incluso en reposo o por la noche?', zh: '休息或晚上睡觉时也疼吗？'},
       options: YES_NO
     },
     {
       id: 'limp',
-      text: {en: 'Does the pain change how you move (limping, holding back)?', zh: '疼得让你改变了动作吗？（一瘸一拐、不敢用力）'},
+      text: {en: 'Does the pain change how you move (limping, holding back)?', es: '¿El dolor cambia tu forma de moverte (cojear, contenerte)?', zh: '疼得让你改变了动作吗？（一瘸一拐、不敢用力）'},
       options: YES_NO
     },
     {
       id: 'weeks',
-      text: {en: 'How long has it hurt?', zh: '疼了多久？'},
+      text: {en: 'How long has it hurt?', es: '¿Cuánto tiempo hace que duele?', zh: '疼了多久？'},
       options: [
-        {value: 'short', text: {en: 'Less than 2 weeks', zh: '不到 2 周'}},
-        {value: 'long', text: {en: '2 weeks or more', zh: '2 周或更久'}}
+        {value: 'short', text: {en: 'Less than 2 weeks', es: 'Menos de 2 semanas', zh: '不到 2 周'}},
+        {value: 'long', text: {en: '2 weeks or more', es: '2 semanas o más', zh: '2 周或更久'}}
       ]
     }
   ],
@@ -1046,49 +1059,49 @@ var OVERUSE = {
     return 'selfCare';
   },
   firstAid: [
-    {en: 'Cut back the activity that hurts. Pain during exercise should stay at 3 out of 10 or less.', zh: '减少引起疼痛的运动。运动时疼痛不要超过 3 分（满分 10 分）。'},
-    {en: 'Switch to something that does not hurt, like cycling or swimming.', zh: '换成不疼的运动，比如骑车、游泳。'},
-    {en: 'Ice after activity can ease the pain.', zh: '运动后冰敷可以减轻疼痛。'},
-    {en: 'Think about what changed: more training, new shoes, a harder surface?', zh: '想一想最近有什么变化：训练量加大了？换了鞋？场地变硬了？'}
+    {en: 'Cut back the activity that hurts. Pain during exercise should stay at 3 out of 10 or less.', es: 'Reduce la actividad que duele. El dolor durante el ejercicio debe quedarse en 3 de 10 o menos.', zh: '减少引起疼痛的运动。运动时疼痛不要超过 3 分（满分 10 分）。'},
+    {en: 'Switch to something that does not hurt, like cycling or swimming.', es: 'Cámbiate a algo que no duela, como bicicleta o natación.', zh: '换成不疼的运动，比如骑车、游泳。'},
+    {en: 'Ice after activity can ease the pain.', es: 'Poner hielo después de la actividad puede aliviar el dolor.', zh: '运动后冰敷可以减轻疼痛。'},
+    {en: 'Think about what changed: more training, new shoes, a harder surface?', es: 'Piensa en qué cambió: ¿más entrenamiento, zapatillas nuevas, una superficie más dura?', zh: '想一想最近有什么变化：训练量加大了？换了鞋？场地变硬了？'}
   ],
   where: {
     soon: [
-      {en: 'Within a few days: a sports medicine doctor or a physical therapist.', zh: '几天内挂运动医学科，或找康复师（物理治疗师）。'},
-      {en: 'One painful spot on a bone can be a stress fracture: stop running and jumping until it is checked.', zh: '骨头上一个点疼可能是应力性骨折：检查之前不要跑跳。'}
+      {en: 'Within a few days: a sports medicine doctor or a physical therapist.', es: 'En unos días: un médico de medicina deportiva o un fisioterapeuta.', zh: '几天内挂运动医学科，或找康复师（物理治疗师）。'},
+      {en: 'One painful spot on a bone can be a stress fracture: stop running and jumping until it is checked.', es: 'Un punto doloroso en un hueso puede ser una fractura por estrés: deja de correr y saltar hasta que lo revisen.', zh: '骨头上一个点疼可能是应力性骨折：检查之前不要跑跳。'}
     ],
     selfCare: [
-      {en: 'No visit needed yet.', zh: '暂时不需要去医院。'},
-      {en: 'If it is not better after 2 weeks of lighter training, see a sports medicine doctor.', zh: '如果减少训练 2 周后还没好转，挂运动医学科。'}
+      {en: 'No visit needed yet.', es: 'Todavía no hace falta ir al médico.', zh: '暂时不需要去医院。'},
+      {en: 'If it is not better after 2 weeks of lighter training, see a sports medicine doctor.', es: 'Si no mejora después de 2 semanas de entrenamiento más suave, ve a un médico de medicina deportiva.', zh: '如果减少训练 2 周后还没好转，挂运动医学科。'}
     ]
   },
-  rehabNote: {en: 'Overuse injuries heal with the right amount of load, not complete rest.', zh: '劳损靠的是合适的训练量来恢复，而不是完全不动。'},
+  rehabNote: {en: 'Overuse injuries heal with the right amount of load, not complete rest.', es: 'Las lesiones por sobrecarga se curan con la carga justa, no con reposo total.', zh: '劳损靠的是合适的训练量来恢复，而不是完全不动。'},
   rehab: [
     {
-      when: {en: 'Weeks 1–2', zh: '第 1–2 周'},
-      goal: {en: 'Calm it down', zh: '让疼痛平息'},
+      when: {en: 'Weeks 1–2', es: 'Semanas 1–2', zh: '第 1–2 周'},
+      goal: {en: 'Calm it down', es: 'Calmarlo', zh: '让疼痛平息'},
       moves: [
-        {en: 'Lower the load and cross-train without pain.', zh: '减少训练量，换成不疼的运动来保持体能。'}
+        {en: 'Lower the load and cross-train without pain.', es: 'Baja la carga y haz otro deporte sin dolor.', zh: '减少训练量，换成不疼的运动来保持体能。'}
       ]
     },
     {
-      when: {en: 'Weeks 2–6', zh: '第 2–6 周'},
-      goal: {en: 'Load the tissue slowly', zh: '慢慢给组织加负荷'},
+      when: {en: 'Weeks 2–6', es: 'Semanas 2–6', zh: '第 2–6 周'},
+      goal: {en: 'Load the tissue slowly', es: 'Cargar el tejido poco a poco', zh: '慢慢给组织加负荷'},
       moves: [
-        {en: 'Achilles: slow heel raises and lowers. Knee: wall sits. Elbow: slow wrist lifts with a light weight.', zh: '跟腱：慢速提踵、慢慢放下。膝盖：靠墙静蹲。手肘：拿轻重量慢慢抬手腕。'}
+        {en: 'Achilles: slow heel raises and lowers. Knee: wall sits. Elbow: slow wrist lifts with a light weight.', es: 'Aquiles: subir y bajar talones despacio. Rodilla: sentadilla en la pared. Codo: levantar la muñeca despacio con un peso ligero.', zh: '跟腱：慢速提踵、慢慢放下。膝盖：靠墙静蹲。手肘：拿轻重量慢慢抬手腕。'}
       ]
     },
     {
-      when: {en: 'Weeks 6–12', zh: '第 6–12 周'},
-      goal: {en: 'Build back up', zh: '逐步恢复训练'},
+      when: {en: 'Weeks 6–12', es: 'Semanas 6–12', zh: '第 6–12 周'},
+      goal: {en: 'Build back up', es: 'Volver a aumentar', zh: '逐步恢复训练'},
       moves: [
-        {en: 'Return to your sport, adding no more than about 10% more each week.', zh: '回到原来的运动，每周增加的量不超过约 10%。'}
+        {en: 'Return to your sport, adding no more than about 10% more each week.', es: 'Vuelve a tu deporte, sin aumentar más de un 10% aproximadamente cada semana.', zh: '回到原来的运动，每周增加的量不超过约 10%。'}
       ]
     },
     {
-      when: {en: 'Keep it away', zh: '预防复发'},
-      goal: {en: 'Stop it coming back', zh: '防止再次劳损'},
+      when: {en: 'Keep it away', es: 'Mantenerlo a raya', zh: '预防复发'},
+      goal: {en: 'Stop it coming back', es: 'Evitar que vuelva', zh: '防止再次劳损'},
       moves: [
-        {en: 'Strength training twice a week, rest days, and good shoes.', zh: '每周两次力量训练，安排休息日，穿合适的鞋。'}
+        {en: 'Strength training twice a week, rest days, and good shoes.', es: 'Entrenamiento de fuerza dos veces por semana, días de descanso y buen calzado.', zh: '每周两次力量训练，安排休息日，穿合适的鞋。'}
       ]
     }
   ]
@@ -1096,25 +1109,25 @@ var OVERUSE = {
 
 var HEAT_ILLNESS = {
   id: 'heat',
-  name: {en: 'Heat illness', zh: '中暑'},
-  hint: {en: 'Dizzy, sick or faint in the heat', zh: '天热运动后头晕、恶心、虚弱'},
+  name: {en: 'Heat illness', es: 'Enfermedad por calor', zh: '中暑'},
+  hint: {en: 'Dizzy, sick or faint in the heat', es: 'Mareo, malestar o desmayo con el calor', zh: '天热运动后头晕、恶心、虚弱'},
   questions: [
     {
       id: 'mind',
-      text: {en: 'Is the person confused, acting strangely, slurring words, fainting, or having a seizure?', zh: '伤者意识不清、行为反常、说话不清、晕倒或抽搐吗？'},
+      text: {en: 'Is the person confused, acting strangely, slurring words, fainting, or having a seizure?', es: '¿La persona está confundida, actúa de forma extraña, arrastra las palabras, se desmaya o tiene una convulsión?', zh: '伤者意识不清、行为反常、说话不清、晕倒或抽搐吗？'},
       options: YES_NO
     },
     {
       id: 'vomit',
-      text: {en: 'Are they vomiting or unable to keep drinks down?', zh: '在呕吐，或者喝不下水吗？'},
+      text: {en: 'Are they vomiting or unable to keep drinks down?', es: '¿Está vomitando o no puede retener líquidos?', zh: '在呕吐，或者喝不下水吗？'},
       options: YES_NO
     },
     {
       id: 'better',
-      text: {en: 'After 30 minutes resting somewhere cool and drinking, are they getting better?', zh: '在凉快的地方休息、喝水 30 分钟后，有没有好转？'},
+      text: {en: 'After 30 minutes resting somewhere cool and drinking, are they getting better?', es: 'Después de 30 minutos descansando en un lugar fresco y bebiendo, ¿está mejorando?', zh: '在凉快的地方休息、喝水 30 分钟后，有没有好转？'},
       options: [
-        {value: 'yes', text: {en: 'Yes, getting better', zh: '有，在好转'}},
-        {value: 'no', text: {en: 'No, or getting worse', zh: '没有，或者更严重了'}}
+        {value: 'yes', text: {en: 'Yes, getting better', es: 'Sí, está mejorando', zh: '有，在好转'}},
+        {value: 'no', text: {en: 'No, or getting worse', es: 'No, o está empeorando', zh: '没有，或者更严重了'}}
       ]
     }
   ],
@@ -1126,50 +1139,50 @@ var HEAT_ILLNESS = {
     return 'selfCare';
   },
   firstAid: [
-    {en: 'Stop exercising and move to shade or air conditioning.', zh: '停止运动，到阴凉处或有空调的地方。'},
-    {en: 'Take off extra clothing and gear.', zh: '脱掉多余的衣服和护具。'},
-    {en: 'Cool down fast: cold water on the skin, fanning, ice packs on the neck, armpits and groin. If confused, cool first (cold water tub if possible) while waiting for help.', zh: '尽快降温：往皮肤上浇冷水、扇风，在脖子、腋下、大腿根放冰袋。如果意识不清，等救护车时先降温（有条件的话泡冷水）。'},
-    {en: 'If fully alert, sip water or a sports drink. Do not give drinks to someone who is confused.', zh: '如果意识清醒，小口喝水或运动饮料。意识不清的人不要喂水。'},
-    {en: 'If dizzy, lie down and raise the legs.', zh: '如果头晕，躺下并把腿垫高。'}
+    {en: 'Stop exercising and move to shade or air conditioning.', es: 'Deja de hacer ejercicio y ve a la sombra o a un lugar con aire acondicionado.', zh: '停止运动，到阴凉处或有空调的地方。'},
+    {en: 'Take off extra clothing and gear.', es: 'Quítate la ropa y el equipo que sobren.', zh: '脱掉多余的衣服和护具。'},
+    {en: 'Cool down fast: cold water on the skin, fanning, ice packs on the neck, armpits and groin. If confused, cool first (cold water tub if possible) while waiting for help.', es: 'Enfría rápido: agua fría sobre la piel, abanicar, bolsas de hielo en el cuello, las axilas y las ingles. Si está confundida, enfría primero (bañera con agua fría si es posible) mientras esperas ayuda.', zh: '尽快降温：往皮肤上浇冷水、扇风，在脖子、腋下、大腿根放冰袋。如果意识不清，等救护车时先降温（有条件的话泡冷水）。'},
+    {en: 'If fully alert, sip water or a sports drink. Do not give drinks to someone who is confused.', es: 'Si está totalmente alerta, que beba a sorbos agua o una bebida deportiva. No des de beber a alguien que está confundido.', zh: '如果意识清醒，小口喝水或运动饮料。意识不清的人不要喂水。'},
+    {en: 'If dizzy, lie down and raise the legs.', es: 'Si hay mareo, acuéstate y levanta las piernas.', zh: '如果头晕，躺下并把腿垫高。'}
   ],
   where: {
-    emergency: [CALL_EMERGENCY, {en: 'Likely heat stroke. Keep cooling until help arrives.', zh: '很可能是热射病（重度中暑），救护车到之前一直降温。'}],
+    emergency: [CALL_EMERGENCY, {en: 'Likely heat stroke. Keep cooling until help arrives.', es: 'Probablemente es un golpe de calor. Sigue enfriando hasta que llegue la ayuda.', zh: '很可能是热射病（重度中暑），救护车到之前一直降温。'}],
     today: [
-      {en: 'Today: urgent care or the ER. They may need fluids through a drip.', zh: '今天去急诊，可能需要输液。'}
+      {en: 'Today: urgent care or the ER. They may need fluids through a drip.', es: 'Hoy: una clínica de atención inmediata o urgencias. Puede que necesite suero por vía intravenosa.', zh: '今天去急诊，可能需要输液。'}
     ],
     selfCare: [
-      {en: 'No visit needed. Rest for the rest of the day.', zh: '不需要去医院，今天剩下的时间好好休息。'},
-      {en: 'Go to the ER at once if confusion or fainting appears.', zh: '如果出现意识不清或晕倒，马上去急诊。'}
+      {en: 'No visit needed. Rest for the rest of the day.', es: 'No hace falta ir al médico. Descansa el resto del día.', zh: '不需要去医院，今天剩下的时间好好休息。'},
+      {en: 'Go to the ER at once if confusion or fainting appears.', es: 'Ve a urgencias enseguida si aparece confusión o desmayo.', zh: '如果出现意识不清或晕倒，马上去急诊。'}
     ]
   },
-  rehabNote: {en: 'After heat stroke, return to exercise only when a doctor says so.', zh: '如果是热射病（重度中暑），要等医生同意才能恢复运动。'},
+  rehabNote: {en: 'After heat stroke, return to exercise only when a doctor says so.', es: 'Después de un golpe de calor, vuelve al ejercicio solo cuando un médico lo diga.', zh: '如果是热射病（重度中暑），要等医生同意才能恢复运动。'},
   rehab: [
     {
-      when: {en: 'Days 0–1', zh: '第 0–1 天'},
-      goal: {en: 'Rest and rehydrate', zh: '休息、补水'},
+      when: {en: 'Days 0–1', es: 'Días 0–1', zh: '第 0–1 天'},
+      goal: {en: 'Rest and rehydrate', es: 'Descansar e hidratarse', zh: '休息、补水'},
       moves: [
-        {en: 'No exercise. Drink until your urine is pale yellow.', zh: '不运动。多喝水，直到尿液是淡黄色。'}
+        {en: 'No exercise. Drink until your urine is pale yellow.', es: 'Nada de ejercicio. Bebe hasta que la orina sea amarillo claro.', zh: '不运动。多喝水，直到尿液是淡黄色。'}
       ]
     },
     {
-      when: {en: 'Days 1–3', zh: '第 1–3 天'},
-      goal: {en: 'Light activity in the cool', zh: '在凉爽环境中轻度活动'},
+      when: {en: 'Days 1–3', es: 'Días 1–3', zh: '第 1–3 天'},
+      goal: {en: 'Light activity in the cool', es: 'Actividad ligera en un lugar fresco', zh: '在凉爽环境中轻度活动'},
       moves: [
-        {en: 'Short, easy sessions indoors or in the early morning.', zh: '在室内或清晨做短时间的轻松运动。'}
+        {en: 'Short, easy sessions indoors or in the early morning.', es: 'Sesiones cortas y fáciles bajo techo o a primera hora de la mañana.', zh: '在室内或清晨做短时间的轻松运动。'}
       ]
     },
     {
-      when: {en: 'Weeks 1–2', zh: '第 1–2 周'},
-      goal: {en: 'Get used to the heat again', zh: '重新适应高温'},
+      when: {en: 'Weeks 1–2', es: 'Semanas 1–2', zh: '第 1–2 周'},
+      goal: {en: 'Get used to the heat again', es: 'Volver a acostumbrarse al calor', zh: '重新适应高温'},
       moves: [
-        {en: 'Over 10–14 days, slowly make sessions in the heat longer and harder.', zh: '用 10–14 天，慢慢延长在高温下运动的时间和强度。'}
+        {en: 'Over 10–14 days, slowly make sessions in the heat longer and harder.', es: 'Durante 10–14 días, alarga y endurece poco a poco las sesiones con calor.', zh: '用 10–14 天，慢慢延长在高温下运动的时间和强度。'}
       ]
     },
     {
-      when: {en: 'Prevention', zh: '预防'},
-      goal: {en: 'Stop it happening again', zh: '防止再次中暑'},
+      when: {en: 'Prevention', es: 'Prevención', zh: '预防'},
+      goal: {en: 'Stop it happening again', es: 'Evitar que vuelva a pasar', zh: '防止再次中暑'},
       moves: [
-        {en: 'Drink before and during exercise, avoid the hottest hours, take breaks in the shade.', zh: '运动前和运动中都要喝水，避开最热的时段，在阴凉处休息。'}
+        {en: 'Drink before and during exercise, avoid the hottest hours, take breaks in the shade.', es: 'Bebe antes y durante el ejercicio, evita las horas de más calor, haz pausas a la sombra.', zh: '运动前和运动中都要喝水，避开最热的时段，在阴凉处休息。'}
       ]
     }
   ]
@@ -1179,81 +1192,84 @@ var HEAT_ILLNESS = {
 // which one before showing questions. Each has an icon and a color (hue,
 // 0-360) so the cards are easy to tell apart and the page feels warmer.
 var CATEGORIES = [
-  {id: 'sprain', name: {en: 'Sprain', zh: '扭伤'}, hint: {en: 'Ligaments: ankle, knee, wrist', zh: '韧带：脚踝、膝盖、手腕'}, injuries: [ANKLE_SPRAIN, OTHER_SPRAIN]},
-  {id: 'strain', name: {en: 'Strain', zh: '拉伤'}, hint: {en: 'Muscles and tendons', zh: '肌肉、肌腱'}, injuries: [MUSCLE_STRAIN]},
-  {id: 'dislocation', name: {en: 'Dislocation', zh: '脱位'}, hint: {en: 'A joint popped out', zh: '关节错位'}, injuries: [PATELLA_DISLOCATION, OTHER_DISLOCATION]},
-  {id: 'fracture', name: {en: 'Broken bone', zh: '骨折'}, hint: {en: 'Cracked or broken', zh: '骨头裂了或断了'}, injuries: [FRACTURE]},
-  {id: 'concussion', name: {en: 'Head injury', zh: '脑震荡'}, hint: {en: 'A hit to the head', zh: '头部被撞'}, injuries: [CONCUSSION]},
-  {id: 'bruise', name: {en: 'Bruise', zh: '撞伤淤青'}, hint: {en: 'Hit by a ball or body', zh: '被球或人撞到'}, injuries: [BRUISE]},
-  {id: 'wound', name: {en: 'Cuts and scrapes', zh: '擦伤割伤'}, hint: {en: 'Skin broken, bleeding', zh: '皮肤破了、流血'}, injuries: [WOUND]},
-  {id: 'cramp', name: {en: 'Cramp', zh: '抽筋'}, hint: {en: 'Muscle locks tight', zh: '肌肉突然绷紧'}, injuries: [CRAMP]},
-  {id: 'overuse', name: {en: 'Overuse pain', zh: '劳损'}, hint: {en: 'Built up over time', zh: '慢慢累积的疼'}, injuries: [OVERUSE]},
-  {id: 'heat', name: {en: 'Heat illness', zh: '中暑'}, hint: {en: 'Dizzy or sick in the heat', zh: '天热头晕、恶心'}, injuries: [HEAT_ILLNESS]}
+  {id: 'sprain', name: {en: 'Sprain', es: 'Esguince', zh: '扭伤'}, hint: {en: 'Ligaments: ankle, knee, wrist', es: 'Ligamentos: tobillo, rodilla, muñeca', zh: '韧带：脚踝、膝盖、手腕'}, injuries: [ANKLE_SPRAIN, OTHER_SPRAIN]},
+  {id: 'strain', name: {en: 'Strain', es: 'Distensión', zh: '拉伤'}, hint: {en: 'Muscles and tendons', es: 'Músculos y tendones', zh: '肌肉、肌腱'}, injuries: [MUSCLE_STRAIN]},
+  {id: 'dislocation', name: {en: 'Dislocation', es: 'Luxación', zh: '脱位'}, hint: {en: 'A joint popped out', es: 'Una articulación se salió', zh: '关节错位'}, injuries: [PATELLA_DISLOCATION, OTHER_DISLOCATION]},
+  {id: 'fracture', name: {en: 'Broken bone', es: 'Hueso roto', zh: '骨折'}, hint: {en: 'Cracked or broken', es: 'Fisurado o roto', zh: '骨头裂了或断了'}, injuries: [FRACTURE]},
+  {id: 'concussion', name: {en: 'Head injury', es: 'Golpe en la cabeza', zh: '脑震荡'}, hint: {en: 'A hit to the head', es: 'Un golpe en la cabeza', zh: '头部被撞'}, injuries: [CONCUSSION]},
+  {id: 'bruise', name: {en: 'Bruise', es: 'Contusión', zh: '撞伤淤青'}, hint: {en: 'Hit by a ball or body', es: 'Golpe de un balón o de otra persona', zh: '被球或人撞到'}, injuries: [BRUISE]},
+  {id: 'wound', name: {en: 'Cuts and scrapes', es: 'Cortes y raspones', zh: '擦伤割伤'}, hint: {en: 'Skin broken, bleeding', es: 'Piel abierta, sangrado', zh: '皮肤破了、流血'}, injuries: [WOUND]},
+  {id: 'cramp', name: {en: 'Cramp', es: 'Calambre', zh: '抽筋'}, hint: {en: 'Muscle locks tight', es: 'El músculo se agarrota', zh: '肌肉突然绷紧'}, injuries: [CRAMP]},
+  {id: 'overuse', name: {en: 'Overuse pain', es: 'Dolor por sobrecarga', zh: '劳损'}, hint: {en: 'Built up over time', es: 'Apareció con el tiempo', zh: '慢慢累积的疼'}, injuries: [OVERUSE]},
+  {id: 'heat', name: {en: 'Heat illness', es: 'Enfermedad por calor', zh: '中暑'}, hint: {en: 'Dizzy or sick in the heat', es: 'Mareo o malestar con el calor', zh: '天热头晕、恶心'}, injuries: [HEAT_ILLNESS]}
 ];
 
 var INJURIES = CATEGORIES.reduce(function (all, c) { return all.concat(c.injuries); }, []);
 
 // Signs that need emergency help whatever the injury, shown at the top.
 var RED_FLAGS = [
-  {en: 'A bone is visibly out of place or poking through the skin', zh: '骨头明显错位，或者刺破皮肤'},
-  {en: 'The foot or hand is numb, cold, pale or blue', zh: '手脚发麻、发凉、发白或发紫'},
-  {en: 'A hit to the head, then confusion, vomiting or passing out', zh: '头部被撞以后，出现意识不清、呕吐或昏迷'},
-  {en: 'Confused or collapsing after exercising in the heat', zh: '天热运动后意识不清或晕倒'},
-  {en: 'Pain too strong to move at all', zh: '疼得完全动不了'}
+  {en: 'A bone is visibly out of place or poking through the skin', es: 'Un hueso está claramente fuera de su sitio o sale por la piel', zh: '骨头明显错位，或者刺破皮肤'},
+  {en: 'The foot or hand is numb, cold, pale or blue', es: 'El pie o la mano está dormido, frío, pálido o morado', zh: '手脚发麻、发凉、发白或发紫'},
+  {en: 'A hit to the head, then confusion, vomiting or passing out', es: 'Un golpe en la cabeza, y después confusión, vómitos o desmayo', zh: '头部被撞以后，出现意识不清、呕吐或昏迷'},
+  {en: 'Confused or collapsing after exercising in the heat', es: 'Confusión o desmayo después de hacer ejercicio con calor', zh: '天热运动后意识不清或晕倒'},
+  {en: 'Pain too strong to move at all', es: 'Dolor tan fuerte que no se puede mover nada', zh: '疼得完全动不了'}
 ];
 
 // Comfort for the feelings that come with each stage of recovery, the same
 // for every injury. Shown after the rehab advice.
 var COMFORT_STAGES = [
   {
-    when: {en: 'Right after the injury', zh: '刚受伤的时候'},
+    when: {en: 'Right after the injury', es: 'Justo después de la lesión', zh: '刚受伤的时候'},
     words: {
       en: 'Feeling scared, angry or asking "why me" is normal. Your body is not failing you; it has already started to heal.',
+      es: 'Sentir miedo, rabia o preguntarte "¿por qué a mí?" es normal. Tu cuerpo no te está fallando; ya ha empezado a curarse.',
       zh: '害怕、生气、觉得"为什么偏偏是我"，都很正常。你的身体没有辜负你，它已经开始修复了。'
     },
-    tryThis: {en: 'Tell one person how you feel today, not only how the injury feels.', zh: '今天跟一个人说说你的心情，不只是伤口的情况。'}
+    tryThis: {en: 'Tell one person how you feel today, not only how the injury feels.', es: 'Cuéntale hoy a una persona cómo te sientes, no solo cómo está la lesión.', zh: '今天跟一个人说说你的心情，不只是伤口的情况。'}
   },
   {
-    when: {en: 'In the middle of recovery', zh: '恢复到一半的时候'},
+    when: {en: 'In the middle of recovery', es: 'En mitad de la recuperación', zh: '恢复到一半的时候'},
     words: {
       en: 'Progress can feel slow, and watching others train while you can\'t is hard. Slow days are still part of getting better.',
+      es: 'El progreso puede parecer lento, y ver a otros entrenar mientras tú no puedes es duro. Los días lentos también son parte de mejorar.',
       zh: '进步可能感觉很慢，看着别人训练自己却不能上场，很难受。慢的日子也是在变好。'
     },
-    tryThis: {en: 'Write down one small thing you could do today that you could not do last week.', zh: '记下一件今天能做到、上周还做不到的小事。'}
+    tryThis: {en: 'Write down one small thing you could do today that you could not do last week.', es: 'Escribe una cosa pequeña que hoy puedes hacer y la semana pasada no.', zh: '记下一件今天能做到、上周还做不到的小事。'}
   },
   {
-    when: {en: 'Getting ready to play again', zh: '准备回到运动的时候'},
+    when: {en: 'Getting ready to play again', es: 'Preparándote para volver a jugar', zh: '准备回到运动的时候'},
     words: {
       en: 'Being afraid of getting hurt again is common, even when your body is ready. Confidence comes back one session at a time.',
+      es: 'Tener miedo de volver a lesionarte es común, incluso cuando tu cuerpo está listo. La confianza vuelve sesión a sesión.',
       zh: '害怕再次受伤很常见，哪怕身体已经准备好了。信心会一次一次训练慢慢回来。'
     },
-    tryThis: {en: 'Start with an easy session you know you can finish, and notice that you did it.', zh: '先从一次肯定能完成的轻松训练开始，并告诉自己：我做到了。'}
+    tryThis: {en: 'Start with an easy session you know you can finish, and notice that you did it.', es: 'Empieza con una sesión fácil que sepas que puedes terminar, y date cuenta de que lo hiciste.', zh: '先从一次肯定能完成的轻松训练开始，并告诉自己：我做到了。'}
   }
 ];
 
 // Where to talk to a counselor. `href` opens the phone or the website.
 var COUNSELING = [
   {
-    name: {en: 'UIUC Counseling Center', zh: '伊利诺伊大学心理咨询中心'},
-    detail: {en: 'Free for students · 217-333-3704', zh: '学生免费 · 217-333-3704'},
+    name: {en: 'UIUC Counseling Center', es: 'Centro de Consejería de UIUC', zh: '伊利诺伊大学心理咨询中心'},
+    detail: {en: 'Free for students · 217-333-3704', es: 'Gratis para estudiantes · 217-333-3704', zh: '学生免费 · 217-333-3704'},
     links: [
-      {label: {en: 'Call', zh: '打电话'}, href: 'tel:+12173333704'},
-      {label: {en: 'Website', zh: '官网'}, href: 'https://counselingcenter.illinois.edu/'}
+      {label: {en: 'Call', es: 'Llamar', zh: '打电话'}, href: 'tel:+12173333704'},
+      {label: {en: 'Website', es: 'Sitio web', zh: '官网'}, href: 'https://counselingcenter.illinois.edu/'}
     ]
   },
   {
-    name: {en: '988 Lifeline (US)', zh: '988 心理危机热线（美国）'},
-    detail: {en: 'Call or text 988, any time', zh: '电话或短信 988，全天 24 小时'},
+    name: {en: '988 Lifeline (US)', es: 'Línea 988 (EE. UU.)', zh: '988 心理危机热线（美国）'},
+    detail: {en: 'Call or text 988, any time', es: 'Llama o envía un mensaje al 988, a cualquier hora', zh: '电话或短信 988，全天 24 小时'},
     links: [
-      {label: {en: 'Call', zh: '打电话'}, href: 'tel:988'},
-      {label: {en: 'Text', zh: '发短信'}, href: 'sms:988'}
+      {label: {en: 'Call', es: 'Llamar', zh: '打电话'}, href: 'tel:988'},
+      {label: {en: 'Text', es: 'Mensaje', zh: '发短信'}, href: 'sms:988'}
     ]
   },
   {
-    name: {en: 'Psychological help line (China)', zh: '全国心理援助热线（中国）'},
-    detail: {en: '12356', zh: '12356'},
+    name: {en: 'Psychological help line (China)', es: 'Línea de ayuda psicológica (China)', zh: '全国心理援助热线（中国）'},
+    detail: {en: '12356', es: '12356', zh: '12356'},
     links: [
-      {label: {en: 'Call', zh: '打电话'}, href: 'tel:12356'}
+      {label: {en: 'Call', es: 'Llamar', zh: '打电话'}, href: 'tel:12356'}
     ]
   }
 ];
@@ -1262,24 +1278,24 @@ var COUNSELING = [
 // `query` is the search text sent to the map, in that map's language.
 var HOSPITAL_KINDS = [
   {
-    name: {en: 'Emergency room', zh: '急诊'},
-    when: {en: 'Bone out of place, numbness, head injury, or pain you cannot bear.', zh: '骨头错位、发麻、头部受伤，或者疼得受不了。'},
-    query: {en: 'emergency room', zh: '医院急诊'}
+    name: {en: 'Emergency room', es: 'Urgencias', zh: '急诊'},
+    when: {en: 'Bone out of place, numbness, head injury, or pain you cannot bear.', es: 'Hueso fuera de su sitio, adormecimiento, golpe en la cabeza o dolor insoportable.', zh: '骨头错位、发麻、头部受伤，或者疼得受不了。'},
+    query: {en: 'emergency room', es: 'emergency room', zh: '医院急诊'}
   },
   {
-    name: {en: 'Urgent care', zh: '社区医院 / 门诊'},
-    when: {en: 'Needs a doctor today but is not an emergency.', zh: '今天需要看医生，但不是急症。'},
-    query: {en: 'urgent care', zh: '社区卫生服务中心'}
+    name: {en: 'Urgent care', es: 'Atención inmediata', zh: '社区医院 / 门诊'},
+    when: {en: 'Needs a doctor today but is not an emergency.', es: 'Necesita un médico hoy, pero no es una emergencia.', zh: '今天需要看医生，但不是急症。'},
+    query: {en: 'urgent care', es: 'urgent care', zh: '社区卫生服务中心'}
   },
   {
-    name: {en: 'Orthopedics / sports medicine', zh: '骨科 / 运动医学科'},
-    when: {en: 'Joint, ligament or bone problems that need a specialist.', zh: '关节、韧带、骨头的问题，需要专科医生。'},
-    query: {en: 'sports medicine orthopedics', zh: '骨科 运动医学'}
+    name: {en: 'Orthopedics / sports medicine', es: 'Traumatología / medicina deportiva', zh: '骨科 / 运动医学科'},
+    when: {en: 'Joint, ligament or bone problems that need a specialist.', es: 'Problemas de articulaciones, ligamentos o huesos que necesitan un especialista.', zh: '关节、韧带、骨头的问题，需要专科医生。'},
+    query: {en: 'sports medicine orthopedics', es: 'sports medicine orthopedics', zh: '骨科 运动医学'}
   },
   {
-    name: {en: 'Physical therapy', zh: '康复理疗'},
-    when: {en: 'Getting strength and movement back after the injury.', zh: '受伤后恢复力量和活动度。'},
-    query: {en: 'physical therapy', zh: '康复理疗'}
+    name: {en: 'Physical therapy', es: 'Fisioterapia', zh: '康复理疗'},
+    when: {en: 'Getting strength and movement back after the injury.', es: 'Recuperar la fuerza y el movimiento después de la lesión.', zh: '受伤后恢复力量和活动度。'},
+    query: {en: 'physical therapy', es: 'physical therapy', zh: '康复理疗'}
   }
 ];
 

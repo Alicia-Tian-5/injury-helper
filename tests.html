@@ -142,6 +142,10 @@ test('city hospitals: every listed hospital has a name, department and specialty
       ['name', 'department', 'knownFor'].forEach(function (field) {
         if (!hospital[field].en || !hospital[field].zh) throw new Error('missing ' + field + ' for ' + hospital.name.en);
       });
+      // Names stay in English in Spanish, so they can be searched on a map.
+      ['department', 'knownFor'].forEach(function (field) {
+        if (!hospital[field].es) throw new Error('no Spanish ' + field + ' for ' + hospital.name.en);
+      });
       var links = hospitalMapLinks(city, hospital);
       if (links.google.indexOf('https://www.google.com/maps/') !== 0) throw new Error('bad Google link ' + links.google);
       if (city.country === 'cn' && links.amap.indexOf('https://uri.amap.com/') !== 0) throw new Error('no Amap link for ' + hospital.name.en);
@@ -165,6 +169,20 @@ test('city hospitals: an unlisted or empty city finds nothing but still gets a m
   equal(links.amap, 'https://uri.amap.com/search?keyword=' + encodeURIComponent('杭州 运动医学科'));
   equal(links.google, 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('sports medicine orthopedics in 杭州'));
 });
+test('spanish: every injury question, piece of advice, comfort and place has a Spanish version', function () {
+  var missing = [];
+  function check(value, path) {
+    if (!value || typeof value !== 'object') return;
+    if (typeof value.en === 'string' && typeof value.zh === 'string') {
+      if (!value.es) missing.push(path + ': ' + value.en);
+      return;
+    }
+    Object.keys(value).forEach(function (key) { check(value[key], path + '.' + key); });
+  }
+  check({LEVELS: LEVELS, CATEGORIES: CATEGORIES, INJURIES: INJURIES, RED_FLAGS: RED_FLAGS, COMFORT_STAGES: COMFORT_STAGES, COUNSELING: COUNSELING,
+         HOSPITAL_KINDS: HOSPITAL_KINDS, KNOWLEDGE: KNOWLEDGE}, '');
+  if (missing.length) throw new Error(missing.length + ' without Spanish, e.g. ' + missing[0]);
+});
 test('chat: messages about suicide or self-harm show the hotlines, in both languages', function () {
   equal(isCrisisMessage('我现在不想活了'), true);
   equal(isCrisisMessage('I want to die'), true);
@@ -185,17 +203,17 @@ test('chat: empty messages are not sent and long ones are cut to the limit', fun
   equal(cleanChatMessage('  我很难受 '), '我很难受');
   equal(cleanChatMessage('a'.repeat(900)).length, CHAT_MAX_LENGTH);
 });
-test('knowledge: prevention and first aid, every topic in Chinese and English', function () {
+test('knowledge: prevention and first aid, every topic in Chinese, English and Spanish', function () {
   equal(KNOWLEDGE.map(function (part) { return part.id; }).join(','), 'prevent,firstAid');
   KNOWLEDGE.forEach(function (part) {
     if (part.topics.length === 0) throw new Error(part.id + ' has no topics');
     [part.title].concat(part.topics.map(function (topic) { return topic.title; })).forEach(function (text) {
-      if (!text.en || !text.zh) throw new Error('missing a language in ' + JSON.stringify(text));
+      if (!text.en || !text.es || !text.zh) throw new Error('missing a language in ' + JSON.stringify(text));
     });
     part.topics.forEach(function (topic) {
       if (topic.points.length === 0) throw new Error(topic.title.en + ' has no points');
       topic.points.forEach(function (point) {
-        if (!point.en || !point.zh) throw new Error('missing a language in ' + JSON.stringify(point));
+        if (!point.en || !point.es || !point.zh) throw new Error('missing a language in ' + JSON.stringify(point));
       });
     });
   });
