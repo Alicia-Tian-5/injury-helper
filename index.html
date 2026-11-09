@@ -157,6 +157,38 @@ h1 a{color:var(--acc)}
 .city-form .primary{width:auto;flex:0 0 auto}
 #cityResult h3{margin-top:16px}
 .city-note{font-size:14px;margin:12px 0 0}
+.plan-progress{font-weight:600;margin:4px 0 8px}
+.plan-today{list-style:none;margin:0 0 12px;padding:0}
+.plan-today li{border-top:1px solid var(--line)}
+.plan-today label{display:flex;align-items:center;gap:12px;padding:10px 0;min-height:44px;cursor:pointer}
+.plan-today input{width:22px;height:22px;flex:0 0 auto;accent-color:var(--acc)}
+.plan-today .done span{color:var(--muted);text-decoration:line-through}
+.plan-today small{color:var(--muted);font-size:15px;margin-left:6px}
+.plan-form{border:1px solid var(--line);border-radius:6px;padding:14px;margin:12px 0;background:var(--tint)}
+.plan-form h3{margin-top:0}
+.day-picks{display:flex;flex-wrap:wrap;gap:6px}
+.day-picks label{position:relative}
+.day-picks span{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:40px;padding:0 10px;border:1.5px solid var(--line);border-radius:4px;background:var(--card)}
+.day-picks input:checked+span{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+.day-picks input:focus-visible+span{outline:2px solid var(--acc);outline-offset:2px}
+.plan-dates{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.plan-dates .field,.plan-dates input{min-width:0}
+@media (max-width:420px){.plan-dates{grid-template-columns:1fr}}
+.calendar-row .primary:disabled{opacity:.45;cursor:not-allowed}
+.plan-buttons{display:flex;gap:8px}
+.plan-buttons .primary{width:auto;flex:1}
+.plan-all{margin-top:14px}
+.plan-all summary{cursor:pointer;font-weight:600;color:var(--acc);padding:10px 0;min-height:44px}
+.plan-item{border-top:1px solid var(--line);padding:10px 0}
+.plan-item .case-meta{margin:2px 0 6px}
+.plan-item small{color:var(--muted);font-weight:400;font-size:15px;margin-left:6px}
+.plan-item button{margin-right:6px}
+.plan-calendar{border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
+.calendar-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.calendar-row .field{margin-bottom:0}
+.calendar-row .primary{width:auto}
+.home-today{display:block;text-decoration:none;color:var(--text);border-left:4px solid var(--acc);margin:0 0 12px}
+.home-today strong{color:var(--acc)}
 .trend{margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .trend svg{display:block;width:100%;height:auto}
 .trend .grid{stroke:var(--line);stroke-width:1}
@@ -240,6 +272,7 @@ h1 a{text-decoration:none}
   .place+.place{border-top:0}
   .place{border-bottom:1px solid var(--line)}
   #view-cases{max-width:860px;margin:0 auto}
+  #planCard{grid-column:1/-1}
 }
 @media (max-width:420px){.slogan{font-size:24px}h1{font-size:19px}.injury{padding:10px 12px}.injury strong{font-size:17px}}
 </style>
@@ -262,6 +295,7 @@ h1 a{text-decoration:none}
 <main>
 
 <div class="view" id="view-home" hidden>
+  <a class="card home-today" id="homeToday" href="#log" hidden></a>
   <section class="cover">
     <div class="cover-inner">
       <div class="cover-text">
@@ -387,6 +421,45 @@ h1 a{text-decoration:none}
 </div>
 
 <div class="view" id="view-log" hidden>
+  <section class="card plan" id="planCard">
+    <h2 id="planTitle"></h2>
+    <p class="muted" id="planIntro"></p>
+    <h3 id="planTodayTitle"></h3>
+    <p class="plan-progress" id="planProgress" role="status"></p>
+    <ul class="plan-today" id="planToday"></ul>
+    <p class="error" id="planError" role="alert" hidden></p>
+    <p class="success" id="planSaved" role="status" hidden></p>
+    <button type="button" class="secondary" id="planAddBtn"></button>
+    <form class="plan-form" id="planForm" novalidate hidden>
+      <h3 id="planFormTitle"></h3>
+      <label class="field"><span id="planNameLabel"></span><input id="planName" maxlength="60"></label>
+      <label class="field"><span id="planAmountLabel"></span><input id="planAmount" maxlength="60"></label>
+      <fieldset class="field">
+        <legend id="planDaysLabel"></legend>
+        <div class="day-picks" id="planDays"></div>
+      </fieldset>
+      <div class="plan-dates">
+        <label class="field"><span id="planStartLabel"></span><input type="date" id="planStart"></label>
+        <label class="field"><span id="planEndLabel"></span><input type="date" id="planEnd"></label>
+      </div>
+      <p class="error" id="planFormError" role="alert" hidden></p>
+      <div class="plan-buttons"><button type="submit" class="primary" id="planSaveBtn"></button><button type="button" class="secondary" id="planCancelBtn"></button></div>
+    </form>
+    <details class="plan-all" id="planAll">
+      <summary id="planListTitle"></summary>
+      <div id="planList"></div>
+    </details>
+    <div class="plan-calendar">
+      <h3 id="calendarTitle"></h3>
+      <p class="muted" id="calendarHint"></p>
+      <div class="calendar-row">
+        <label class="field"><span id="calendarTimeLabel"></span><input type="time" id="calendarTime" value="20:00"></label>
+        <button type="button" class="primary" id="calendarBtn"></button>
+      </div>
+      <p class="muted" id="calendarNone" hidden></p>
+      <p class="success" id="calendarDone" role="status" hidden></p>
+    </div>
+  </section>
   <section class="card">
     <h2 id="logTitle"></h2>
     <p class="muted" id="logIntro"></p>
@@ -461,6 +534,7 @@ h1 a{text-decoration:none}
 <script src="recovery-log.js"></script>
 <script src="knowledge.js"></script>
 <script src="city-hospitals.js"></script>
+<script src="rehab-plan.js"></script>
 <script>
 // Interface text. Injury content lives in triage.js.
 var T = {
@@ -598,6 +672,56 @@ var T = {
     logSavedMsg: 'Saved. Well done for keeping track!',
     logSaveFailed: 'The record could not be saved. Your browser may be blocking storage (for example in a private window).',
     logListTitle: 'Your records',
+    planTitle: 'Rehab plan',
+    planIntro: 'Add the exercises your doctor or physical therapist gave you. Each day this shows what to do, and you can tick them off.',
+    planTodayTitle: 'Today, {0}',
+    planEmpty: 'No exercises yet. Add the first one from your instructions.',
+    planNoneToday: 'Nothing planned for today. Rest well.',
+    planProgress: 'Done today: {0} of {1}',
+    planAllDone: 'All done for today. Well done!',
+    planAdd: 'Add an exercise',
+    planFormAdd: 'New exercise',
+    planFormEdit: 'Change exercise',
+    planNameLabel: 'Exercise',
+    planNamePlaceholder: 'For example: straight leg raises',
+    planAmountLabel: 'Sets / reps / time (optional)',
+    planAmountPlaceholder: 'For example: 3 sets of 10',
+    planDaysLabel: 'Which days',
+    planEveryDay: 'Every day',
+    weekdays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    planWeekly: 'Every {0}',
+    planStartLabel: 'Start date',
+    planEndLabel: 'End date (optional)',
+    planSave: 'Save exercise',
+    planUpdate: 'Save changes',
+    planCancel: 'Cancel',
+    planSavedMsg: 'Saved.',
+    planListTitle: 'All exercises ({0})',
+    planFrom: 'from {0}',
+    planRange: '{0} to {1}',
+    planOver: 'finished',
+    planNotYet: 'not started yet',
+    planEdit: 'Change',
+    planDelete: 'Delete',
+    planDeleteConfirm: 'Delete "{0}" from your plan?',
+    planProblemName: 'Please enter the exercise.',
+    planProblemNameLong: 'The exercise name is too long (at most {0} characters).',
+    planProblemAmountLong: 'Sets / reps is too long (at most {0} characters).',
+    planProblemDays: 'Please choose at least one day.',
+    planProblemStart: 'Please choose a start date.',
+    planProblemEnd: 'The end date cannot be before the start date.',
+    planSaveFailed: 'Could not save. Please try again.',
+    planLoadFailed: 'Your plan could not be loaded. Your browser may be blocking storage (for example in a private window).',
+    calendarTitle: 'Daily reminder',
+    calendarHint: 'Download a calendar file and open it to add the exercises to your phone or computer calendar. It reminds you at this time on each exercise day. If you change the plan, add it again.',
+    calendarTimeLabel: 'Reminder time',
+    calendarBtn: 'Add to calendar',
+    calendarNone: 'Add an exercise first.',
+    calendarDone: 'Calendar file downloaded. Open it and choose "Add" to save the reminders.',
+    calendarEventTitle: 'Rehab',
+    homeToday: 'Today\'s rehab: {0} of {1} done',
+    homeTodayAllDone: 'Today\'s rehab is done ({0}/{0})',
+    homeTodayGo: 'Open the plan →',
     logTrendTitle: 'Pain trend',
     logTrendNone: 'Give a pain score in a record and its trend will appear here.',
     logTrendOneMore: 'Give pain scores on one more day to see the trend.',
@@ -760,6 +884,56 @@ var T = {
     logSavedMsg: 'Guardado. ¡Bien hecho por llevar el registro!',
     logSaveFailed: 'No se pudo guardar. Puede que tu navegador bloquee el almacenamiento (por ejemplo, en una ventana privada).',
     logListTitle: 'Tus registros',
+    planTitle: 'Plan de rehabilitación',
+    planIntro: 'Añade los ejercicios que te dio tu médico o fisioterapeuta. Cada día verás qué hacer y podrás marcarlos.',
+    planTodayTitle: 'Hoy, {0}',
+    planEmpty: 'Todavía no hay ejercicios. Añade el primero según tus indicaciones.',
+    planNoneToday: 'No hay nada planeado para hoy. Descansa bien.',
+    planProgress: 'Hecho hoy: {0} de {1}',
+    planAllDone: 'Todo hecho por hoy. ¡Muy bien!',
+    planAdd: 'Añadir un ejercicio',
+    planFormAdd: 'Nuevo ejercicio',
+    planFormEdit: 'Cambiar ejercicio',
+    planNameLabel: 'Ejercicio',
+    planNamePlaceholder: 'Por ejemplo: elevaciones de pierna recta',
+    planAmountLabel: 'Series / repeticiones / tiempo (opcional)',
+    planAmountPlaceholder: 'Por ejemplo: 3 series de 10',
+    planDaysLabel: 'Qué días',
+    planEveryDay: 'Todos los días',
+    weekdays: ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'],
+    planWeekly: 'Cada {0}',
+    planStartLabel: 'Fecha de inicio',
+    planEndLabel: 'Fecha de fin (opcional)',
+    planSave: 'Guardar ejercicio',
+    planUpdate: 'Guardar cambios',
+    planCancel: 'Cancelar',
+    planSavedMsg: 'Guardado.',
+    planListTitle: 'Todos los ejercicios ({0})',
+    planFrom: 'desde {0}',
+    planRange: 'del {0} al {1}',
+    planOver: 'terminado',
+    planNotYet: 'aún no empieza',
+    planEdit: 'Cambiar',
+    planDelete: 'Eliminar',
+    planDeleteConfirm: '¿Eliminar "{0}" de tu plan?',
+    planProblemName: 'Escribe el ejercicio.',
+    planProblemNameLong: 'El nombre del ejercicio es demasiado largo (máximo {0} caracteres).',
+    planProblemAmountLong: 'Series / repeticiones es demasiado largo (máximo {0} caracteres).',
+    planProblemDays: 'Elige al menos un día.',
+    planProblemStart: 'Elige una fecha de inicio.',
+    planProblemEnd: 'La fecha de fin no puede ser anterior a la de inicio.',
+    planSaveFailed: 'No se pudo guardar. Inténtalo de nuevo.',
+    planLoadFailed: 'No se pudo cargar tu plan. Puede que tu navegador bloquee el almacenamiento (por ejemplo, en una ventana privada).',
+    calendarTitle: 'Recordatorio diario',
+    calendarHint: 'Descarga un archivo de calendario y ábrelo para añadir los ejercicios al calendario de tu teléfono o computadora. Te avisará a esta hora cada día de ejercicio. Si cambias el plan, vuelve a añadirlo.',
+    calendarTimeLabel: 'Hora del recordatorio',
+    calendarBtn: 'Añadir al calendario',
+    calendarNone: 'Primero añade un ejercicio.',
+    calendarDone: 'Archivo de calendario descargado. Ábrelo y elige "Añadir" para guardar los recordatorios.',
+    calendarEventTitle: 'Rehabilitación',
+    homeToday: 'Rehabilitación de hoy: {0} de {1} hechos',
+    homeTodayAllDone: 'La rehabilitación de hoy está hecha ({0}/{0})',
+    homeTodayGo: 'Abrir el plan →',
     logTrendTitle: 'Evolución del dolor',
     logTrendNone: 'Pon una puntuación de dolor en un registro y aquí aparecerá su evolución.',
     logTrendOneMore: 'Pon puntuaciones de dolor un día más para ver la evolución.',
@@ -920,6 +1094,56 @@ var T = {
     logSavedMsg: '已保存。坚持记录，你做得很好！',
     logSaveFailed: '没能保存。浏览器可能不允许存储（比如无痕模式）。',
     logListTitle: '我的记录',
+    planTitle: '康复训练计划',
+    planIntro: '把医生或康复师让你做的训练填进来。每天这里会告诉你今天该做什么，做完可以打勾。',
+    planTodayTitle: '今天：{0}',
+    planEmpty: '还没有训练。按医嘱添加第一项吧。',
+    planNoneToday: '今天没有安排训练，好好休息。',
+    planProgress: '今天完成 {0}/{1}',
+    planAllDone: '今天的训练都完成了，真棒！',
+    planAdd: '添加训练',
+    planFormAdd: '添加训练',
+    planFormEdit: '修改训练',
+    planNameLabel: '训练动作',
+    planNamePlaceholder: '比如：直腿抬高',
+    planAmountLabel: '组数 / 次数 / 时间（可选）',
+    planAmountPlaceholder: '比如：3组，每组10次',
+    planDaysLabel: '哪几天做',
+    planEveryDay: '每天',
+    weekdays: ['日', '一', '二', '三', '四', '五', '六'],
+    planWeekly: '每周{0}',
+    planStartLabel: '开始日期',
+    planEndLabel: '结束日期（可选）',
+    planSave: '保存训练',
+    planUpdate: '保存修改',
+    planCancel: '取消',
+    planSavedMsg: '已保存。',
+    planListTitle: '全部训练（{0}）',
+    planFrom: '{0} 开始',
+    planRange: '{0} 至 {1}',
+    planOver: '已结束',
+    planNotYet: '还没开始',
+    planEdit: '修改',
+    planDelete: '删除',
+    planDeleteConfirm: '确定从计划里删除"{0}"吗？',
+    planProblemName: '请填写训练动作。',
+    planProblemNameLong: '训练动作名太长了（最多 {0} 个字）。',
+    planProblemAmountLong: '组数 / 次数太长了（最多 {0} 个字）。',
+    planProblemDays: '请至少选一天。',
+    planProblemStart: '请选择开始日期。',
+    planProblemEnd: '结束日期不能早于开始日期。',
+    planSaveFailed: '没能保存，请再试一次。',
+    planLoadFailed: '没能读取训练计划。浏览器可能不允许存储（比如无痕模式）。',
+    calendarTitle: '每天提醒',
+    calendarHint: '下载一个日历文件，打开后把训练加到手机或电脑的日历里，每个训练日到这个时间就会提醒你。改了计划后要重新添加一次。',
+    calendarTimeLabel: '提醒时间',
+    calendarBtn: '加到日历',
+    calendarNone: '先添加一项训练。',
+    calendarDone: '日历文件已下载。打开它，选择"添加"就能保存提醒。',
+    calendarEventTitle: '康复训练',
+    homeToday: '今天的康复训练：完成 {0}/{1}',
+    homeTodayAllDone: '今天的康复训练都完成了（{0}/{0}）',
+    homeTodayGo: '去看计划 →',
     logTrendTitle: '疼痛趋势',
     logTrendNone: '在记录里填上疼痛分数，这里就会画出变化趋势。',
     logTrendOneMore: '再记一天疼痛分数，就能看到变化趋势。',
@@ -1569,6 +1793,7 @@ function renderAll() {
   renderStatic();
   updateTabsFade();
   renderCases();
+  renderPlan();
   renderLog();
   renderCategories();
   renderPhoto();
@@ -1747,6 +1972,9 @@ $('caseForm').addEventListener('submit', function (e) {
 
 // ---- Recovery log ----
 // Entries come from this browser's storage (recovery-log.js).
+// Declared up here because the first renderAll() runs before the plan code below.
+var plan = {status: 'loading', items: [], done: [], today: logDateString(new Date()), formOpen: false, editing: null,
+  saving: false, saved: false, problems: [], saveFailed: false, calendarDone: false};
 var log = {status: 'loading', entries: [], photo: null, photoBad: false, saving: false, saved: false, saveFailed: false, problems: []};
 
 function logProblemText(p) {
@@ -1990,6 +2218,273 @@ function buildPainScale(field) {
 LOG_PAIN_FIELDS.forEach(buildPainScale);
 resetLogDate();
 loadLog();
+
+// ---- Rehab plan ----
+
+var PLAN_PROBLEM_TEXT = {
+  name: function (p) { return p.problem === 'tooLong' ? t('planProblemNameLong').replace('{0}', PLAN_NAME_MAX) : t('planProblemName'); },
+  amount: function () { return t('planProblemAmountLong').replace('{0}', PLAN_AMOUNT_MAX); },
+  days: function () { return t('planProblemDays'); },
+  start: function () { return t('planProblemStart'); },
+  end: function () { return t('planProblemEnd'); }
+};
+
+function planDaysText(item) {
+  if (item.days.length === 7) return t('planEveryDay');
+  var names = item.days.map(function (day) { return t('weekdays')[day]; });
+  return t('planWeekly').replace('{0}', names.join(lang === 'zh' ? '、' : ', '));
+}
+
+function planDatesText(item) {
+  if (!item.end) return t('planFrom').replace('{0}', formatShortDate(item.start));
+  return t('planRange').replace('{0}', formatShortDate(item.start)).replace('{1}', formatShortDate(item.end));
+}
+
+function planItemLabel(item) {
+  var label = document.createElement('span');
+  label.textContent = item.name;
+  if (item.amount) {
+    var amount = document.createElement('small');
+    amount.textContent = item.amount;
+    label.appendChild(amount);
+  }
+  return label;
+}
+
+// The day buttons in the form: "every day" and one per weekday, Monday first.
+function buildDayPicks() {
+  var box = $('planDays');
+  ['all', 1, 2, 3, 4, 5, 6, 0].forEach(function (day) {
+    var label = document.createElement('label');
+    label.innerHTML = '<input type="checkbox" class="visually-hidden"><span></span>';
+    label.querySelector('input').value = day;
+    box.appendChild(label);
+  });
+  box.addEventListener('change', function (e) {
+    var boxes = box.querySelectorAll('input');
+    if (e.target.value === 'all') boxes.forEach(function (input) { input.checked = e.target.checked; });
+    else boxes[0].checked = [].slice.call(boxes, 1).every(function (input) { return input.checked; });
+  });
+}
+
+function setPickedDays(days) {
+  $('planDays').querySelectorAll('input').forEach(function (input) {
+    input.checked = input.value === 'all' ? days.length === 7 : days.indexOf(Number(input.value)) >= 0;
+  });
+}
+
+function pickedDays() {
+  return [].slice.call($('planDays').querySelectorAll('input:checked'))
+    .filter(function (input) { return input.value !== 'all'; })
+    .map(function (input) { return Number(input.value); });
+}
+
+function renderPlan() {
+  ['planTitle', 'planIntro', 'planNameLabel', 'planAmountLabel', 'planDaysLabel', 'planStartLabel', 'planEndLabel',
+   'calendarTitle', 'calendarHint', 'calendarTimeLabel', 'calendarBtn', 'calendarNone', 'calendarDone']
+    .forEach(function (id) { $(id).textContent = t(id); });
+  $('planCancelBtn').textContent = t('planCancel');
+  $('planName').placeholder = t('planNamePlaceholder');
+  $('planAmount').placeholder = t('planAmountPlaceholder');
+  $('planDays').querySelectorAll('span').forEach(function (span, index) {
+    span.textContent = index === 0 ? t('planEveryDay') : t('weekdays')[[1, 2, 3, 4, 5, 6, 0][index - 1]];
+  });
+  $('planTodayTitle').textContent = t('planTodayTitle').replace('{0}', formatLogDate(plan.today));
+
+  var ready = plan.status === 'ready';
+  var due = ready ? itemsDueOn(plan.items, plan.today) : [];
+  var doneCount = due.filter(function (item) { return plan.done.indexOf(item.id) >= 0; }).length;
+  var progressKey = plan.status === 'loading' ? 'logLoading' : plan.status === 'error' ? 'planLoadFailed'
+    : plan.items.length === 0 ? 'planEmpty' : due.length === 0 ? 'planNoneToday'
+    : doneCount === due.length ? 'planAllDone' : 'planProgress';
+  $('planProgress').textContent = t(progressKey).replace('{0}', doneCount).replace('{1}', due.length);
+
+  var today = $('planToday');
+  today.innerHTML = '';
+  due.forEach(function (item) {
+    var row = document.createElement('li');
+    var label = document.createElement('label');
+    var box = document.createElement('input');
+    box.type = 'checkbox';
+    box.checked = plan.done.indexOf(item.id) >= 0;
+    box.dataset.id = item.id;
+    label.className = box.checked ? 'done' : '';
+    label.appendChild(box);
+    label.appendChild(planItemLabel(item));
+    row.appendChild(label);
+    today.appendChild(row);
+  });
+  $('planError').textContent = t('planSaveFailed');
+  $('planError').hidden = !(plan.saveFailed && !plan.formOpen);
+  $('planSaved').textContent = t('planSavedMsg');
+  $('planSaved').hidden = !plan.saved;
+
+  $('planAddBtn').textContent = t('planAdd');
+  $('planAddBtn').hidden = plan.formOpen || !ready;
+  $('planForm').hidden = !plan.formOpen;
+  $('planFormTitle').textContent = t(plan.editing ? 'planFormEdit' : 'planFormAdd');
+  $('planSaveBtn').textContent = t(plan.editing ? 'planUpdate' : 'planSave');
+  $('planSaveBtn').disabled = plan.saving;
+  var errors = plan.problems.map(function (p) { return PLAN_PROBLEM_TEXT[p.field](p); });
+  if (plan.saveFailed && plan.formOpen) errors.push(t('planSaveFailed'));
+  $('planFormError').textContent = errors.join(' ');
+  $('planFormError').hidden = errors.length === 0;
+
+  var items = sortPlanItems(plan.items, plan.today);
+  $('planAll').hidden = items.length === 0;
+  $('planListTitle').textContent = t('planListTitle').replace('{0}', items.length);
+  var list = $('planList');
+  list.innerHTML = '';
+  items.forEach(function (item) {
+    var row = document.createElement('div');
+    row.className = 'plan-item';
+    var name = document.createElement('strong');
+    name.appendChild(planItemLabel(item));
+    var meta = document.createElement('div');
+    meta.className = 'case-meta';
+    var notes = [planDaysText(item), planDatesText(item)];
+    if (isPlanItemOver(item, plan.today)) notes.push(t('planOver'));
+    else if (item.start > plan.today) notes.push(t('planNotYet'));
+    meta.textContent = notes.join(' · ');
+    row.appendChild(name);
+    row.appendChild(meta);
+    [['planEdit', 'edit'], ['planDelete', 'delete']].forEach(function (pair) {
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'secondary';
+      button.textContent = t(pair[0]);
+      button.dataset.action = pair[1];
+      button.dataset.id = item.id;
+      row.appendChild(button);
+    });
+    list.appendChild(row);
+  });
+
+  var active = plan.items.filter(function (item) { return !isPlanItemOver(item, plan.today); });
+  $('calendarBtn').disabled = active.length === 0;
+  $('calendarNone').hidden = !ready || active.length > 0;
+  $('calendarDone').hidden = !plan.calendarDone;
+
+  $('homeToday').hidden = due.length === 0;
+  if (due.length > 0) {
+    $('homeToday').innerHTML = '<strong></strong> <span class="muted"></span>';
+    $('homeToday').querySelector('strong').textContent = doneCount === due.length
+      ? t('homeTodayAllDone').split('{0}').join(due.length)
+      : t('homeToday').replace('{0}', doneCount).replace('{1}', due.length);
+    $('homeToday').querySelector('span').textContent = t('homeTodayGo');
+  }
+}
+
+// Reads the plan and today's ticks. A new day starts with nothing ticked.
+function loadPlan() {
+  plan.today = logDateString(new Date());
+  return Promise.all([planStore.all(), planStore.doneOn(plan.today)]).then(function (results) {
+    plan.items = results[0];
+    plan.done = results[1];
+    plan.status = 'ready';
+  }).catch(function () {
+    plan.status = 'error';
+  }).then(renderPlan);
+}
+
+function openPlanForm(item) {
+  plan.formOpen = true;
+  plan.editing = item || null;
+  plan.problems = [];
+  plan.saveFailed = false;
+  plan.saved = false;
+  $('planName').value = item ? item.name : '';
+  $('planAmount').value = item ? item.amount : '';
+  setPickedDays(item ? item.days : ALL_WEEKDAYS);
+  $('planStart').value = item ? item.start : plan.today;
+  $('planEnd').value = item ? item.end : '';
+  renderPlan();
+  $('planForm').scrollIntoView({block: 'nearest'});
+  $('planName').focus();
+}
+
+$('planAddBtn').addEventListener('click', function () { openPlanForm(null); });
+
+$('planCancelBtn').addEventListener('click', function () {
+  plan.formOpen = false;
+  plan.problems = [];
+  renderPlan();
+});
+
+$('planForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var item = planItemFromForm({name: $('planName').value, amount: $('planAmount').value, days: pickedDays(),
+    start: $('planStart').value, end: $('planEnd').value}, new Date());
+  if (plan.editing) {
+    item.id = plan.editing.id;
+    item.createdAt = plan.editing.createdAt;
+  }
+  plan.problems = planItemProblems(item);
+  plan.saveFailed = false;
+  if (plan.problems.length > 0) { renderPlan(); return; }
+  plan.saving = true;
+  renderPlan();
+  planStore.save(item).then(function () {
+    plan.formOpen = false;
+    plan.editing = null;
+    plan.saved = true;
+    plan.calendarDone = false;
+    return loadPlan();
+  }).catch(function () {
+    plan.saveFailed = true;
+  }).then(function () {
+    plan.saving = false;
+    renderPlan();
+  });
+});
+
+$('planToday').addEventListener('change', function (e) {
+  var id = Number(e.target.dataset.id);
+  var done = e.target.checked;
+  plan.done = plan.done.filter(function (doneId) { return doneId !== id; }).concat(done ? [id] : []);
+  plan.saved = false;
+  plan.saveFailed = false;
+  renderPlan();
+  planStore.setDone(id, plan.today, done).catch(function () {
+    plan.saveFailed = true;
+    return loadPlan();
+  });
+});
+
+$('planList').addEventListener('click', function (e) {
+  var id = Number(e.target.dataset.id);
+  var item = plan.items.filter(function (candidate) { return candidate.id === id; })[0];
+  if (!item) return;
+  if (e.target.dataset.action === 'edit') { openPlanForm(item); return; }
+  if (e.target.dataset.action !== 'delete' || !confirm(t('planDeleteConfirm').replace('{0}', item.name))) return;
+  plan.saved = false;
+  plan.calendarDone = false;
+  planStore.remove(id).catch(function () { plan.saveFailed = true; }).then(loadPlan);
+});
+
+// Downloads a calendar file; phones and computers offer to add it to their calendar.
+$('calendarBtn').addEventListener('click', function () {
+  var time = /^\d{2}:\d{2}$/.test($('calendarTime').value) ? $('calendarTime').value : '20:00';
+  var active = plan.items.filter(function (item) { return !isPlanItemOver(item, plan.today); });
+  var file = new Blob([planCalendar(active, time, t('calendarEventTitle'), new Date())], {type: 'text/calendar'});
+  var link = document.createElement('a');
+  link.href = URL.createObjectURL(file);
+  link.download = 'rehab-reminders.ics';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(function () { URL.revokeObjectURL(link.href); }, 1000);
+  plan.calendarDone = true;
+  renderPlan();
+});
+
+// Coming back to the page on a new day shows the new day's exercises.
+document.addEventListener('visibilitychange', function () {
+  if (!document.hidden && plan.today !== logDateString(new Date())) loadPlan();
+});
+
+buildDayPicks();
+loadPlan();
 
 $('seeCasesBtn').addEventListener('click', function () {
   cases.filter = currentInjury ? currentInjury.id : '';

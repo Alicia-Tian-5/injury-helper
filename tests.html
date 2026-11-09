@@ -16,6 +16,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="share.js"></script>
 <script src="chat.js"></script>
 <script src="recovery-log.js"></script>
+<script src="rehab-plan.js"></script>
 <script src="knowledge.js"></script>
 <script src="city-hospitals.js"></script>
 <script>
@@ -202,6 +203,52 @@ test('log trend: no scores means no points, and days are counted across months',
   equal(painTrend([]).length, 0);
   equal(daysBetween('2026-10-30', '2026-11-02'), 3);
   equal(daysBetween('2026-11-09', '2026-11-09'), 0);
+});
+function planItem(fields) {
+  return planItemFromForm(Object.assign({name: 'Straight leg raises', amount: '3 x 10', days: ALL_WEEKDAYS, start: '2026-11-09', end: ''}, fields), new Date(0));
+}
+test('plan: an exercise needs a name, at least one day and a start date, and cannot end before it starts', function () {
+  equal(planItemProblems(planItem({})).length, 0);
+  equal(planItemProblems(planItem({name: '   '}))[0].field, 'name');
+  equal(planItemProblems(planItem({name: 'x'.repeat(PLAN_NAME_MAX + 1)}))[0].problem, 'tooLong');
+  equal(planItemProblems(planItem({amount: 'x'.repeat(PLAN_AMOUNT_MAX + 1)}))[0].field, 'amount');
+  equal(planItemProblems(planItem({days: []}))[0].field, 'days');
+  equal(planItemProblems(planItem({start: ''}))[0].field, 'start');
+  equal(planItemProblems(planItem({end: '2026-11-01'}))[0].field, 'end');
+  equal(planItemProblems(planItem({end: '2026-11-09'})).length, 0);
+});
+test('plan: an exercise is due only on its weekdays, from its start date to its end date', function () {
+  var mondaysAndFridays = planItem({days: ['5', '1', '1'], start: '2026-11-09', end: '2026-11-20'});
+  equal(mondaysAndFridays.days.join(','), '1,5');
+  equal(isDueOn(mondaysAndFridays, '2026-11-09'), true);   // Monday, first day
+  equal(isDueOn(mondaysAndFridays, '2026-11-10'), false);  // Tuesday
+  equal(isDueOn(mondaysAndFridays, '2026-11-13'), true);   // Friday
+  equal(isDueOn(mondaysAndFridays, '2026-11-20'), true);   // Friday, last day
+  equal(isDueOn(mondaysAndFridays, '2026-11-23'), false);  // Monday after the end
+  equal(isDueOn(mondaysAndFridays, '2026-11-02'), false);  // Monday before the start
+  equal(itemsDueOn([mondaysAndFridays, planItem({})], '2026-11-10').length, 1);
+});
+test('plan: running exercises are listed first, finished ones last', function () {
+  var over = planItem({name: 'over', start: '2026-10-01', end: '2026-10-31'});
+  var later = planItem({name: 'later', start: '2026-12-01'});
+  var now = planItem({name: 'now', start: '2026-11-01'});
+  equal(sortPlanItems([over, later, now], '2026-11-09').map(function (i) { return i.name; }).join(','), 'now,later,over');
+  equal(isPlanItemOver(over, '2026-11-09'), true);
+  equal(isPlanItemOver(now, '2026-11-09'), false);
+});
+test('plan: the calendar file repeats each exercise on its days at the chosen time, until the end date', function () {
+  var item = planItem({name: 'Heel raises, slow; 15', days: [2, 4], start: '2026-11-09', end: '2026-11-30'});
+  item.id = 7;
+  var ics = planCalendar([item], '20:30', 'Rehab', new Date(Date.UTC(2026, 10, 9, 12, 0, 0)));
+  var lines = ics.split('\r\n');
+  equal(lines[0], 'BEGIN:VCALENDAR');
+  equal(lines.indexOf('DTSTART:20261110T203000') > 0, true);  // first Tuesday on or after the start
+  equal(lines.indexOf('RRULE:FREQ=WEEKLY;BYDAY=TU,TH;UNTIL=20261130T235959') > 0, true);
+  equal(lines.indexOf('SUMMARY:Rehab: Heel raises\\, slow\\; 15 3 x 10') > 0, true);
+  equal(lines.indexOf('DTSTAMP:20261109T120000Z') > 0, true);
+  equal(lines.filter(function (line) { return line === 'BEGIN:VEVENT'; }).length, 1);
+  var everyDay = planCalendar([planItem({})], '08:00', 'Rehab', new Date(0));
+  equal(everyDay.indexOf('BYDAY=SU,MO,TU,WE,TH,FR,SA\r\n') > 0, true);  // no end date, no UNTIL
 });
 test('chat: messages about suicide or self-harm show the hotlines, in both languages', function () {
   equal(isCrisisMessage('我现在不想活了'), true);
@@ -416,6 +463,14 @@ function testSpanishSwitch() {
         equal(doc.getElementById('navAssess').textContent, 'Revisar mi lesión');
         equal(doc.getElementById('startBtn').textContent, 'Empezar la evaluación');
       });
+      // If any start-up code throws, the texts after it stay empty. Parts
+      // that are not shown yet (results, the trend) are filled later.
+      test('page: starts without errors, so every heading and button has its text', function () {
+        var empty = [].slice.call(doc.querySelectorAll('h1, h2, h3, button, summary'))
+          .filter(function (element) { return !element.closest('[hidden]:not(.view)') && element.textContent.trim() === ''; })
+          .map(function (element) { return element.id || element.className || element.tagName; });
+        if (empty.length) throw new Error('empty: ' + empty.join(', '));
+      });
       test('language: Spanish has every interface text that English has', function () {
         if (!page.T.es) throw new Error('there is no Spanish interface text');
         Object.keys(page.T.en).forEach(function (key) {
@@ -467,7 +522,30 @@ var logStorageChecked = logStore.add({date: '2000-01-01', text: 'test record', p
 }).catch(function (e) {
   results.push({name: 'log: records can be stored in this browser', ok: false, msg: String(e && e.message || e)});
 });
-Promise.all([rulesChecked, testSpanishSwitch(), logStorageChecked]).then(showResults);
+var planStorageChecked = planStore.save(planItem({name: 'test exercise'})).then(function (id) {
+  return planStore.setDone(id, '2000-01-01', true).then(function () {
+    return Promise.all([planStore.all(), planStore.doneOn('2000-01-01'), planStore.doneOn('2000-01-02')]);
+  }).then(function (results) {
+    test('plan: a saved exercise and its tick for one day can be read back', function () {
+      equal(results[0].some(function (item) { return item.id === id && item.name === 'test exercise'; }), true);
+      equal(results[1].indexOf(id) >= 0, true);
+      equal(results[2].indexOf(id) >= 0, false);
+    });
+    return planStore.setDone(id, '2000-01-01', false);
+  }).then(function () {
+    return planStore.remove(id);
+  }).then(function () {
+    return Promise.all([planStore.all(), planStore.doneOn('2000-01-01')]);
+  }).then(function (results) {
+    test('plan: unticking and deleting remove the tick and the exercise', function () {
+      equal(results[0].some(function (item) { return item.id === id; }), false);
+      equal(results[1].indexOf(id) >= 0, false);
+    });
+  });
+}).catch(function (e) {
+  results.push({name: 'plan: exercises can be stored in this browser', ok: false, msg: String(e && e.message || e)});
+});
+Promise.all([rulesChecked, testSpanishSwitch(), logStorageChecked, planStorageChecked]).then(showResults);
 </script>
 </body>
 </html>

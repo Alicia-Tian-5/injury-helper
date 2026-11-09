@@ -85,14 +85,12 @@ function painTrend(entries) {
 
 // ---- Storage in this browser ----
 
-var LOG_DATABASE = 'injury-helper-log';
-var LOG_STORE = 'entries';
-
-function openLogDatabase() {
+// Opens one of this site's databases; `stores` are created the first time.
+function openDatabase(name, stores) {
   return new Promise(function (resolve, reject) {
-    var request = indexedDB.open(LOG_DATABASE, 1);
+    var request = indexedDB.open(name, 1);
     request.onupgradeneeded = function () {
-      request.result.createObjectStore(LOG_STORE, {keyPath: 'id', autoIncrement: true});
+      stores.forEach(function (store) { request.result.createObjectStore(store.name, store.options); });
     };
     request.onsuccess = function () { resolve(request.result); };
     request.onerror = function () { reject(request.error); };
@@ -100,17 +98,28 @@ function openLogDatabase() {
 }
 
 // Runs one request in a transaction and resolves with its result once the
-// transaction has finished, so a saved entry is really on disk.
-function logRequest(mode, makeRequest) {
-  return openLogDatabase().then(function (database) {
+// transaction has finished, so saved data is really on disk.
+function databaseRequest(open, storeName, mode, makeRequest) {
+  return open().then(function (database) {
     return new Promise(function (resolve, reject) {
-      var transaction = database.transaction(LOG_STORE, mode);
-      var request = makeRequest(transaction.objectStore(LOG_STORE));
+      var transaction = database.transaction(storeName, mode);
+      var request = makeRequest(transaction.objectStore(storeName));
       transaction.oncomplete = function () { database.close(); resolve(request.result); };
       transaction.onerror = function () { database.close(); reject(transaction.error); };
       transaction.onabort = function () { database.close(); reject(transaction.error); };
     });
   });
+}
+
+var LOG_DATABASE = 'injury-helper-log';
+var LOG_STORE = 'entries';
+
+function openLogDatabase() {
+  return openDatabase(LOG_DATABASE, [{name: LOG_STORE, options: {keyPath: 'id', autoIncrement: true}}]);
+}
+
+function logRequest(mode, makeRequest) {
+  return databaseRequest(openLogDatabase, LOG_STORE, mode, makeRequest);
 }
 
 var logStore = {
