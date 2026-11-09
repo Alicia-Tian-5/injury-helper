@@ -161,6 +161,24 @@ test('log: a record needs a date and some words', function () {
   equal(logEntryProblems(logEntryFromForm({date: '', text: 'ok'}, now))[0].field, 'date');
   equal(logEntryProblems(logEntryFromForm({date: '2026-11-09', text: 'a'.repeat(LOG_TEXT_MAX + 1)}, now))[0].problem, 'tooLong');
 });
+test('log: both pain scores are optional and must be 0 to 10', function () {
+  var now = new Date(2026, 10, 9, 20, 0);
+  var entry = logEntryFromForm({date: '2026-11-09', text: 'ok', painRest: '2', painExercise: ''}, now);
+  equal(entry.painRest, 2);
+  equal(entry.painExercise, null);
+  LOG_PAIN_FIELDS.forEach(function (field) {
+    function problems(pain) {
+      var input = {date: '2026-11-09', text: 'ok'};
+      input[field] = pain;
+      return logEntryProblems(logEntryFromForm(input, now));
+    }
+    equal(problems('').length, 0);
+    equal(problems('0').length, 0);
+    equal(problems('10').length, 0);
+    equal(problems('11')[0].field, field);
+    equal(problems('2.5').length, 1);
+  });
+});
 test('log: newest day first, and the later record first on the same day', function () {
   var sorted = sortLogEntries([
     {id: 1, date: '2026-11-07', createdAt: 5},

@@ -117,6 +117,14 @@ ol.steps li,ul.points li{margin-bottom:6px}
 .case dt{font-weight:600;font-size:15px;margin-top:6px}
 .case dd{margin:0;white-space:pre-wrap}
 .log-date input{max-width:240px}
+/* 0-5 and 6-10 on two rows on phones, all eleven on one row when there is room. */
+.pain-scale{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-width:560px}
+@media (min-width:520px){.pain-scale{grid-template-columns:repeat(11,1fr)}}
+.pain-scale label{position:relative;min-height:40px;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--line);border-radius:4px;cursor:pointer;font-weight:600}
+.pain-scale label:has(input:checked){background:var(--acc);border-color:var(--acc);color:#fff}
+.pain-scale label:focus-within{outline:2px solid var(--acc);outline-offset:2px}
+#logPainHint{margin:0}
+.pain-name{font-weight:600;margin:12px 0 6px}
 .log-photo{display:block;max-width:220px;max-height:220px;object-fit:cover;border-radius:4px;margin-top:10px}
 .link-btn{background:none;color:var(--acc);text-decoration:underline;padding:8px;margin-left:6px}
 .log-entry img{display:block;max-width:100%;max-height:360px;object-fit:contain;border-radius:4px;margin:6px 0 8px}
@@ -343,6 +351,14 @@ h1 a{text-decoration:none}
     <p class="muted" id="logIntro"></p>
     <form id="logForm" novalidate>
       <label class="field log-date"><span id="logDateLabel"></span><input type="date" id="logDate"></label>
+      <fieldset class="field">
+        <legend id="logPainLabel"></legend>
+        <p class="muted" id="logPainHint"></p>
+        <p class="pain-name" id="painRestLabel"></p>
+        <div class="pain-scale" id="painRest" role="radiogroup" aria-labelledby="painRestLabel"></div>
+        <p class="pain-name" id="painExerciseLabel"></p>
+        <div class="pain-scale" id="painExercise" role="radiogroup" aria-labelledby="painExerciseLabel"></div>
+      </fieldset>
       <label class="field"><span id="logTextLabel"></span><textarea id="logText" rows="4" maxlength="1000"></textarea></label>
       <div class="field">
         <span id="logPhotoLabel"></span>
@@ -528,7 +544,14 @@ var T = {
     logDeleteConfirm: 'Delete this record? This cannot be undone.',
     logProblemDate: 'Choose a date.',
     logProblemText: 'Write a few words about today.',
-    logProblemTooLong: 'Keep it under {0} characters.'
+    logProblemTooLong: 'Keep it under {0} characters.',
+    logPainLabel: 'Pain score (optional)',
+    logPainHint: '0 = no pain, 10 = the worst pain you can imagine. Tap the chosen score again to clear it.',
+    painRestLabel: 'Pain at rest (not exercising)',
+    painExerciseLabel: 'Pain during rehab exercises',
+    painRestShown: 'Pain at rest {0}/10',
+    painExerciseShown: 'During rehab {0}/10',
+    logProblemPain: 'Choose a pain score from 0 to 10.'
   },
   // Spanish covers the interface. Injury content has no Spanish yet, so L()
   // shows it in English.
@@ -661,7 +684,14 @@ var T = {
     logDeleteConfirm: '¿Eliminar este registro? No se puede deshacer.',
     logProblemDate: 'Elige una fecha.',
     logProblemText: 'Escribe unas palabras sobre hoy.',
-    logProblemTooLong: 'Como máximo {0} caracteres.'
+    logProblemTooLong: 'Como máximo {0} caracteres.',
+    logPainLabel: 'Nivel de dolor (opcional)',
+    logPainHint: '0 = sin dolor, 10 = el peor dolor imaginable. Toca otra vez el número elegido para quitarlo.',
+    painRestLabel: 'Dolor en reposo (sin hacer ejercicios)',
+    painExerciseLabel: 'Dolor durante los ejercicios de rehabilitación',
+    painRestShown: 'Dolor en reposo {0}/10',
+    painExerciseShown: 'En rehabilitación {0}/10',
+    logProblemPain: 'Elige un nivel de dolor del 0 al 10.'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -792,7 +822,14 @@ var T = {
     logDeleteConfirm: '确定删除这条记录吗？删除后无法恢复。',
     logProblemDate: '请选择日期。',
     logProblemText: '写几句今天的情况吧。',
-    logProblemTooLong: '最多 {0} 个字。'
+    logProblemTooLong: '最多 {0} 个字。',
+    logPainLabel: '疼痛分数（可选）',
+    logPainHint: '0 = 不疼，10 = 疼得受不了。再点一次选中的分数可以取消。',
+    painRestLabel: '平时（不做康复时）的疼痛',
+    painExerciseLabel: '做康复动作时的疼痛',
+    painRestShown: '平时疼痛 {0}/10',
+    painExerciseShown: '康复时疼痛 {0}/10',
+    logProblemPain: '请选 0 到 10 的疼痛分数。'
   }
 };
 
@@ -1497,6 +1534,7 @@ var log = {status: 'loading', entries: [], photo: null, photoBad: false, saving:
 
 function logProblemText(p) {
   if (p.field === 'date') return t('logProblemDate');
+  if (LOG_PAIN_FIELDS.indexOf(p.field) >= 0) return t('logProblemPain');
   if (p.problem === 'tooLong') return t('logProblemTooLong').replace('{0}', LOG_TEXT_MAX);
   return t('logProblemText');
 }
@@ -1513,6 +1551,10 @@ function logEntryCard(entry) {
   article.className = 'case log-entry';
   article.innerHTML = '<div class="case-meta"><strong></strong></div><p></p>';
   article.querySelector('strong').textContent = formatLogDate(entry.date);
+  LOG_PAIN_FIELDS.forEach(function (field) {
+    if (entry[field] == null) return;
+    article.querySelector('.case-meta').appendChild(document.createTextNode(' · ' + t(field + 'Shown').replace('{0}', entry[field])));
+  });
   article.querySelector('p').textContent = entry.text;
   if (entry.photo) {
     var img = document.createElement('img');
@@ -1533,7 +1575,7 @@ function logEntryCard(entry) {
 }
 
 function renderLog() {
-  ['logTitle', 'logIntro', 'logDateLabel', 'logTextLabel', 'logPhotoLabel', 'logPhotoRemove', 'logPhotoBad', 'logListTitle']
+  ['logTitle', 'logIntro', 'logDateLabel', 'logPainLabel', 'logPainHint', 'painRestLabel', 'painExerciseLabel', 'logTextLabel', 'logPhotoLabel', 'logPhotoRemove', 'logPhotoBad', 'logListTitle']
     .forEach(function (id) { $(id).textContent = t(id); });
   $('logText').placeholder = t('logPlaceholder');
   $('logPhotoBtn').textContent = t(log.photo ? 'logPhotoChange' : 'logPhotoBtn');
@@ -1595,7 +1637,12 @@ $('logPhotoRemove').addEventListener('click', function () {
 
 $('logForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  var entry = logEntryFromForm({date: $('logDate').value, text: $('logText').value, photo: log.photo}, new Date());
+  var input = {date: $('logDate').value, text: $('logText').value, photo: log.photo};
+  LOG_PAIN_FIELDS.forEach(function (field) {
+    var chosen = $(field).querySelector('input:checked');
+    input[field] = chosen ? chosen.value : '';
+  });
+  var entry = logEntryFromForm(input, new Date());
   log.problems = logEntryProblems(entry);
   log.saveFailed = false;
   log.saved = false;
@@ -1617,6 +1664,31 @@ $('logForm').addEventListener('submit', function (e) {
   });
 });
 
+// One button per pain score. Tapping the chosen score again clears it,
+// since the score is optional.
+function buildPainScale(field) {
+  var scale = $(field);
+  for (var score = 0; score <= LOG_PAIN_MAX; score++) {
+    var label = document.createElement('label');
+    label.innerHTML = '<input type="radio" class="visually-hidden"><span></span>';
+    label.querySelector('input').name = field;
+    label.querySelector('input').value = score;
+    label.querySelector('span').textContent = score;
+    scale.appendChild(label);
+  }
+  var checkedBefore = null;
+  scale.addEventListener('pointerdown', function () {
+    checkedBefore = scale.querySelector('input:checked');
+  });
+  scale.addEventListener('click', function (e) {
+    if (e.target.tagName === 'INPUT' && e.target === checkedBefore) {
+      e.target.checked = false;
+      checkedBefore = null;
+    }
+  });
+}
+
+LOG_PAIN_FIELDS.forEach(buildPainScale);
 resetLogDate();
 loadLog();
 

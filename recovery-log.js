@@ -10,11 +10,23 @@ function logDateString(date) {
   return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
 }
 
+var LOG_PAIN_MAX = 10;
+// Two optional pain scores: at rest, and while doing the rehab exercises.
+var LOG_PAIN_FIELDS = ['painRest', 'painExercise'];
+
+// A chosen score as text ('' when none was chosen) to a number or null.
+function painScore(value) {
+  var text = String(value == null ? '' : value);
+  return text === '' ? null : Number(text);
+}
+
 // Trim the form's values, ready to save. photo is a data URL or null.
 function logEntryFromForm(input, now) {
   return {
     date: String(input.date || ''),
     text: String(input.text || '').trim(),
+    painRest: painScore(input.painRest),
+    painExercise: painScore(input.painExercise),
     photo: input.photo || null,
     createdAt: now.getTime()
   };
@@ -27,6 +39,10 @@ function logEntryProblems(entry) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.date)) problems.push({field: 'date', problem: 'missing'});
   if (entry.text.length === 0) problems.push({field: 'text', problem: 'missing'});
   else if (entry.text.length > LOG_TEXT_MAX) problems.push({field: 'text', problem: 'tooLong'});
+  LOG_PAIN_FIELDS.forEach(function (field) {
+    var pain = entry[field];
+    if (pain !== null && !(Number.isInteger(pain) && pain >= 0 && pain <= LOG_PAIN_MAX)) problems.push({field: field, problem: 'outOfRange'});
+  });
   return problems;
 }
 
