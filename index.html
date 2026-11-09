@@ -116,6 +116,11 @@ ol.steps li,ul.points li{margin-bottom:6px}
 .case dl{margin:0}
 .case dt{font-weight:600;font-size:15px;margin-top:6px}
 .case dd{margin:0;white-space:pre-wrap}
+.learn-intro{margin:-4px 0 16px}
+.learn-part details{border-top:1px solid var(--line)}
+.learn-part summary{cursor:pointer;font-weight:600;color:var(--acc);padding:12px 0;min-height:44px}
+.learn-part details ul{margin:0 0 14px;padding-left:22px}
+.learn-part details li{margin-bottom:6px}
 .log-date input{max-width:240px}
 /* 0-5 and 6-10 on two rows on phones, all eleven on one row when there is room. */
 .pain-scale{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-width:560px}
@@ -211,7 +216,7 @@ h1 a{text-decoration:none}
   .feature svg{width:36px;height:36px}
   .row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
   .injuries{grid-template-columns:repeat(5,1fr)}
-  #view-comfort:not([hidden]),#view-log:not([hidden]){display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  #view-comfort:not([hidden]),#view-log:not([hidden]),.learn-parts{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
   #hospitalList{display:grid;grid-template-columns:1fr 1fr;column-gap:32px}
   .place+.place{border-top:0}
   .place{border-bottom:1px solid var(--line)}
@@ -230,6 +235,7 @@ h1 a{text-decoration:none}
       <a href="#cases" data-view="cases"><span id="navCases"></span></a>
       <a href="#hospitals" data-view="hospitals"><span id="navHospitals"></span></a>
       <a href="#log" data-view="log"><span id="navLog"></span></a>
+      <a href="#learn" data-view="learn"><span id="navLearn"></span></a>
     </nav>
     <div class="langs" id="langs" role="group"><button data-lang="zh" lang="zh-CN">中</button><button data-lang="en" lang="en">EN</button><button data-lang="es" lang="es">ES</button></div>
   </div>
@@ -345,6 +351,12 @@ h1 a{text-decoration:none}
   <section class="card alert"><p class="numbers" id="hospitalsEmergency"></p></section>
 </div>
 
+<div class="view" id="view-learn" hidden>
+  <h2 class="section-title" id="learnTitle"></h2>
+  <p class="muted learn-intro" id="learnIntro"></p>
+  <div class="learn-parts" id="learnParts"></div>
+</div>
+
 <div class="view" id="view-log" hidden>
   <section class="card">
     <h2 id="logTitle"></h2>
@@ -412,6 +424,7 @@ h1 a{text-decoration:none}
 <script src="share.js"></script>
 <script src="chat.js"></script>
 <script src="recovery-log.js"></script>
+<script src="knowledge.js"></script>
 <script>
 // Interface text. Injury content lives in triage.js.
 var T = {
@@ -545,6 +558,9 @@ var T = {
     logProblemDate: 'Choose a date.',
     logProblemText: 'Write a few words about today.',
     logProblemTooLong: 'Keep it under {0} characters.',
+    navLearn: 'Sports health',
+    learnTitle: 'Sports health basics',
+    learnIntro: 'How to lower the chance of getting hurt, and what to do in the first minutes and days if you do. General knowledge, not a diagnosis. Tap a topic to open it.',
     logPainLabel: 'Pain score (optional)',
     logPainHint: '0 = no pain, 10 = the worst pain you can imagine. Tap the chosen score again to clear it.',
     painRestLabel: 'Pain at rest (not exercising)',
@@ -685,6 +701,9 @@ var T = {
     logProblemDate: 'Elige una fecha.',
     logProblemText: 'Escribe unas palabras sobre hoy.',
     logProblemTooLong: 'Como máximo {0} caracteres.',
+    navLearn: 'Salud deportiva',
+    learnTitle: 'Lo básico de la salud deportiva',
+    learnIntro: 'Cómo reducir el riesgo de lesionarte y qué hacer en los primeros minutos y días si te lesionas. Información general, no un diagnóstico. Toca un tema para abrirlo.',
     logPainLabel: 'Nivel de dolor (opcional)',
     logPainHint: '0 = sin dolor, 10 = el peor dolor imaginable. Toca otra vez el número elegido para quitarlo.',
     painRestLabel: 'Dolor en reposo (sin hacer ejercicios)',
@@ -823,6 +842,9 @@ var T = {
     logProblemDate: '请选择日期。',
     logProblemText: '写几句今天的情况吧。',
     logProblemTooLong: '最多 {0} 个字。',
+    navLearn: '运动健康知识',
+    learnTitle: '运动健康知识',
+    learnIntro: '怎样减少受伤的机会，以及万一受伤了，最初几分钟和几天里该怎么做。这些是一般知识，不能代替医生的诊断。点一个话题展开看。',
     logPainLabel: '疼痛分数（可选）',
     logPainHint: '0 = 不疼，10 = 疼得受不了。再点一次选中的分数可以取消。',
     painRestLabel: '平时（不做康复时）的疼痛',
@@ -868,7 +890,7 @@ function renderStatic() {
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
   document.title = t('title');
   ['title', 'welcomeTitle', 'welcomeText', 'alertTitle', 'numbers', 'pickTitle', 'subTitle', 'questionsTitle', 'firstAidTitle', 'whereTitle', 'rehabTitle', 'comfortTitle', 'counselingTitle', 'disclaimer',
-   'navAssess', 'navComfort', 'navCases', 'navHospitals', 'navLog', 'hospitalsTitle', 'hospitalsIntro', 'hospitalsEmergency',
+   'navAssess', 'navComfort', 'navCases', 'navHospitals', 'navLog', 'navLearn', 'learnTitle', 'learnIntro', 'hospitalsTitle', 'hospitalsIntro', 'hospitalsEmergency',
    'slogan', 'coverIntro', 'startBtn', 'coverSos', 'featAssess', 'featAssessText', 'featComfort', 'featComfortText',
    'featCases', 'featCasesText', 'featHospitals', 'featHospitalsText', 'chatTitle', 'chatIntro', 'chatInputLabel', 'chatSend', 'chatCrisis',
    'chatCta', 'fact1', 'fact2', 'fact3', 'fact4', 'featuresTitle', 'footerName', 'footerSos', 'photoCredit']
@@ -885,8 +907,42 @@ function renderStatic() {
   fillList('redFlags', RED_FLAGS);
   renderComfort();
   renderHospitals();
+  renderKnowledge();
   $('chatInput').placeholder = t('chatPlaceholder');
   renderChatStatus();
+}
+
+// Sports health knowledge (knowledge.js). Topics the reader opened stay
+// open when the language changes.
+function renderKnowledge() {
+  var box = $('learnParts');
+  var open = {};
+  box.querySelectorAll('details[open]').forEach(function (d) { open[d.dataset.key] = true; });
+  box.innerHTML = '';
+  KNOWLEDGE.forEach(function (part) {
+    var section = document.createElement('section');
+    section.className = 'card learn-part';
+    var heading = document.createElement('h2');
+    heading.textContent = L(part.title);
+    section.appendChild(heading);
+    part.topics.forEach(function (topic, index) {
+      var details = document.createElement('details');
+      details.dataset.key = part.id + index;
+      details.open = !!open[details.dataset.key];
+      var summary = document.createElement('summary');
+      summary.textContent = L(topic.title);
+      details.appendChild(summary);
+      var list = document.createElement('ul');
+      topic.points.forEach(function (point) {
+        var li = document.createElement('li');
+        li.textContent = L(point);
+        list.appendChild(li);
+      });
+      details.appendChild(list);
+      section.appendChild(details);
+    });
+    box.appendChild(section);
+  });
 }
 
 function renderHospitals() {
@@ -914,7 +970,7 @@ function renderHospitals() {
 // The menu shows one section at a time. The section is in the address
 // (#cases, ...), so the back button and shared links work. Without one,
 // the cover comes first.
-var VIEWS = ['home', 'assess', 'comfort', 'cases', 'hospitals', 'log'];
+var VIEWS = ['home', 'assess', 'comfort', 'cases', 'hospitals', 'log', 'learn'];
 
 function currentView() {
   var name = location.hash.slice(1);

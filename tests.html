@@ -16,6 +16,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="share.js"></script>
 <script src="chat.js"></script>
 <script src="recovery-log.js"></script>
+<script src="knowledge.js"></script>
 <script>
 var results = [];
 function test(name, fn) {
@@ -153,6 +154,27 @@ test('chat: empty messages are not sent and long ones are cut to the limit', fun
   equal(cleanChatMessage('  我很难受 '), '我很难受');
   equal(cleanChatMessage('a'.repeat(900)).length, CHAT_MAX_LENGTH);
 });
+test('knowledge: prevention and first aid, every topic in Chinese and English', function () {
+  equal(KNOWLEDGE.map(function (part) { return part.id; }).join(','), 'prevent,firstAid');
+  KNOWLEDGE.forEach(function (part) {
+    if (part.topics.length === 0) throw new Error(part.id + ' has no topics');
+    [part.title].concat(part.topics.map(function (topic) { return topic.title; })).forEach(function (text) {
+      if (!text.en || !text.zh) throw new Error('missing a language in ' + JSON.stringify(text));
+    });
+    part.topics.forEach(function (topic) {
+      if (topic.points.length === 0) throw new Error(topic.title.en + ' has no points');
+      topic.points.forEach(function (point) {
+        if (!point.en || !point.zh) throw new Error('missing a language in ' + JSON.stringify(point));
+      });
+    });
+  });
+});
+test('knowledge: the danger signs give the emergency numbers', function () {
+  var firstAid = KNOWLEDGE.filter(function (part) { return part.id === 'firstAid'; })[0];
+  var text = JSON.stringify(firstAid.topics);
+  if (text.indexOf('120') === -1 || text.indexOf('911') === -1) throw new Error('emergency numbers missing');
+});
+
 test('log: a record needs a date and some words', function () {
   var now = new Date(2026, 10, 9, 20, 0);
   equal(logEntryProblems(logEntryFromForm({date: '2026-11-09', text: '  肿消了一点 '}, now)).length, 0);
