@@ -157,6 +157,16 @@ h1 a{color:var(--acc)}
 .city-form .primary{width:auto;flex:0 0 auto}
 #cityResult h3{margin-top:16px}
 .city-note{font-size:14px;margin:12px 0 0}
+.trend{margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.trend svg{display:block;width:100%;height:auto}
+.trend .grid{stroke:var(--line);stroke-width:1}
+.trend .axis-label{fill:var(--muted);font-size:13px}
+.trend polyline{fill:none;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.trend-legend{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:15px}
+.trend-legend li::before{content:"";display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle;background:currentColor}
+.trend-rest{color:var(--acc);stroke:var(--acc);fill:var(--acc)}
+.trend-exercise{color:var(--orange);stroke:var(--orange);fill:var(--orange)}
+.trend-legend li span{color:var(--text)}
 .place a{background:var(--acc);color:#fff;text-decoration:none;font-weight:600;border-radius:4px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center}
 /* Cover photo: a smiling doctor, by Vitaly Gariev on Unsplash (free under
    the Unsplash License). */
@@ -405,6 +415,12 @@ h1 a{text-decoration:none}
   </section>
   <section class="card">
     <h2 id="logListTitle"></h2>
+    <div class="trend" id="logTrend" hidden>
+      <h3 id="logTrendTitle"></h3>
+      <p class="muted" id="logTrendHint"></p>
+      <div id="logTrendChart"></div>
+      <ul class="trend-legend" id="logTrendLegend"></ul>
+    </div>
     <p class="muted" id="logStatus" role="status"></p>
     <div id="logList"></div>
   </section>
@@ -582,6 +598,13 @@ var T = {
     logSavedMsg: 'Saved. Well done for keeping track!',
     logSaveFailed: 'The record could not be saved. Your browser may be blocking storage (for example in a private window).',
     logListTitle: 'Your records',
+    logTrendTitle: 'Pain trend',
+    logTrendNone: 'Give a pain score in a record and its trend will appear here.',
+    logTrendOneMore: 'Give pain scores on one more day to see the trend.',
+    logTrendHint: 'Pain from 0 to 10 over time. Several records on one day are averaged.',
+    trendRest: 'Pain at rest',
+    trendExercise: 'Pain during rehab',
+    trendChange: '{0} → {1}',
     logLoading: 'Loading your records…',
     logEmpty: 'No records yet. Write your first one above: every small step counts.',
     logLoadFailed: 'Your records could not be loaded. Your browser may be blocking storage (for example in a private window).',
@@ -737,6 +760,13 @@ var T = {
     logSavedMsg: 'Guardado. ¡Bien hecho por llevar el registro!',
     logSaveFailed: 'No se pudo guardar. Puede que tu navegador bloquee el almacenamiento (por ejemplo, en una ventana privada).',
     logListTitle: 'Tus registros',
+    logTrendTitle: 'Evolución del dolor',
+    logTrendNone: 'Pon una puntuación de dolor en un registro y aquí aparecerá su evolución.',
+    logTrendOneMore: 'Pon puntuaciones de dolor un día más para ver la evolución.',
+    logTrendHint: 'Dolor de 0 a 10 a lo largo del tiempo. Si hay varios registros en un día, se usa la media.',
+    trendRest: 'Dolor en reposo',
+    trendExercise: 'Dolor en rehabilitación',
+    trendChange: '{0} → {1}',
     logLoading: 'Cargando tus registros…',
     logEmpty: 'Aún no hay registros. Escribe el primero arriba: cada pequeño paso cuenta.',
     logLoadFailed: 'No se pudieron cargar tus registros. Puede que tu navegador bloquee el almacenamiento (por ejemplo, en una ventana privada).',
@@ -890,6 +920,13 @@ var T = {
     logSavedMsg: '已保存。坚持记录，你做得很好！',
     logSaveFailed: '没能保存。浏览器可能不允许存储（比如无痕模式）。',
     logListTitle: '我的记录',
+    logTrendTitle: '疼痛趋势',
+    logTrendNone: '在记录里填上疼痛分数，这里就会画出变化趋势。',
+    logTrendOneMore: '再记一天疼痛分数，就能看到变化趋势。',
+    logTrendHint: '疼痛 0–10 分随时间的变化。同一天有多条记录时取平均分。',
+    trendRest: '平时疼痛',
+    trendExercise: '康复时疼痛',
+    trendChange: '{0} → {1}',
     logLoading: '正在读取记录…',
     logEmpty: '还没有记录。在上面写下第一条吧，每一小步都算数。',
     logLoadFailed: '没能读取记录。浏览器可能不允许存储（比如无痕模式）。',
@@ -1106,6 +1143,8 @@ function showView() {
     else a.removeAttribute('aria-current');
   });
   scrollToCurrentTab();
+  // The chart is sized to its box, which has no width while hidden.
+  if (view === 'log') renderPainTrend();
 }
 
 // On phones not every section fits in the menu: bring the current one into
@@ -1128,6 +1167,7 @@ function updateTabsFade() {
 
 $('tabs').addEventListener('scroll', updateTabsFade);
 window.addEventListener('resize', updateTabsFade);
+window.addEventListener('resize', function () { if (!$('view-log').hidden) renderPainTrend(); });
 
 window.addEventListener('hashchange', function () {
   showView();
@@ -1775,6 +1815,88 @@ function renderLog() {
   var list = $('logList');
   list.innerHTML = '';
   if (log.status === 'ready') log.entries.forEach(function (entry) { list.appendChild(logEntryCard(entry)); });
+  renderPainTrend();
+}
+
+var TREND_CLASSES = {painRest: 'trend-rest', painExercise: 'trend-exercise'};
+var TREND_NAMES = {painRest: 'trendRest', painExercise: 'trendExercise'};
+
+// A score like 2.5 as "2.5", and 3 as "3".
+function trendScore(score) { return String(Math.round(score * 10) / 10); }
+
+function svgElement(name, attributes) {
+  var element = document.createElementNS('http://www.w3.org/2000/svg', name);
+  Object.keys(attributes).forEach(function (key) { element.setAttribute(key, attributes[key]); });
+  return element;
+}
+
+// A line chart of the two pain scores. Days are spaced by real time, so a
+// week without records shows as a longer gap. It is drawn at the box's real
+// width, so the labels keep their size on a phone.
+function painTrendChart(points, width) {
+  var height = 220, left = 30, right = 12, top = 12, bottom = 30;
+  var totalDays = Math.max(1, daysBetween(points[0].date, points[points.length - 1].date));
+  function x(date) { return left + daysBetween(points[0].date, date) / totalDays * (width - left - right); }
+  function y(score) { return top + (1 - score / LOG_PAIN_MAX) * (height - top - bottom); }
+  var svg = svgElement('svg', {viewBox: '0 0 ' + width + ' ' + height, role: 'img', 'aria-labelledby': 'logTrendTitle'});
+  [0, 5, 10].forEach(function (score) {
+    svg.appendChild(svgElement('line', {class: 'grid', x1: left, x2: width - right, y1: y(score), y2: y(score)}));
+    var label = svgElement('text', {class: 'axis-label', x: left - 8, y: y(score) + 4, 'text-anchor': 'end'});
+    label.textContent = score;
+    svg.appendChild(label);
+  });
+  [points[0], points[points.length - 1]].forEach(function (point, index) {
+    var label = svgElement('text', {class: 'axis-label', x: x(point.date), y: height - 10, 'text-anchor': index === 0 ? 'start' : 'end'});
+    label.textContent = formatShortDate(point.date);
+    svg.appendChild(label);
+  });
+  LOG_PAIN_FIELDS.forEach(function (field) {
+    var scored = points.filter(function (point) { return point[field] !== null; });
+    var line = svgElement('polyline', {class: TREND_CLASSES[field], points: scored.map(function (point) { return x(point.date) + ',' + y(point[field]); }).join(' ')});
+    svg.appendChild(line);
+    scored.forEach(function (point) {
+      var dot = svgElement('circle', {class: TREND_CLASSES[field], cx: x(point.date), cy: y(point[field]), r: 4.5});
+      var tip = svgElement('title', {});
+      tip.textContent = formatShortDate(point.date) + ' · ' + t(TREND_NAMES[field]) + ' ' + trendScore(point[field]) + '/10';
+      dot.appendChild(tip);
+      svg.appendChild(dot);
+    });
+  });
+  return svg;
+}
+
+function formatShortDate(dateString) {
+  var parts = dateString.split('-').map(Number);
+  return new Date(parts[0], parts[1] - 1, parts[2]).toLocaleDateString(lang === 'zh' ? 'zh-CN' : lang, {month: 'short', day: 'numeric'});
+}
+
+// The trend sits above the records once there are any. With fewer than two
+// days of scores there is no line to draw, so it says what to do instead.
+function renderPainTrend() {
+  var ready = log.status === 'ready' && log.entries.length > 0;
+  $('logTrend').hidden = !ready;
+  if (!ready) return;
+  var points = painTrend(log.entries);
+  $('logTrendTitle').textContent = t('logTrendTitle');
+  $('logTrendHint').textContent = t(points.length === 0 ? 'logTrendNone' : points.length === 1 ? 'logTrendOneMore' : 'logTrendHint');
+  var chart = $('logTrendChart');
+  var legend = $('logTrendLegend');
+  chart.innerHTML = '';
+  legend.innerHTML = '';
+  if (points.length < 2) return;
+  chart.appendChild(painTrendChart(points, Math.max(260, chart.clientWidth || 600)));
+  LOG_PAIN_FIELDS.forEach(function (field) {
+    var scores = points.filter(function (point) { return point[field] !== null; }).map(function (point) { return point[field]; });
+    if (scores.length === 0) return;
+    var item = document.createElement('li');
+    item.className = TREND_CLASSES[field];
+    var text = document.createElement('span');
+    var change = scores.length === 1 ? trendScore(scores[0])
+      : t('trendChange').replace('{0}', trendScore(scores[0])).replace('{1}', trendScore(scores[scores.length - 1]));
+    text.textContent = t(TREND_NAMES[field]) + ' ' + change;
+    item.appendChild(text);
+    legend.appendChild(item);
+  });
 }
 
 function loadLog() {

@@ -54,6 +54,35 @@ function sortLogEntries(entries) {
   });
 }
 
+// Days from one YYYY-MM-DD date to another, for spacing the chart by real
+// time (noon avoids daylight-saving shifts).
+function daysBetween(from, to) {
+  function noon(dateString) { return new Date(dateString + 'T12:00:00').getTime(); }
+  return Math.round((noon(to) - noon(from)) / 86400000);
+}
+
+// One point per day that has a pain score, oldest first, for the trend
+// chart. Several records on one day are averaged (to one decimal); a score
+// nobody gave that day is null.
+function painTrend(entries) {
+  var days = {};
+  entries.forEach(function (entry) {
+    LOG_PAIN_FIELDS.forEach(function (field) {
+      if (entry[field] === null || entry[field] === undefined) return;
+      var day = days[entry.date] = days[entry.date] || {};
+      day[field] = (day[field] || []).concat(entry[field]);
+    });
+  });
+  return Object.keys(days).sort().map(function (date) {
+    var point = {date: date};
+    LOG_PAIN_FIELDS.forEach(function (field) {
+      var scores = days[date][field];
+      point[field] = scores ? Math.round(scores.reduce(function (a, b) { return a + b; }, 0) / scores.length * 10) / 10 : null;
+    });
+    return point;
+  });
+}
+
 // ---- Storage in this browser ----
 
 var LOG_DATABASE = 'injury-helper-log';

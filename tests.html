@@ -183,6 +183,26 @@ test('spanish: every injury question, piece of advice, comfort and place has a S
          HOSPITAL_KINDS: HOSPITAL_KINDS, KNOWLEDGE: KNOWLEDGE}, '');
   if (missing.length) throw new Error(missing.length + ' without Spanish, e.g. ' + missing[0]);
 });
+test('log trend: one point per day with a score, oldest first, several records on a day averaged', function () {
+  var entries = [
+    {date: '2026-11-05', painRest: 6, painExercise: 8},
+    {date: '2026-11-01', painRest: 7, painExercise: null},
+    {date: '2026-11-05', painRest: 3, painExercise: 7},
+    {date: '2026-11-03', painRest: null, painExercise: null},
+    {date: '2026-11-09', painRest: null, painExercise: 4}
+  ];
+  equal(JSON.stringify(painTrend(entries)), JSON.stringify([
+    {date: '2026-11-01', painRest: 7, painExercise: null},
+    {date: '2026-11-05', painRest: 4.5, painExercise: 7.5},
+    {date: '2026-11-09', painRest: null, painExercise: 4}
+  ]));
+});
+test('log trend: no scores means no points, and days are counted across months', function () {
+  equal(painTrend([{date: '2026-11-01', painRest: null, painExercise: null}]).length, 0);
+  equal(painTrend([]).length, 0);
+  equal(daysBetween('2026-10-30', '2026-11-02'), 3);
+  equal(daysBetween('2026-11-09', '2026-11-09'), 0);
+});
 test('chat: messages about suicide or self-harm show the hotlines, in both languages', function () {
   equal(isCrisisMessage('我现在不想活了'), true);
   equal(isCrisisMessage('I want to die'), true);
