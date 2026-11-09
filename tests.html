@@ -492,7 +492,10 @@ function testSpanishSwitch() {
       // that are not shown yet (results, the trend) are filled later.
       test('page: starts without errors, so every heading and button has its text', function () {
         var empty = [].slice.call(doc.querySelectorAll('h1, h2, h3, button, summary'))
-          .filter(function (element) { return !element.closest('[hidden]:not(.view)') && element.textContent.trim() === ''; })
+          .filter(function (element) {
+            var name = element.textContent.trim() || element.getAttribute('aria-label') || '';
+            return !element.closest('[hidden]:not(.view)') && name === '';
+          })
           .map(function (element) { return element.id || element.className || element.tagName; });
         if (empty.length) throw new Error('empty: ' + empty.join(', '));
       });

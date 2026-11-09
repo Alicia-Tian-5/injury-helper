@@ -205,12 +205,20 @@ h1 a{color:var(--acc)}
 .trend-exercise{color:var(--orange);stroke:var(--orange);fill:var(--orange)}
 .trend-legend li span{color:var(--text)}
 .place a{background:var(--acc);color:#fff;text-decoration:none;font-weight:600;border-radius:4px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center}
-/* Cover photo: a smiling doctor, by Vitaly Gariev on Unsplash (free under
-   the Unsplash License). */
-/* The photo is cropped (rect=) so the doctor stands on the right third. */
-.cover{--veil:244,247,251;--photo:url("https://images.unsplash.com/photo-1758691463582-11aea602cd4a?rect=0,150,2560,1440&w=1920&q=80&auto=format");
-  text-align:center;margin:-16px calc(50% - 50vw) 18px;padding:48px 16px;min-height:calc(100vh - 110px);display:flex;align-items:center;
-  background:linear-gradient(rgba(var(--veil),.8),rgba(var(--veil),.8)),var(--photo) 80% 25%/cover,#e7eef6}
+/* Cover photos are free under the Unsplash License; COVER_SLIDES in the
+   script lists each one with its photographer. */
+/* Photos change every few seconds behind a light veil that keeps the words readable. */
+.cover{--veil:244,247,251;position:relative;overflow:hidden;background:#e7eef6;
+  text-align:center;margin:-16px calc(50% - 50vw) 18px;padding:48px 16px;min-height:calc(100vh - 110px);display:flex;align-items:center}
+.cover-slide{position:absolute;inset:0;background-size:cover;background-position:var(--position);opacity:0;transition:opacity .9s ease}
+.cover-slide.on{opacity:1}
+.cover-veil{position:absolute;inset:0;background:rgba(var(--veil),.8)}
+.cover-inner{position:relative;z-index:1}
+.cover-dots{position:absolute;left:0;right:0;bottom:10px;z-index:1;display:flex;justify-content:center;gap:2px}
+.cover-dots button{width:32px;height:32px;background:none;padding:0;display:flex;align-items:center;justify-content:center}
+.cover-dots button::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--acc);opacity:.3}
+.cover-dots button[aria-current="true"]::before{opacity:1}
+@media (prefers-reduced-motion:reduce){.cover-slide{transition:none}}
 /* Soft glow behind the words so they stay sharp over the photo. */
 .cover-text{text-shadow:0 0 18px rgba(var(--veil),.9)}
 .cover-inner{max-width:1180px;margin:0 auto}
@@ -258,7 +266,9 @@ h1 a{text-decoration:none}
   .tabs a{background:none;border:0;border-radius:0;border-bottom:3px solid transparent;padding:8px 12px}
   .tabs a[aria-current="page"]{background:none;color:var(--acc);border-bottom-color:var(--acc)}
   .cover{text-align:left;padding:72px 32px;margin-bottom:28px;min-height:calc(100vh - 70px);
-    background:linear-gradient(90deg,rgba(var(--veil),.94) 0%,rgba(var(--veil),.86) 38%,rgba(var(--veil),.35) 68%,rgba(var(--veil),.25) 100%),var(--photo) center 25%/cover,#e7eef6}
+  }
+  .cover-slide{background-position:var(--wide)}
+  .cover-veil{background:linear-gradient(90deg,rgba(var(--veil),.94) 0%,rgba(var(--veil),.86) 38%,rgba(var(--veil),.35) 68%,rgba(var(--veil),.25) 100%)}
   .cover-inner{width:100%}
   .cover-text{max-width:700px}
   .cover-actions{justify-content:flex-start}
@@ -302,6 +312,9 @@ h1 a{text-decoration:none}
 <div class="view" id="view-home" hidden>
   <a class="card home-today" id="homeToday" href="#log" hidden></a>
   <section class="cover">
+    <div id="coverSlides" aria-hidden="true"></div>
+    <div class="cover-veil"></div>
+    <div class="cover-dots" id="coverDots"></div>
     <div class="cover-inner">
       <div class="cover-text">
         <p class="slogan" id="slogan"></p>
@@ -542,7 +555,7 @@ h1 a{text-decoration:none}
     <p class="footer-name" id="footerName"></p>
     <p id="footerSos"></p>
     <p class="footer-note" id="disclaimer"></p>
-    <p class="footer-note"><span id="photoCredit"></span> <a href="https://unsplash.com/photos/a-smiling-doctor-with-glasses-and-stethoscope-stands-arms-crossed-XqMo4OlBnh0" target="_blank" rel="noopener">Vitaly Gariev / Unsplash</a></p>
+    <p class="footer-note"><span id="photoCredit"></span> <span id="photoCredits"></span></p>
   </div>
 </footer>
 
@@ -622,7 +635,8 @@ var T = {
     fact4: 'the whole site in two languages',
     featuresTitle: 'What you can do here',
     footerName: 'Sports Injury Helper · On your road back to sport, I\'m always here.',
-    photoCredit: 'Cover photo:',
+    photoCredit: 'Cover photos (Unsplash):',
+    coverSlide: 'Photo {0}',
     footerSos: 'Emergency: 911 (US) · 120 (China) · Crisis line: 988 (US) · 12356 (China)',
     chatTitle: 'Talk to the AI',
     chatIntro: 'Tell it how you feel. It answers with comfort and a few small things you can do. It is an AI, not a counselor, and the chat stays on this computer.',
@@ -846,7 +860,8 @@ var T = {
     fact4: 'todo el sitio en varios idiomas',
     featuresTitle: 'Lo que puedes hacer aquí',
     footerName: 'Ayuda para lesiones deportivas · En tu camino de vuelta al deporte, siempre estoy aquí.',
-    photoCredit: 'Foto de portada:',
+    photoCredit: 'Fotos de portada (Unsplash):',
+    coverSlide: 'Foto {0}',
     footerSos: 'Emergencias: 911 (EE. UU.) · 120 (China) · Línea de crisis: 988 (EE. UU.) · 12356 (China)',
     chatTitle: 'Habla con la IA',
     chatIntro: 'Cuéntale cómo te sientes. Responde con apoyo y algunas cosas pequeñas que puedes hacer. Es una IA, no un consejero, y la conversación se queda en este ordenador.',
@@ -1068,7 +1083,8 @@ var T = {
     fact4: '全站中英双语',
     featuresTitle: '你可以在这里',
     footerName: '运动损伤急救助手 · 运动康复路上，我一直都在',
-    photoCredit: '封面照片：',
+    photoCredit: '封面照片（Unsplash）：',
+    coverSlide: '第 {0} 张照片',
     footerSos: '急救：120（中国）· 911（美国）· 心理援助：12356（中国）· 988（美国）',
     chatTitle: '和 AI 聊聊',
     chatIntro: '说说你现在的感受。它会安慰你，并给你几件能马上去做的小事。它是 AI，不是心理咨询师；聊天内容只留在这台电脑上。',
@@ -1898,6 +1914,7 @@ function pickInjury(injury) {
 
 function renderAll() {
   renderStatic();
+  renderCover();
   updateTabsFade();
   renderCases();
   renderPlan();
@@ -2614,6 +2631,87 @@ document.addEventListener('visibilitychange', function () {
 });
 
 buildDayPicks();
+
+// ---- Cover slideshow ----
+// `position` keeps the subject in view on a phone, where the photo is cropped
+// narrow; `wide` is for computers, where the words sit on the left. `crop`
+// cuts the photo first (rect=x,y,width,height in the original's pixels).
+var COVER_SLIDES = [
+  {photo: 'photo-1758691463582-11aea602cd4a', crop: 'rect=0,150,2560,1440', position: '72% 25%', wide: 'right 25%', author: 'Vitaly Gariev', page: 'https://unsplash.com/photos/a-smiling-doctor-with-glasses-and-stethoscope-stands-arms-crossed-XqMo4OlBnh0'},
+  {photo: 'photo-1461896836934-ffe607ba8211', position: '60% 60%', author: 'Braden Collum', page: 'https://unsplash.com/photos/man-on-running-field-9HI8UJMSdZA'},
+  {photo: 'photo-1706777193603-76c3e9613553', position: '45% 50%', author: 'Tom Claes', page: 'https://unsplash.com/photos/a-person-sitting-on-a-chair-with-a-foot-in-a-cast-gkgLYinrRtM'},
+  {photo: 'photo-1649751361457-01d3a696c7e6', position: '55% 40%', author: 'yury kirillov', page: 'https://unsplash.com/photos/a-man-getting-his-leg-examined-by-a-doctor-pbUWW-CBoqY'},
+  {photo: 'photo-1645005513713-9e2b92a687d3', position: '50% 40%', author: 'Sincerely Media', page: 'https://unsplash.com/photos/a-man-and-a-woman-holding-dumbs-in-their-hands-inoZpsBQRqk'}
+];
+var COVER_SECONDS = 4.5;
+var cover = {current: 0, timer: null};
+
+function coverImage(slide) {
+  return 'url("https://images.unsplash.com/' + slide.photo + '?' + (slide.crop ? slide.crop + '&' : '') + 'w=1920&q=80&auto=format&fit=crop")';
+}
+
+// A photo is only downloaded when it is shown or about to be, to save data on phones.
+function loadCoverSlide(index) {
+  var layer = $('coverSlides').children[index];
+  if (!layer.style.backgroundImage) layer.style.backgroundImage = coverImage(COVER_SLIDES[index]);
+}
+
+function showCoverSlide(index) {
+  cover.current = (index + COVER_SLIDES.length) % COVER_SLIDES.length;
+  loadCoverSlide(cover.current);
+  loadCoverSlide((cover.current + 1) % COVER_SLIDES.length);
+  [].forEach.call($('coverSlides').children, function (layer, i) { layer.classList.toggle('on', i === cover.current); });
+  [].forEach.call($('coverDots').children, function (dot, i) { dot.setAttribute('aria-current', String(i === cover.current)); });
+}
+
+// Moves on every few seconds, unless the visitor asked for less motion, the
+// tab is hidden, or another section is open. Picking a dot restarts the wait.
+function startCoverTimer() {
+  clearInterval(cover.timer);
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  cover.timer = setInterval(function () {
+    if (!document.hidden && !$('view-home').hidden) showCoverSlide(cover.current + 1);
+  }, COVER_SECONDS * 1000);
+}
+
+function buildCover() {
+  COVER_SLIDES.forEach(function (slide, index) {
+    var layer = document.createElement('div');
+    layer.className = 'cover-slide';
+    layer.style.setProperty('--position', slide.position);
+    layer.style.setProperty('--wide', slide.wide || slide.position);
+    $('coverSlides').appendChild(layer);
+    var dot = document.createElement('button');
+    dot.type = 'button';
+    dot.addEventListener('click', function () {
+      showCoverSlide(index);
+      startCoverTimer();
+    });
+    $('coverDots').appendChild(dot);
+  });
+  showCoverSlide(0);
+  startCoverTimer();
+}
+
+function renderCover() {
+  [].forEach.call($('coverDots').children, function (dot, index) {
+    dot.setAttribute('aria-label', t('coverSlide').replace('{0}', index + 1));
+  });
+  var credits = $('photoCredits');
+  credits.innerHTML = '';
+  COVER_SLIDES.forEach(function (slide, index) {
+    if (index > 0) credits.appendChild(document.createTextNode(' · '));
+    var link = document.createElement('a');
+    link.href = slide.page;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.textContent = slide.author;
+    credits.appendChild(link);
+  });
+}
+
+buildCover();
+renderCover();
 loadPlan();
 
 $('seeCasesBtn').addEventListener('click', function () {
