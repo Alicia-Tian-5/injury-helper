@@ -141,21 +141,17 @@ test('chat: an ordinary sad message does not show the crisis hotlines', function
   equal(isCrisisMessage('我现在很难受'), false);
   equal(isCrisisMessage('I miss playing soccer so much'), false);
 });
+test('chat: when the AI writes Spanish itself, it is told to sound like a native speaker', function () {
+  var prompt = chatSystemPrompt('es');
+  if (prompt.indexOf('Reply only in Spanish') === -1) throw new Error('no Spanish instruction');
+  if (prompt.indexOf('native Spanish speaker') === -1) throw new Error('no native-speaker instruction');
+  equal(chatSystemPrompt('en'), CHAT_SYSTEM_PROMPT);
+});
 test('chat: empty messages are not sent and long ones are cut to the limit', function () {
   equal(cleanChatMessage('   '), null);
   equal(cleanChatMessage('  我很难受 '), '我很难受');
   equal(cleanChatMessage('a'.repeat(900)).length, CHAT_MAX_LENGTH);
 });
-test('categories each have an icon and their own color', function () {
-  var hues = {};
-  CATEGORIES.forEach(function (c) {
-    if (!c.icon) throw new Error('no icon for category ' + c.id);
-    if (!(c.hue >= 0 && c.hue < 360)) throw new Error('bad color for category ' + c.id);
-    if (hues[c.hue]) throw new Error(c.id + ' has the same color as ' + hues[c.hue]);
-    hues[c.hue] = c.id;
-  });
-});
-
 test('photo: fills unanswered questions from the AI result', function () {
   var answers = {};
   var filled = applyPhotoResult(ankle, answers, {isInjury: true, description: '', deformity: 'unknown', swelling: 'severe'});
@@ -269,8 +265,46 @@ results.forEach(function (r) {
 });
 }
 
+// Opens the real page in a hidden frame and clicks the ES button, the way a
+// visitor would. Puts back the visitor's saved language afterwards, since the
+// frame shares this site's storage.
+function testSpanishSwitch() {
+  var saved = null;
+  try { saved = localStorage.getItem('injury-helper-lang'); } catch (e) { /* storage blocked */ }
+  return new Promise(function (resolve) {
+    var frame = document.createElement('iframe');
+    frame.style.display = 'none';
+    frame.src = 'index.html';
+    frame.onload = function () {
+      var page = frame.contentWindow;
+      var doc = frame.contentDocument;
+      test('language: the ES button switches the interface to Spanish', function () {
+        var button = doc.querySelector('#langs [data-lang="es"]');
+        if (!button) throw new Error('there is no ES button');
+        button.click();
+        equal(doc.documentElement.lang, 'es');
+        equal(doc.getElementById('navAssess').textContent, 'Revisar mi lesión');
+        equal(doc.getElementById('startBtn').textContent, 'Empezar la evaluación');
+      });
+      test('language: Spanish has every interface text that English has', function () {
+        if (!page.T.es) throw new Error('there is no Spanish interface text');
+        Object.keys(page.T.en).forEach(function (key) {
+          if (!page.T.es[key]) throw new Error('Spanish is missing ' + key);
+        });
+      });
+      try {
+        if (saved === null) localStorage.removeItem('injury-helper-lang');
+        else localStorage.setItem('injury-helper-lang', saved);
+      } catch (e) { /* storage blocked: nothing was saved either */ }
+      frame.remove();
+      resolve();
+    };
+    document.body.appendChild(frame);
+  });
+}
+
 // firestore.rules must accept exactly what the page lets people post.
-fetch('firestore.rules').then(function (r) { return r.text(); }).then(function (rules) {
+var rulesChecked = fetch('firestore.rules').then(function (r) { return r.text(); }).then(function (rules) {
   test('rules: list every injury id', function () {
     INJURIES.forEach(function (injury) {
       if (rules.indexOf("'" + injury.id + "'") === -1) throw new Error('rules miss ' + injury.id);
@@ -285,7 +319,8 @@ fetch('firestore.rules').then(function (r) { return r.text(); }).then(function (
   });
 }).catch(function (e) {
   results.push({name: 'rules: firestore.rules can be read', ok: false, msg: e.message});
-}).then(showResults);
+});
+Promise.all([rulesChecked, testSpanishSwitch()]).then(showResults);
 </script>
 </body>
 </html>

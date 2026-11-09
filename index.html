@@ -4,82 +4,73 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>运动损伤急救助手 · Sports Injury Helper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap">
 <style>
 :root{
-  --bg:#fdf8f3;--bg-top:#fbe6d8;--card:#fff;--text:#3a2e28;--muted:#7a6a60;--line:#f0e2d6;
-  --acc:#b8603d;--acc-soft:#fbeadf;--tint:#fdf1e8;--shadow:0 2px 10px rgba(150,90,50,.08);
+  --bg:#f4f6f9;--card:#fff;--text:#1b2733;--muted:#56626f;--line:#d9e0e8;
+  --acc:#1f4e79;--acc-dark:#163a5c;--acc-soft:#e7eef6;--tint:#f0f4f8;--shadow:0 1px 3px rgba(20,40,70,.08);
   --red:#c62828;--red-soft:#fdecec;--orange:#d9480f;--orange-soft:#fff1e6;
   --yellow:#a86400;--yellow-soft:#fff8e1;--green:#2e7d32;--green-soft:#e8f5e9;
 }
 @media (prefers-color-scheme:dark){:root{
-  --bg:#1a1614;--bg-top:#2e221c;--card:#241e1b;--text:#f0e8e3;--muted:#b3a59c;--line:#3a302a;
-  --acc:#e8956f;--acc-soft:#3a2820;--tint:#2c231f;--shadow:none;
+  --bg:#0f1620;--card:#17212c;--text:#e6ebf1;--muted:#9eabb9;--line:#2b3846;
+  --acc:#7fb0e0;--acc-dark:#a6c8ea;--acc-soft:#1c2b3c;--tint:#141e29;--shadow:none;
   --red:#ff6b6b;--red-soft:#3a1d1f;--orange:#ff9b5c;--orange-soft:#3a2617;
   --yellow:#f2c14e;--yellow-soft:#352d17;--green:#6fcf73;--green-soft:#1c3220;
 }}
 *{box-sizing:border-box}
 /* Elements with display rules below must still disappear when hidden. */
 [hidden]{display:none !important}
-body{margin:0;background:linear-gradient(180deg,var(--bg-top) 0,var(--bg) 320px) no-repeat,var(--bg);color:var(--text);font:17px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.6 "Source Sans 3","Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif}
 html,body{overflow-x:clip}
 main{max-width:680px;margin:0 auto;padding:16px 16px 48px}
-h1{font-size:22px;margin:0;line-height:1.3}
-h2{font-size:19px;margin:0 0 10px}
-h3{font-size:17px;margin:0 0 6px}
-button{font:inherit;cursor:pointer;border:0;border-radius:10px}
-.langs{flex:0 0 auto;display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+h1{font-size:21px;font-weight:700;margin:0;line-height:1.3;letter-spacing:.01em}
+h2{font-size:20px;font-weight:600;margin:0 0 10px}
+h3{font-size:17px;font-weight:600;margin:0 0 6px}
+button{font:inherit;cursor:pointer;border:0;border-radius:4px}
+.langs{flex:0 0 auto;display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
 .langs button{background:var(--card);color:var(--muted);border-radius:0;padding:8px 14px;font-size:15px;white-space:nowrap}
 .langs button+button{border-left:1px solid var(--line)}
-.langs button.on{background:var(--acc);color:#fff;font-weight:700}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.langs button.on{background:var(--acc);color:#fff;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
 .alert{background:var(--red-soft);border-color:var(--red)}
 .alert h2{color:var(--red)}
 .alert ul{margin:0 0 8px;padding-left:20px}
 .alert .numbers{font-weight:700;margin:0}
 .muted{color:var(--muted);font-size:15px}
 .injuries{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-/* Each choice card gets its category's own soft color from --hue. */
-.injury{--hue:28;background:hsl(var(--hue) 85% 95%);color:var(--text);border:2px solid transparent;border-radius:14px;padding:12px 14px;text-align:left;min-height:72px;display:flex;align-items:center;gap:12px}
-.injury .icon{flex:0 0 auto;width:42px;height:42px;border-radius:50%;background:hsl(var(--hue) 80% 87%);display:flex;align-items:center;justify-content:center;font-size:22px}
-.injury strong{display:block;font-size:18px;color:hsl(var(--hue) 55% 32%)}
+.injury{background:var(--card);color:var(--text);border:1.5px solid var(--line);border-radius:6px;padding:12px 14px;text-align:left;min-height:72px}
+.injury strong{display:block;font-size:18px;font-weight:600;color:var(--acc)}
 .injury small{display:block;color:var(--muted);font-size:14px}
-.injury:hover{background:hsl(var(--hue) 85% 92%)}
-.injury[aria-pressed="true"]{border-color:hsl(var(--hue) 60% 50%);background:hsl(var(--hue) 85% 90%)}
-@media (prefers-color-scheme:dark){
-  .injury{background:hsl(var(--hue) 30% 17%)}
-  .injury .icon{background:hsl(var(--hue) 35% 26%)}
-  .injury strong{color:hsl(var(--hue) 75% 78%)}
-  .injury:hover{background:hsl(var(--hue) 30% 21%)}
-  .injury[aria-pressed="true"]{border-color:hsl(var(--hue) 65% 62%);background:hsl(var(--hue) 32% 23%)}
-}
-.welcome{background:linear-gradient(135deg,#ffd9c2 0%,#ffe9d6 45%,#d6f0ea 100%);border:0;display:flex;gap:14px;align-items:center}
-.welcome .hug{font-size:34px;line-height:1}
-.welcome h2{margin:0 0 2px;color:#8a3f1f}
-.welcome p{margin:0;color:#5a4a40}
-@media (prefers-color-scheme:dark){
-  .welcome{background:linear-gradient(135deg,#4a2c20 0%,#3a2a20 45%,#1f3833 100%)}
-  .welcome h2{color:#ffc9a8}.welcome p{color:#e3d6cc}
-}
+.injury:hover{border-color:var(--acc)}
+.injury[aria-pressed="true"]{border-color:var(--acc);background:var(--acc-soft);box-shadow:inset 0 0 0 1px var(--acc)}
+.welcome{border-left:4px solid var(--acc)}
+.welcome h2{margin:0 0 2px;color:var(--acc)}
+.welcome p{margin:0}
 fieldset{border:0;margin:0 0 16px;padding:0}
 fieldset.missing legend{color:var(--red)}
 legend{font-weight:600;margin-bottom:8px;padding:0}
 .options{display:flex;flex-wrap:wrap;gap:8px}
-.options label{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:10px;padding:10px 14px;cursor:pointer;min-height:44px}
+.options label{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:4px;padding:10px 14px;cursor:pointer;min-height:44px}
 .options input{width:18px;height:18px;margin:0;accent-color:var(--acc)}
 .options label:has(input:checked){border-color:var(--acc);background:var(--acc-soft)}
-.primary{background:var(--acc);color:#fff;font-weight:700;padding:13px 22px;width:100%;font-size:18px}
-.secondary{background:transparent;color:var(--acc);border:1.5px solid var(--acc);padding:10px 18px}
+.primary{background:var(--acc);color:#fff;font-weight:600;padding:13px 22px;width:100%;font-size:18px}
+.primary:hover{background:var(--acc-dark)}
+.secondary{background:transparent;color:var(--acc);border:1.5px solid var(--acc);padding:10px 18px;font-weight:600}
+.secondary:hover{background:var(--acc-soft)}
 .error{color:var(--red);font-weight:600;margin:10px 0 0}
-.photo{border:1.5px dashed var(--line);border-radius:12px;padding:14px;margin-bottom:18px}
+.photo{border:1.5px dashed var(--line);border-radius:6px;padding:14px;margin-bottom:18px}
 .photo .muted{margin:0 0 10px}
 .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.file-btn{display:inline-block;border-radius:10px;cursor:pointer}
+.file-btn{display:inline-block;border-radius:4px;cursor:pointer}
 .file-btn:focus-within{outline:2px solid var(--acc);outline-offset:2px}
 .photo-result{display:flex;gap:12px;align-items:flex-start;margin-top:12px}
-.photo-result img{width:96px;height:96px;object-fit:cover;border-radius:8px;flex:0 0 auto;background:var(--line)}
+.photo-result img{width:96px;height:96px;object-fit:cover;border-radius:4px;flex:0 0 auto;background:var(--line)}
 .photo-result p{margin:0 0 6px}
 #photoDesc{font-style:italic}
-.tag{font-size:12px;font-weight:600;color:var(--acc);background:var(--acc-soft);border-radius:6px;padding:1px 6px;margin-left:4px;white-space:nowrap}
+.tag{font-size:12px;font-weight:600;color:var(--acc);background:var(--acc-soft);border-radius:3px;padding:1px 6px;margin-left:4px;white-space:nowrap}
 .level{border-width:2px}
 .level h2{margin-bottom:4px}
 .level p{margin:0}
@@ -88,30 +79,21 @@ legend{font-weight:600;margin-bottom:8px;padding:0}
 .level-soon{background:var(--yellow-soft);border-color:var(--yellow)}.level-soon h2{color:var(--yellow)}
 .level-selfCare{background:var(--green-soft);border-color:var(--green)}.level-selfCare h2{color:var(--green)}
 .step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--acc);color:#fff;font-size:15px;margin-right:8px;vertical-align:2px}
-/* The three advice sections each get their own color: act, go, recover. */
-.advice-now{border-top:5px solid #e8794f}.advice-now .step-num{background:#e8794f}
-.advice-where{border-top:5px solid #2f9e8f}.advice-where .step-num{background:#2f9e8f}
-.advice-rehab{border-top:5px solid #5aa860}.advice-rehab .step-num{background:#5aa860}
-.advice-rehab .phase{border-left-color:#5aa860}
-.advice-comfort{border-top:5px solid #9b7fd1}.advice-comfort .step-num{background:#9b7fd1}
-.comfort-stage{border-left:4px solid #9b7fd1;padding:4px 0 4px 12px;margin-top:12px}
+.advice-now,.advice-where,.advice-rehab,.advice-comfort{border-top:4px solid var(--acc)}
+.comfort-stage{border-left:3px solid var(--acc);padding:4px 0 4px 12px;margin-top:12px}
 .comfort-stage .when{font-weight:700}
 .comfort-stage p{margin:2px 0}
 .comfort-stage .try{color:var(--muted);font-size:15px}
-.counseling{background:#f3eefc;border-radius:14px;padding:14px;margin-top:16px}
-.counseling h3{color:#6a4fa8}
+.counseling{background:var(--tint);border:1px solid var(--line);border-radius:6px;padding:14px;margin-top:16px}
+.counseling h3{color:var(--acc)}
 .counselor{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0}
-.counselor+.counselor{border-top:1px solid #e2d9f5}
+.counselor+.counselor{border-top:1px solid var(--line)}
 .counselor .detail{color:var(--muted);font-size:14px}
 .counselor .links{display:flex;gap:8px}
-.counselor a{background:#9b7fd1;color:#fff;text-decoration:none;font-weight:600;border-radius:10px;padding:8px 16px;min-height:40px;display:inline-flex;align-items:center}
-@media (prefers-color-scheme:dark){
-  .counseling{background:#2a2338}.counseling h3{color:#c9b4f5}
-  .counselor+.counselor{border-top-color:#3d3352}
-}
+.counselor a{background:var(--acc);color:#fff;text-decoration:none;font-weight:600;border-radius:4px;padding:8px 16px;min-height:40px;display:inline-flex;align-items:center}
 ol.steps,ul.points{margin:0;padding-left:22px}
 ol.steps li,ul.points li{margin-bottom:6px}
-.phase{border-left:4px solid var(--acc);padding:4px 0 4px 12px;margin-top:14px}
+.phase{border-left:3px solid var(--acc);padding:4px 0 4px 12px;margin-top:14px}
 .phase .when{font-weight:700}
 .phase .goal{color:var(--muted);font-size:15px;margin-bottom:4px}
 .phase ul{margin:0;padding-left:20px}
@@ -121,10 +103,10 @@ ol.steps li,ul.points li{margin-bottom:6px}
 .cases-head h2{margin:0}
 .field{display:block;margin-bottom:12px}
 .field span{display:block;font-weight:600;margin-bottom:4px}
-.field input,.field select,.field textarea{width:100%;font:inherit;color:var(--text);background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px}
+.field input,.field select,.field textarea{width:100%;font:inherit;color:var(--text);background:var(--card);border:1.5px solid var(--line);border-radius:4px;padding:10px 12px}
 .field textarea{resize:vertical}
 .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--acc);outline-offset:0;border-color:var(--acc)}
-#caseForm{border:1.5px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+#caseForm{border:1.5px solid var(--line);border-radius:6px;padding:14px;margin:12px 0}
 .success{color:var(--green);font-weight:600}
 .filter{max-width:280px;margin-top:12px}
 .case{border-top:1px solid var(--line);padding:12px 0}
@@ -135,59 +117,62 @@ ol.steps li,ul.points li{margin-bottom:6px}
 .case dt{font-weight:600;font-size:15px;margin-top:6px}
 .case dd{margin:0;white-space:pre-wrap}
 #subPick{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
-.site-header{position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.site-header{position:sticky;top:0;z-index:10;background:var(--card);border-top:4px solid var(--acc);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+h1 a{color:var(--acc)}
 .site-header .wrap{max-width:680px;margin:0 auto;padding:10px 16px 8px;display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap}
 .site-header h1{flex:1 1 auto}
 .tabs{order:3;width:100%;display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
-.tabs a{flex:0 0 auto;text-decoration:none;color:var(--muted);font-weight:600;border-radius:999px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line)}
+.tabs a{flex:0 0 auto;text-decoration:none;color:var(--muted);font-weight:600;border-radius:4px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--line)}
 .tabs a[aria-current="page"]{background:var(--acc);border-color:var(--acc);color:#fff}
 .place{padding:12px 0}
 .place+.place{border-top:1px solid var(--line)}
 .place .detail{color:var(--muted);font-size:15px}
 .place .links{display:flex;gap:8px;margin-top:8px}
-.place a{background:var(--acc);color:#fff;text-decoration:none;font-weight:600;border-radius:10px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center}
+.place a{background:var(--acc);color:#fff;text-decoration:none;font-weight:600;border-radius:4px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center}
 /* Cover photo: a smiling doctor, by Vitaly Gariev on Unsplash (free under
    the Unsplash License). */
 /* The photo is cropped (rect=) so the doctor stands on the right third. */
-.cover{--veil:253,241,232;--photo:url("https://images.unsplash.com/photo-1758691463582-11aea602cd4a?rect=0,150,2560,1440&w=1920&q=80&auto=format");
+.cover{--veil:244,247,251;--photo:url("https://images.unsplash.com/photo-1758691463582-11aea602cd4a?rect=0,150,2560,1440&w=1920&q=80&auto=format");
   text-align:center;margin:-16px calc(50% - 50vw) 18px;padding:48px 16px;min-height:calc(100vh - 110px);display:flex;align-items:center;
-  background:linear-gradient(rgba(var(--veil),.8),rgba(var(--veil),.8)),var(--photo) 80% 25%/cover,#fbe4d4}
+  background:linear-gradient(rgba(var(--veil),.8),rgba(var(--veil),.8)),var(--photo) 80% 25%/cover,#e7eef6}
 /* Soft glow behind the words so they stay sharp over the photo. */
 .cover-text{text-shadow:0 0 18px rgba(var(--veil),.9)}
 .cover-inner{max-width:1180px;margin:0 auto}
 .cover-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
-.facts div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center;box-shadow:var(--shadow)}
-.facts strong{display:block;font-size:28px;color:var(--acc);line-height:1.2}
+.facts div{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--acc);border-radius:4px;padding:14px;text-align:center;box-shadow:var(--shadow)}
+.facts strong{display:block;font-size:28px;font-weight:700;color:var(--acc);line-height:1.2}
 .facts span{color:var(--muted);font-size:15px}
-.section-title{font-size:22px;margin:0 0 12px}
+.section-title{font-size:22px;font-weight:600;margin:0 0 12px}
 .row-2>.card{margin-bottom:14px}
-.site-footer{background:#3a2e28;color:#f0e2d6;margin-top:24px}
+.site-footer{background:#13283f;color:#e3eaf2;margin-top:24px}
 .site-footer .wrap{max-width:1180px;margin:0 auto;padding:28px 16px;text-align:center}
 .site-footer p{margin:0 0 8px}
-.footer-name{font-weight:800;font-size:18px}
-.footer-note{color:#c9b6a8;font-size:14px}
+.footer-name{font-weight:600;font-size:18px}
+.footer-note{color:#a9b8c8;font-size:14px}
 .footer-note a{color:inherit}
-.slogan{font-size:28px;font-weight:800;line-height:1.35;margin:14px 0 10px;color:var(--acc)}
+.slogan{font-size:28px;font-weight:700;line-height:1.3;margin:14px 0 12px;color:var(--acc)}
 .cover-intro{color:var(--text);margin:0 auto 22px;max-width:460px}
-.start{display:inline-block;width:auto;text-decoration:none;padding:14px 36px;border-radius:999px}
+.start{display:inline-block;width:auto;text-decoration:none;padding:14px 32px;border-radius:4px}
 .cover-sos{color:var(--red);font-size:15px;font-weight:600;margin:16px 0 0}
 .features{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.feature{display:flex;flex-direction:column;gap:2px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;color:var(--text);text-decoration:none;box-shadow:var(--shadow)}
-.feature>span:first-child{font-size:26px}
-h1 a{color:inherit;text-decoration:none}
+.feature{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px;color:var(--text);text-decoration:none;box-shadow:var(--shadow)}
+.feature svg{width:30px;height:30px;color:var(--acc);margin-bottom:6px}
+.feature strong{color:var(--acc);font-weight:600}
+.feature:hover{border-color:var(--acc)}
+h1 a{text-decoration:none}
 .chat-log{display:flex;flex-direction:column;gap:8px;margin:12px 0}
-.bubble{max-width:85%;padding:10px 14px;border-radius:16px;white-space:pre-wrap}
-.bubble.me{align-self:flex-end;background:var(--acc);color:#fff;border-bottom-right-radius:4px}
-.bubble.ai{align-self:flex-start;background:var(--acc-soft);color:var(--text);border-bottom-left-radius:4px}
+.bubble{max-width:85%;padding:10px 14px;border-radius:8px;white-space:pre-wrap}
+.bubble.me{align-self:flex-end;background:var(--acc);color:#fff;border-bottom-right-radius:2px}
+.bubble.ai{align-self:flex-start;background:var(--acc-soft);color:var(--text);border-bottom-left-radius:2px}
 .chat-form{display:flex;gap:8px;align-items:flex-end}
-.chat-form textarea{flex:1;font:inherit;color:var(--text);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;resize:vertical}
+.chat-form textarea{flex:1;font:inherit;color:var(--text);background:var(--card);border:1.5px solid var(--line);border-radius:4px;padding:10px 12px;resize:vertical}
 .chat-form textarea:focus{outline:2px solid var(--acc);border-color:var(--acc)}
 .chat-form .primary{width:auto;padding:12px 18px;font-size:17px}
-.chat-crisis{background:var(--red-soft);border:1.5px solid var(--red);border-radius:12px;padding:12px;color:var(--text);margin-top:10px}
+.chat-crisis{background:var(--red-soft);border:1.5px solid var(--red);border-radius:6px;padding:12px;color:var(--text);margin-top:10px}
 .chat-crisis a{color:var(--red);font-weight:700}
 .start{text-decoration:none}
-@media (prefers-color-scheme:dark){.cover{--veil:26,22,20}.site-footer{background:#100c0a}}
+@media (prefers-color-scheme:dark){.cover{--veil:15,22,32}.site-footer{background:#0a121b}}
 /* Computers: a wide, full-window layout. Phones keep the single column. */
 @media (min-width:900px){
   main,.site-header .wrap{max-width:1180px;padding-left:32px;padding-right:32px}
@@ -197,7 +182,7 @@ h1 a{color:inherit;text-decoration:none}
   .tabs a{background:none;border:0;border-radius:0;border-bottom:3px solid transparent;padding:8px 12px}
   .tabs a[aria-current="page"]{background:none;color:var(--acc);border-bottom-color:var(--acc)}
   .cover{text-align:left;padding:72px 32px;margin-bottom:28px;min-height:calc(100vh - 70px);
-    background:linear-gradient(90deg,rgba(var(--veil),.94) 0%,rgba(var(--veil),.86) 38%,rgba(var(--veil),.35) 68%,rgba(var(--veil),.25) 100%),var(--photo) center 25%/cover,#fbe4d4}
+    background:linear-gradient(90deg,rgba(var(--veil),.94) 0%,rgba(var(--veil),.86) 38%,rgba(var(--veil),.35) 68%,rgba(var(--veil),.25) 100%),var(--photo) center 25%/cover,#e7eef6}
   .cover-inner{width:100%}
   .cover-text{max-width:700px}
   .cover-actions{justify-content:flex-start}
@@ -208,7 +193,7 @@ h1 a{color:inherit;text-decoration:none}
   .section-title{font-size:28px}
   .features{grid-template-columns:repeat(4,1fr);gap:16px}
   .feature{padding:22px}
-  .feature>span:first-child{font-size:36px}
+  .feature svg{width:36px;height:36px}
   .row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
   .injuries{grid-template-columns:repeat(5,1fr)}
   #view-comfort:not([hidden]){display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
@@ -217,7 +202,7 @@ h1 a{color:inherit;text-decoration:none}
   .place{border-bottom:1px solid var(--line)}
   #view-cases{max-width:860px;margin:0 auto}
 }
-@media (max-width:420px){.slogan{font-size:24px}h1{font-size:20px}.injury{padding:10px 12px}.injury strong{font-size:17px}}
+@media (max-width:420px){.slogan{font-size:24px}h1{font-size:19px}.injury{padding:10px 12px}.injury strong{font-size:17px}}
 </style>
 </head>
 <body>
@@ -225,12 +210,12 @@ h1 a{color:inherit;text-decoration:none}
   <div class="wrap">
     <h1><a href="#home" id="title"></a></h1>
     <nav class="tabs" id="tabs">
-      <a href="#assess" data-view="assess">🩹 <span id="navAssess"></span></a>
-      <a href="#comfort" data-view="comfort">💜 <span id="navComfort"></span></a>
-      <a href="#cases" data-view="cases">💬 <span id="navCases"></span></a>
-      <a href="#hospitals" data-view="hospitals">🏥 <span id="navHospitals"></span></a>
+      <a href="#assess" data-view="assess"><span id="navAssess"></span></a>
+      <a href="#comfort" data-view="comfort"><span id="navComfort"></span></a>
+      <a href="#cases" data-view="cases"><span id="navCases"></span></a>
+      <a href="#hospitals" data-view="hospitals"><span id="navHospitals"></span></a>
     </nav>
-    <div class="langs" id="langs" role="group"><button data-lang="zh" lang="zh-CN">中</button><button data-lang="en" lang="en">EN</button></div>
+    <div class="langs" id="langs" role="group"><button data-lang="zh" lang="zh-CN">中</button><button data-lang="en" lang="en">EN</button><button data-lang="es" lang="es">ES</button></div>
   </div>
 </header>
 <main>
@@ -254,18 +239,17 @@ h1 a{color:inherit;text-decoration:none}
   </section>
   <h2 class="section-title" id="featuresTitle"></h2>
   <div class="features">
-    <a class="feature" href="#assess"><span aria-hidden="true">🩹</span><strong id="featAssess"></strong><span class="muted" id="featAssessText"></span></a>
-    <a class="feature" href="#comfort"><span aria-hidden="true">💜</span><strong id="featComfort"></strong><span class="muted" id="featComfortText"></span></a>
-    <a class="feature" href="#cases"><span aria-hidden="true">💬</span><strong id="featCases"></strong><span class="muted" id="featCasesText"></span></a>
-    <a class="feature" href="#hospitals"><span aria-hidden="true">🏥</span><strong id="featHospitals"></strong><span class="muted" id="featHospitalsText"></span></a>
+    <a class="feature" href="#assess"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="1.5"/><path d="M9 4V3h6v1M9 11l2 2 4-4M9 17h6"/></svg><strong id="featAssess"></strong><span class="muted" id="featAssessText"></span></a>
+    <a class="feature" href="#comfort"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><strong id="featComfort"></strong><span class="muted" id="featComfortText"></span></a>
+    <a class="feature" href="#cases"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg><strong id="featCases"></strong><span class="muted" id="featCasesText"></span></a>
+    <a class="feature" href="#hospitals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M12 8v8M8 12h8"/></svg><strong id="featHospitals"></strong><span class="muted" id="featHospitalsText"></span></a>
   </div>
 </div>
 
 <div class="view" id="view-assess">
 <div class="row-2">
 <section class="card welcome">
-  <div class="hug" aria-hidden="true">🤍</div>
-  <div><h2 id="welcomeTitle"></h2><p id="welcomeText"></p></div>
+  <h2 id="welcomeTitle"></h2><p id="welcomeText"></p>
 </section>
 
 <section class="card alert" aria-labelledby="alertTitle">
@@ -486,6 +470,114 @@ var T = {
     casesNotSetUp: 'Case sharing is not set up yet.',
     anonymous: 'Anonymous'
   },
+  // Spanish covers the interface. Injury content has no Spanish yet, so L()
+  // shows it in English.
+  es: {
+    title: 'Ayuda para lesiones deportivas',
+    welcomeTitle: 'Respira hondo. No estás solo.',
+    welcomeText: 'Lesionarse da miedo. Iremos paso a paso y sabrás qué hacer a continuación.',
+    langGroup: 'Idioma de la interfaz',
+    alertTitle: 'Pide ayuda de inmediato si:',
+    numbers: 'Emergencias: 911 (EE. UU.) · 120 (China)',
+    pickTitle: '¿Qué pasó?',
+    subTitle: '¿Cuál de estas?',
+    questionsTitle: 'Responde unas preguntas',
+    assess: 'Ver qué hacer',
+    missing: 'Responde todas las preguntas (faltan {0}).',
+    firstAidTitle: 'Ahora mismo',
+    whereTitle: 'Adónde ir',
+    rehabTitle: 'Volver al deporte',
+    comfortTitle: 'Cuidar cómo te sientes',
+    counselingTitle: 'Habla con un consejero',
+    restart: 'Empezar de nuevo',
+    disclaimer: 'Solo como referencia. Esta página no puede diagnosticar una lesión ni sustituye a un médico.',
+    photoTitle: 'Añade una foto (opcional)',
+    photoHint: 'Haz una foto de la lesión. La IA integrada de Chrome la mira en este ordenador y completa lo que puede ver. La foto no se sube a ningún sitio.',
+    photoBtn: 'Elegir o hacer una foto',
+    photoChange: 'Usar otra foto',
+    photoAlt: 'La foto de tu lesión',
+    photoChecking: 'La IA está mirando la foto…',
+    photoDownloading: 'Descargando el modelo de IA de Chrome (solo la primera vez)… {0}%',
+    photoFilled: 'Se completaron {0} a partir de la foto, marcadas "de la foto". Revísalas y cambia las que estén mal.',
+    photoNothing: 'La foto no sirvió para responder ninguna pregunta. Respóndelas tú.',
+    photoNotInjury: 'Esta foto no parece mostrar una lesión. Prueba con otra.',
+    photoUnsupported: 'La IA de este navegador no puede mirar fotos (necesita un Chrome de escritorio reciente). Responde las preguntas tú.',
+    photoBadImage: 'No se pudo leer esta imagen. Prueba con un JPG o PNG.',
+    photoError: 'La IA no pudo mirar la foto. Responde las preguntas tú.',
+    photoTag: 'de la foto',
+    seeCases: 'Ver experiencias de otras personas',
+    seeComfort: 'Cuidar cómo te sientes',
+    slogan: 'En tu camino de vuelta al deporte, siempre estoy aquí.',
+    coverIntro: '¿Te lesionaste haciendo deporte? Está bien. Respira hondo. No es tu culpa y no es el final de tu deporte. Te ayudamos a saber qué hacer ahora y adónde ir, y te acompañamos, paso a paso, de vuelta al deporte que amas.',
+    startBtn: 'Empezar la evaluación',
+    coverSos: '¿Emergencia? Llama ya al 911 (EE. UU.) · 120 (China).',
+    featAssess: 'Revisar mi lesión',
+    featAssessText: 'Unas preguntas y luego pasos claros.',
+    featComfort: 'Apoyo emocional',
+    featComfortText: 'Palabras para cada etapa y personas con quien hablar.',
+    featCases: 'Casos compartidos',
+    featCasesText: 'Historias reales de personas que se recuperaron.',
+    featHospitals: 'Hospitales cercanos',
+    featHospitalsText: 'Encuentra el tipo de lugar adecuado en un mapa.',
+    chatCta: 'Habla con la IA',
+    fact1: 'lesiones deportivas comunes incluidas',
+    fact2: 'pasos: primeros auxilios, adónde ir, rehabilitación',
+    fact3: 'líneas de ayuda emocional, a cualquier hora',
+    fact4: 'todo el sitio en varios idiomas',
+    featuresTitle: 'Lo que puedes hacer aquí',
+    footerName: 'Ayuda para lesiones deportivas · En tu camino de vuelta al deporte, siempre estoy aquí.',
+    photoCredit: 'Foto de portada:',
+    footerSos: 'Emergencias: 911 (EE. UU.) · 120 (China) · Línea de crisis: 988 (EE. UU.) · 12356 (China)',
+    chatTitle: 'Habla con la IA',
+    chatIntro: 'Cuéntale cómo te sientes. Responde con apoyo y algunas cosas pequeñas que puedes hacer. Es una IA, no un consejero, y la conversación se queda en este ordenador.',
+    chatInputLabel: 'Tu mensaje',
+    chatPlaceholder: 'Por ejemplo: ahora mismo me siento muy mal',
+    chatSend: 'Enviar',
+    chatThinking: 'La IA está pensando…',
+    chatDownloading: 'Descargando el modelo de IA de Chrome (solo la primera vez)… {0}%',
+    chatUnsupported: 'La IA de este navegador no puede conversar (necesita un Chrome de escritorio reciente). Los consejeros de arriba siempre están para ti.',
+    chatError: 'La IA no pudo responder. Inténtalo de nuevo o contacta con uno de los consejeros de arriba.',
+    chatCrisis: 'Importas, y mereces ayuda ahora mismo. Llama o escribe al 988 (EE. UU.), llama al 12356 (China) o llama a emergencias. También puedes decírselo a alguien cercano.',
+    navAssess: 'Revisar mi lesión',
+    navComfort: 'Apoyo emocional',
+    navCases: 'Casos compartidos',
+    navHospitals: 'Hospitales cercanos',
+    hospitalsTitle: 'Encuentra atención cerca de ti',
+    hospitalsIntro: 'Elige el tipo de lugar que necesitas. El mapa se abre con tu propia ubicación; esta página nunca la ve.',
+    hospitalsEmergency: 'En una emergencia, no conduzcas tú: llama al 911 (EE. UU.) · 120 (China).',
+    googleMaps: 'Google Maps',
+    amap: 'Amap (China)',
+    casesTitle: 'Casos compartidos',
+    casesIntro: 'Experiencias reales de otras personas. Historias personales, no consejos médicos.',
+    shareBtn: 'Compartir mi experiencia',
+    shareCancel: 'Cancelar',
+    caseInjuryLabel: 'Lesión',
+    choose: 'Elige…',
+    caseLabels: {
+      nickname: 'Apodo (opcional)',
+      story: '¿Cómo pasó? (obligatorio)',
+      treatment: '¿Qué hiciste y adónde fuiste?',
+      recovery: '¿Cuánto tardaste en recuperarte?',
+      lesson: '¿Qué les dirías a otros?'
+    },
+    caseNames: {injury: 'Lesión', nickname: 'Apodo', story: 'Cómo pasó', treatment: 'Tratamiento', recovery: 'Recuperación', lesson: 'Consejo'},
+    privacyNote: 'Tu publicación aparece en público al instante y no se puede editar. No incluyas tu nombre real, tus datos de contacto ni nada que te identifique.',
+    postBtn: 'Publicar',
+    posting: 'Publicando…',
+    posted: '¡Publicado! Gracias por compartir.',
+    problem_missing: '{0}: rellena este campo.',
+    problem_tooShort: '{0}: escribe al menos {1} caracteres.',
+    problem_tooLong: '{0}: como máximo {1} caracteres.',
+    postFailed: 'No se pudo publicar. Revisa tu conexión a internet e inténtalo de nuevo.',
+    filterLabel: 'Mostrar',
+    filterAll: 'Todas las lesiones',
+    casesLoading: 'Cargando casos…',
+    casesEmpty: 'Aún no hay casos. ¡Sé el primero en compartir!',
+    casesEmptyFilter: 'Aún no hay casos de esta lesión.',
+    casesError: 'No se pudieron cargar los casos. Revisa tu conexión a internet y recarga la página.',
+    casesNotSetUp: 'Compartir casos aún no está configurado.',
+    anonymous: 'Anónimo'
+  },
   zh: {
     title: '运动损伤急救助手',
     welcomeTitle: '先深呼吸，别着急',
@@ -610,8 +702,9 @@ function saveLang() {
   try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* storage blocked: the choice just is not remembered */ }
 }
 function t(key) { return T[lang][key]; }
-// Pick the current language from a {en, zh} object.
-function L(text) { return text[lang]; }
+// Pick the current language from a {en, zh} object; English when that
+// language has no text yet (Spanish injury content, for now).
+function L(text) { return text[lang] || text.en; }
 function $(id) { return document.getElementById(id); }
 
 function fillList(listId, items) {
@@ -625,7 +718,7 @@ function fillList(listId, items) {
 }
 
 function renderStatic() {
-  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
   document.title = t('title');
   ['title', 'welcomeTitle', 'welcomeText', 'alertTitle', 'numbers', 'pickTitle', 'subTitle', 'questionsTitle', 'firstAidTitle', 'whereTitle', 'rehabTitle', 'comfortTitle', 'counselingTitle', 'disclaimer',
    'navAssess', 'navComfort', 'navCases', 'navHospitals', 'hospitalsTitle', 'hospitalsIntro', 'hospitalsEmergency',
@@ -706,7 +799,7 @@ function renderComfort() {
     div.innerHTML = '<div class="when"></div><p></p><p class="try"></p>';
     div.querySelector('.when').textContent = L(stage.when);
     div.querySelector('p').textContent = L(stage.words);
-    div.querySelector('.try').textContent = '💜 ' + L(stage.tryThis);
+    div.querySelector('.try').textContent = L(stage.tryThis);
     comfort.appendChild(div);
   });
   var list = $('counselingList');
@@ -730,14 +823,12 @@ function renderComfort() {
 
 // A big tappable card with a name and a hint underneath, used for both
 // categories and the injuries inside a category.
-function choiceButton(item, selected, onPick, category) {
+function choiceButton(item, selected, onPick) {
   var b = document.createElement('button');
   b.type = 'button';
   b.className = 'injury';
   b.setAttribute('aria-pressed', selected);
-  b.style.setProperty('--hue', category.hue);
-  b.innerHTML = '<span class="icon" aria-hidden="true"></span><span><strong></strong><small></small></span>';
-  b.querySelector('.icon').textContent = category.icon;
+  b.innerHTML = '<strong></strong><small></small>';
   b.querySelector('strong').textContent = L(item.name);
   b.querySelector('small').textContent = L(item.hint);
   b.addEventListener('click', onPick);
@@ -748,7 +839,7 @@ function renderCategories() {
   var box = $('categories');
   box.innerHTML = '';
   CATEGORIES.forEach(function (category) {
-    box.appendChild(choiceButton(category, currentCategory === category, function () { pickCategory(category); }, category));
+    box.appendChild(choiceButton(category, currentCategory === category, function () { pickCategory(category); }));
   });
   // Only categories with more than one injury ask which one.
   var showSub = currentCategory !== null && currentCategory.injuries.length > 1;
@@ -757,7 +848,7 @@ function renderCategories() {
   sub.innerHTML = '';
   if (!showSub) return;
   currentCategory.injuries.forEach(function (injury) {
-    sub.appendChild(choiceButton(injury, currentInjury === injury, function () { pickInjury(injury); }, currentCategory));
+    sub.appendChild(choiceButton(injury, currentInjury === injury, function () { pickInjury(injury); }));
   });
 }
 
@@ -895,7 +986,7 @@ async function chatSession() {
     if (availability !== 'unavailable') modelLang = lang;
   }
   chat.session = await LanguageModel.create({
-    initialPrompts: [{role: 'system', content: CHAT_SYSTEM_PROMPT}],
+    initialPrompts: [{role: 'system', content: chatSystemPrompt(modelLang)}],
     expectedInputs: [{type: 'text', languages: [modelLang]}],
     expectedOutputs: [{type: 'text', languages: [modelLang]}],
     monitor: function (m) {
@@ -1245,7 +1336,8 @@ $('caseForm').addEventListener('submit', function (e) {
   e.preventDefault();
   var input = {injury: $('caseInjury').value};
   Object.keys(CASE_FIELDS).forEach(function (field) { input[field] = $('case-' + field).value; });
-  var sharedCase = caseFromForm(input, lang);
+  // firestore.rules only accepts zh and en, so Spanish posts are tagged en.
+  var sharedCase = caseFromForm(input, lang === 'zh' ? 'zh' : 'en');
   cases.problems = caseProblems(sharedCase);
   cases.postFailed = false;
   if (cases.problems.length > 0) { renderCases(); return; }

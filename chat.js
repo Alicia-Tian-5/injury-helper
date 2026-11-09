@@ -21,6 +21,19 @@ var CHAT_SYSTEM_PROMPT = [
   'and ask them to call or text 988 (US), call 12356 (China), or call emergency services.'
 ].join(' ');
 
+// Languages the model may write itself instead of English.
+var CHAT_LANGUAGE_NAMES = {es: 'Spanish', zh: 'Chinese'};
+
+// The instructions for a chat in one language. When the model writes that
+// language itself (no translation), it is told to sound like a native
+// speaker, since English instructions otherwise make it sound translated.
+function chatSystemPrompt(modelLang) {
+  var name = CHAT_LANGUAGE_NAMES[modelLang];
+  if (!name) return CHAT_SYSTEM_PROMPT;
+  return CHAT_SYSTEM_PROMPT + ' Reply only in ' + name + '. Write the way a native ' + name +
+    ' speaker texts a close friend: natural, everyday, casual words, never stiff and never sounding translated from English.';
+}
+
 // Words that mean someone may be in danger. When one appears, the page shows
 // the hotlines at once, before and whatever the AI answers.
 var CRISIS_WORDS = [

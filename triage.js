@@ -1179,16 +1179,16 @@ var HEAT_ILLNESS = {
 // which one before showing questions. Each has an icon and a color (hue,
 // 0-360) so the cards are easy to tell apart and the page feels warmer.
 var CATEGORIES = [
-  {id: 'sprain', icon: '🦶', hue: 28, name: {en: 'Sprain', zh: '扭伤'}, hint: {en: 'Ligaments: ankle, knee, wrist', zh: '韧带：脚踝、膝盖、手腕'}, injuries: [ANKLE_SPRAIN, OTHER_SPRAIN]},
-  {id: 'strain', icon: '💪', hue: 8, name: {en: 'Strain', zh: '拉伤'}, hint: {en: 'Muscles and tendons', zh: '肌肉、肌腱'}, injuries: [MUSCLE_STRAIN]},
-  {id: 'dislocation', icon: '🦵', hue: 268, name: {en: 'Dislocation', zh: '脱位'}, hint: {en: 'A joint popped out', zh: '关节错位'}, injuries: [PATELLA_DISLOCATION, OTHER_DISLOCATION]},
-  {id: 'fracture', icon: '🦴', hue: 210, name: {en: 'Broken bone', zh: '骨折'}, hint: {en: 'Cracked or broken', zh: '骨头裂了或断了'}, injuries: [FRACTURE]},
-  {id: 'concussion', icon: '🤕', hue: 330, name: {en: 'Head injury', zh: '脑震荡'}, hint: {en: 'A hit to the head', zh: '头部被撞'}, injuries: [CONCUSSION]},
-  {id: 'bruise', icon: '⚽', hue: 190, name: {en: 'Bruise', zh: '撞伤淤青'}, hint: {en: 'Hit by a ball or body', zh: '被球或人撞到'}, injuries: [BRUISE]},
-  {id: 'wound', icon: '🩹', hue: 350, name: {en: 'Cuts and scrapes', zh: '擦伤割伤'}, hint: {en: 'Skin broken, bleeding', zh: '皮肤破了、流血'}, injuries: [WOUND]},
-  {id: 'cramp', icon: '⚡', hue: 45, name: {en: 'Cramp', zh: '抽筋'}, hint: {en: 'Muscle locks tight', zh: '肌肉突然绷紧'}, injuries: [CRAMP]},
-  {id: 'overuse', icon: '🔁', hue: 150, name: {en: 'Overuse pain', zh: '劳损'}, hint: {en: 'Built up over time', zh: '慢慢累积的疼'}, injuries: [OVERUSE]},
-  {id: 'heat', icon: '☀️', hue: 36, name: {en: 'Heat illness', zh: '中暑'}, hint: {en: 'Dizzy or sick in the heat', zh: '天热头晕、恶心'}, injuries: [HEAT_ILLNESS]}
+  {id: 'sprain', name: {en: 'Sprain', zh: '扭伤'}, hint: {en: 'Ligaments: ankle, knee, wrist', zh: '韧带：脚踝、膝盖、手腕'}, injuries: [ANKLE_SPRAIN, OTHER_SPRAIN]},
+  {id: 'strain', name: {en: 'Strain', zh: '拉伤'}, hint: {en: 'Muscles and tendons', zh: '肌肉、肌腱'}, injuries: [MUSCLE_STRAIN]},
+  {id: 'dislocation', name: {en: 'Dislocation', zh: '脱位'}, hint: {en: 'A joint popped out', zh: '关节错位'}, injuries: [PATELLA_DISLOCATION, OTHER_DISLOCATION]},
+  {id: 'fracture', name: {en: 'Broken bone', zh: '骨折'}, hint: {en: 'Cracked or broken', zh: '骨头裂了或断了'}, injuries: [FRACTURE]},
+  {id: 'concussion', name: {en: 'Head injury', zh: '脑震荡'}, hint: {en: 'A hit to the head', zh: '头部被撞'}, injuries: [CONCUSSION]},
+  {id: 'bruise', name: {en: 'Bruise', zh: '撞伤淤青'}, hint: {en: 'Hit by a ball or body', zh: '被球或人撞到'}, injuries: [BRUISE]},
+  {id: 'wound', name: {en: 'Cuts and scrapes', zh: '擦伤割伤'}, hint: {en: 'Skin broken, bleeding', zh: '皮肤破了、流血'}, injuries: [WOUND]},
+  {id: 'cramp', name: {en: 'Cramp', zh: '抽筋'}, hint: {en: 'Muscle locks tight', zh: '肌肉突然绷紧'}, injuries: [CRAMP]},
+  {id: 'overuse', name: {en: 'Overuse pain', zh: '劳损'}, hint: {en: 'Built up over time', zh: '慢慢累积的疼'}, injuries: [OVERUSE]},
+  {id: 'heat', name: {en: 'Heat illness', zh: '中暑'}, hint: {en: 'Dizzy or sick in the heat', zh: '天热头晕、恶心'}, injuries: [HEAT_ILLNESS]}
 ];
 
 var INJURIES = CATEGORIES.reduce(function (all, c) { return all.concat(c.injuries); }, []);
