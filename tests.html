@@ -15,6 +15,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="triage.js"></script>
 <script src="share.js"></script>
 <script src="chat.js"></script>
+<script src="recovery-log.js"></script>
 <script>
 var results = [];
 function test(name, fn) {
@@ -152,6 +153,26 @@ test('chat: empty messages are not sent and long ones are cut to the limit', fun
   equal(cleanChatMessage('  我很难受 '), '我很难受');
   equal(cleanChatMessage('a'.repeat(900)).length, CHAT_MAX_LENGTH);
 });
+test('log: a record needs a date and some words', function () {
+  var now = new Date(2026, 10, 9, 20, 0);
+  equal(logEntryProblems(logEntryFromForm({date: '2026-11-09', text: '  肿消了一点 '}, now)).length, 0);
+  equal(logEntryFromForm({date: '2026-11-09', text: '  肿消了一点 '}, now).text, '肿消了一点');
+  equal(logEntryProblems(logEntryFromForm({date: '2026-11-09', text: '   '}, now))[0].field, 'text');
+  equal(logEntryProblems(logEntryFromForm({date: '', text: 'ok'}, now))[0].field, 'date');
+  equal(logEntryProblems(logEntryFromForm({date: '2026-11-09', text: 'a'.repeat(LOG_TEXT_MAX + 1)}, now))[0].problem, 'tooLong');
+});
+test('log: newest day first, and the later record first on the same day', function () {
+  var sorted = sortLogEntries([
+    {id: 1, date: '2026-11-07', createdAt: 5},
+    {id: 2, date: '2026-11-09', createdAt: 1},
+    {id: 3, date: '2026-11-09', createdAt: 2}
+  ]);
+  equal(sorted.map(function (e) { return e.id; }).join(','), '3,2,1');
+});
+test('log: today is written the way a date input expects', function () {
+  equal(logDateString(new Date(2026, 0, 5)), '2026-01-05');
+});
+
 test('photo: fills unanswered questions from the AI result', function () {
   var answers = {};
   var filled = applyPhotoResult(ankle, answers, {isInjury: true, description: '', deformity: 'unknown', swelling: 'severe'});
@@ -320,7 +341,24 @@ var rulesChecked = fetch('firestore.rules').then(function (r) { return r.text();
 }).catch(function (e) {
   results.push({name: 'rules: firestore.rules can be read', ok: false, msg: e.message});
 });
-Promise.all([rulesChecked, testSpanishSwitch()]).then(showResults);
+// A saved record must come back when the page is opened again. The test
+// record is removed afterwards so it never shows up in the real log.
+var logStorageChecked = logStore.add({date: '2000-01-01', text: 'test record', photo: null, createdAt: 0}).then(function (id) {
+  return logStore.all().then(function (entries) {
+    test('log: a saved record can be read back', function () {
+      var found = entries.filter(function (e) { return e.id === id; })[0];
+      equal(found && found.text, 'test record');
+    });
+    return logStore.remove(id);
+  }).then(logStore.all).then(function (entries) {
+    test('log: a deleted record is gone', function () {
+      equal(entries.some(function (e) { return e.id === id; }), false);
+    });
+  });
+}).catch(function (e) {
+  results.push({name: 'log: records can be stored in this browser', ok: false, msg: String(e && e.message || e)});
+});
+Promise.all([rulesChecked, testSpanishSwitch(), logStorageChecked]).then(showResults);
 </script>
 </body>
 </html>

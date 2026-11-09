@@ -64,7 +64,7 @@ legend{font-weight:600;margin-bottom:8px;padding:0}
 .photo{border:1.5px dashed var(--line);border-radius:6px;padding:14px;margin-bottom:18px}
 .photo .muted{margin:0 0 10px}
 .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.file-btn{display:inline-block;border-radius:4px;cursor:pointer}
+.file-btn{display:inline-block;position:relative;border-radius:4px;cursor:pointer}
 .file-btn:focus-within{outline:2px solid var(--acc);outline-offset:2px}
 .photo-result{display:flex;gap:12px;align-items:flex-start;margin-top:12px}
 .photo-result img{width:96px;height:96px;object-fit:cover;border-radius:4px;flex:0 0 auto;background:var(--line)}
@@ -116,12 +116,19 @@ ol.steps li,ul.points li{margin-bottom:6px}
 .case dl{margin:0}
 .case dt{font-weight:600;font-size:15px;margin-top:6px}
 .case dd{margin:0;white-space:pre-wrap}
+.log-date input{max-width:240px}
+.log-photo{display:block;max-width:220px;max-height:220px;object-fit:cover;border-radius:4px;margin-top:10px}
+.link-btn{background:none;color:var(--acc);text-decoration:underline;padding:8px;margin-left:6px}
+.log-entry img{display:block;max-width:100%;max-height:360px;object-fit:contain;border-radius:4px;margin:6px 0 8px}
+.log-entry .secondary{padding:6px 14px;font-size:15px}
 #subPick{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
 .site-header{position:sticky;top:0;z-index:10;background:var(--card);border-top:4px solid var(--acc);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
 h1 a{color:var(--acc)}
 .site-header .wrap{max-width:680px;margin:0 auto;padding:10px 16px 8px;display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap}
 .site-header h1{flex:1 1 auto}
 .tabs{order:3;width:100%;display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+/* On phones the menu scrolls sideways; the fading right edge shows there is more. */
+.tabs.more-right{-webkit-mask-image:linear-gradient(90deg,#000 75%,transparent);mask-image:linear-gradient(90deg,#000 75%,transparent)}
 .tabs a{flex:0 0 auto;text-decoration:none;color:var(--muted);font-weight:600;border-radius:4px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--line)}
 .tabs a[aria-current="page"]{background:var(--acc);border-color:var(--acc);color:#fff}
 .place{padding:12px 0}
@@ -196,7 +203,7 @@ h1 a{text-decoration:none}
   .feature svg{width:36px;height:36px}
   .row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
   .injuries{grid-template-columns:repeat(5,1fr)}
-  #view-comfort:not([hidden]){display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  #view-comfort:not([hidden]),#view-log:not([hidden]){display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
   #hospitalList{display:grid;grid-template-columns:1fr 1fr;column-gap:32px}
   .place+.place{border-top:0}
   .place{border-bottom:1px solid var(--line)}
@@ -214,6 +221,7 @@ h1 a{text-decoration:none}
       <a href="#comfort" data-view="comfort"><span id="navComfort"></span></a>
       <a href="#cases" data-view="cases"><span id="navCases"></span></a>
       <a href="#hospitals" data-view="hospitals"><span id="navHospitals"></span></a>
+      <a href="#log" data-view="log"><span id="navLog"></span></a>
     </nav>
     <div class="langs" id="langs" role="group"><button data-lang="zh" lang="zh-CN">中</button><button data-lang="en" lang="en">EN</button><button data-lang="es" lang="es">ES</button></div>
   </div>
@@ -329,6 +337,32 @@ h1 a{text-decoration:none}
   <section class="card alert"><p class="numbers" id="hospitalsEmergency"></p></section>
 </div>
 
+<div class="view" id="view-log" hidden>
+  <section class="card">
+    <h2 id="logTitle"></h2>
+    <p class="muted" id="logIntro"></p>
+    <form id="logForm" novalidate>
+      <label class="field log-date"><span id="logDateLabel"></span><input type="date" id="logDate"></label>
+      <label class="field"><span id="logTextLabel"></span><textarea id="logText" rows="4" maxlength="1000"></textarea></label>
+      <div class="field">
+        <span id="logPhotoLabel"></span>
+        <label class="secondary file-btn"><input type="file" accept="image/*" id="logPhotoInput" class="visually-hidden"><span id="logPhotoBtn"></span></label>
+        <button type="button" class="link-btn" id="logPhotoRemove" hidden></button>
+        <img class="log-photo" id="logPhotoPreview" alt="" hidden>
+        <p class="error" id="logPhotoBad" role="alert" hidden></p>
+      </div>
+      <button type="submit" class="primary" id="logSaveBtn"></button>
+      <p class="error" id="logError" role="alert" hidden></p>
+    </form>
+    <p class="success" id="logSaved" role="status" hidden></p>
+  </section>
+  <section class="card">
+    <h2 id="logListTitle"></h2>
+    <p class="muted" id="logStatus" role="status"></p>
+    <div id="logList"></div>
+  </section>
+</div>
+
 <div class="view" id="view-cases" hidden>
 
 <section class="card" id="casesCard">
@@ -361,6 +395,7 @@ h1 a{text-decoration:none}
 <script src="triage.js"></script>
 <script src="share.js"></script>
 <script src="chat.js"></script>
+<script src="recovery-log.js"></script>
 <script>
 // Interface text. Injury content lives in triage.js.
 var T = {
@@ -468,7 +503,32 @@ var T = {
     casesEmptyFilter: 'No cases for this injury yet.',
     casesError: 'Cases could not be loaded. Check your internet connection and refresh the page.',
     casesNotSetUp: 'Case sharing is not set up yet.',
-    anonymous: 'Anonymous'
+    anonymous: 'Anonymous',
+    navLog: 'Recovery log',
+    logTitle: 'Write today\'s record',
+    logIntro: 'Note how your recovery is going, with a photo if you like. Your records stay on this device only: they are not uploaded and nobody else can see them.',
+    logDateLabel: 'Date',
+    logTextLabel: 'How is it today?',
+    logPlaceholder: 'For example: the swelling went down a little; did 3 sets of straight leg raises.',
+    logPhotoLabel: 'Photo (optional)',
+    logPhotoBtn: 'Choose or take a photo',
+    logPhotoChange: 'Use a different photo',
+    logPhotoRemove: 'Remove photo',
+    logPhotoAlt: 'Photo for this record',
+    logPhotoBad: 'This image could not be read. Try a JPG or PNG.',
+    logSave: 'Save record',
+    logSaving: 'Saving…',
+    logSavedMsg: 'Saved. Well done for keeping track!',
+    logSaveFailed: 'The record could not be saved. Your browser may be blocking storage (for example in a private window).',
+    logListTitle: 'Your records',
+    logLoading: 'Loading your records…',
+    logEmpty: 'No records yet. Write your first one above: every small step counts.',
+    logLoadFailed: 'Your records could not be loaded. Your browser may be blocking storage (for example in a private window).',
+    logDelete: 'Delete',
+    logDeleteConfirm: 'Delete this record? This cannot be undone.',
+    logProblemDate: 'Choose a date.',
+    logProblemText: 'Write a few words about today.',
+    logProblemTooLong: 'Keep it under {0} characters.'
   },
   // Spanish covers the interface. Injury content has no Spanish yet, so L()
   // shows it in English.
@@ -576,7 +636,32 @@ var T = {
     casesEmptyFilter: 'Aún no hay casos de esta lesión.',
     casesError: 'No se pudieron cargar los casos. Revisa tu conexión a internet y recarga la página.',
     casesNotSetUp: 'Compartir casos aún no está configurado.',
-    anonymous: 'Anónimo'
+    anonymous: 'Anónimo',
+    navLog: 'Diario de recuperación',
+    logTitle: 'Escribe el registro de hoy',
+    logIntro: 'Anota cómo va tu recuperación, con una foto si quieres. Tus registros se quedan solo en este dispositivo: no se suben y nadie más los ve.',
+    logDateLabel: 'Fecha',
+    logTextLabel: '¿Cómo va hoy?',
+    logPlaceholder: 'Por ejemplo: la hinchazón bajó un poco; hice 3 series de elevaciones de pierna recta.',
+    logPhotoLabel: 'Foto (opcional)',
+    logPhotoBtn: 'Elegir o hacer una foto',
+    logPhotoChange: 'Usar otra foto',
+    logPhotoRemove: 'Quitar la foto',
+    logPhotoAlt: 'Foto de este registro',
+    logPhotoBad: 'No se pudo leer esta imagen. Prueba con un JPG o PNG.',
+    logSave: 'Guardar registro',
+    logSaving: 'Guardando…',
+    logSavedMsg: 'Guardado. ¡Bien hecho por llevar el registro!',
+    logSaveFailed: 'No se pudo guardar. Puede que tu navegador bloquee el almacenamiento (por ejemplo, en una ventana privada).',
+    logListTitle: 'Tus registros',
+    logLoading: 'Cargando tus registros…',
+    logEmpty: 'Aún no hay registros. Escribe el primero arriba: cada pequeño paso cuenta.',
+    logLoadFailed: 'No se pudieron cargar tus registros. Puede que tu navegador bloquee el almacenamiento (por ejemplo, en una ventana privada).',
+    logDelete: 'Eliminar',
+    logDeleteConfirm: '¿Eliminar este registro? No se puede deshacer.',
+    logProblemDate: 'Elige una fecha.',
+    logProblemText: 'Escribe unas palabras sobre hoy.',
+    logProblemTooLong: 'Como máximo {0} caracteres.'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -682,7 +767,32 @@ var T = {
     casesEmptyFilter: '这种伤还没有案例。',
     casesError: '案例加载失败。请检查网络后刷新页面。',
     casesNotSetUp: '案例分享还没有设置好。',
-    anonymous: '匿名'
+    anonymous: '匿名',
+    navLog: '康复记录',
+    logTitle: '写下今天的记录',
+    logIntro: '记一记今天恢复得怎么样，也可以配一张照片。记录只保存在这台设备上，不会上传，别人看不到。',
+    logDateLabel: '日期',
+    logTextLabel: '今天怎么样？',
+    logPlaceholder: '比如：膝盖肿消了一点，做了 3 组直腿抬高。',
+    logPhotoLabel: '照片（可选）',
+    logPhotoBtn: '选择或拍一张照片',
+    logPhotoChange: '换一张照片',
+    logPhotoRemove: '去掉照片',
+    logPhotoAlt: '这条记录的照片',
+    logPhotoBad: '这张图片读不出来，换一张 JPG 或 PNG 试试。',
+    logSave: '保存记录',
+    logSaving: '正在保存…',
+    logSavedMsg: '已保存。坚持记录，你做得很好！',
+    logSaveFailed: '没能保存。浏览器可能不允许存储（比如无痕模式）。',
+    logListTitle: '我的记录',
+    logLoading: '正在读取记录…',
+    logEmpty: '还没有记录。在上面写下第一条吧，每一小步都算数。',
+    logLoadFailed: '没能读取记录。浏览器可能不允许存储（比如无痕模式）。',
+    logDelete: '删除',
+    logDeleteConfirm: '确定删除这条记录吗？删除后无法恢复。',
+    logProblemDate: '请选择日期。',
+    logProblemText: '写几句今天的情况吧。',
+    logProblemTooLong: '最多 {0} 个字。'
   }
 };
 
@@ -721,7 +831,7 @@ function renderStatic() {
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
   document.title = t('title');
   ['title', 'welcomeTitle', 'welcomeText', 'alertTitle', 'numbers', 'pickTitle', 'subTitle', 'questionsTitle', 'firstAidTitle', 'whereTitle', 'rehabTitle', 'comfortTitle', 'counselingTitle', 'disclaimer',
-   'navAssess', 'navComfort', 'navCases', 'navHospitals', 'hospitalsTitle', 'hospitalsIntro', 'hospitalsEmergency',
+   'navAssess', 'navComfort', 'navCases', 'navHospitals', 'navLog', 'hospitalsTitle', 'hospitalsIntro', 'hospitalsEmergency',
    'slogan', 'coverIntro', 'startBtn', 'coverSos', 'featAssess', 'featAssessText', 'featComfort', 'featComfortText',
    'featCases', 'featCasesText', 'featHospitals', 'featHospitalsText', 'chatTitle', 'chatIntro', 'chatInputLabel', 'chatSend', 'chatCrisis',
    'chatCta', 'fact1', 'fact2', 'fact3', 'fact4', 'featuresTitle', 'footerName', 'footerSos', 'photoCredit']
@@ -767,7 +877,7 @@ function renderHospitals() {
 // The menu shows one section at a time. The section is in the address
 // (#cases, ...), so the back button and shared links work. Without one,
 // the cover comes first.
-var VIEWS = ['home', 'assess', 'comfort', 'cases', 'hospitals'];
+var VIEWS = ['home', 'assess', 'comfort', 'cases', 'hospitals', 'log'];
 
 function currentView() {
   var name = location.hash.slice(1);
@@ -781,7 +891,29 @@ function showView() {
     if (a.dataset.view === view) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   });
+  scrollToCurrentTab();
 }
+
+// On phones not every section fits in the menu: bring the current one into
+// sight, and fade the right edge while more sections are hidden there.
+function scrollToCurrentTab() {
+  var tabs = $('tabs');
+  var current = tabs.querySelector('[aria-current="page"]');
+  if (current) {
+    var tabsBox = tabs.getBoundingClientRect();
+    var box = current.getBoundingClientRect();
+    if (box.left < tabsBox.left || box.right > tabsBox.right) tabs.scrollLeft += box.left - tabsBox.left - 16;
+  }
+  updateTabsFade();
+}
+
+function updateTabsFade() {
+  var tabs = $('tabs');
+  tabs.classList.toggle('more-right', tabs.scrollLeft + tabs.clientWidth < tabs.scrollWidth - 2);
+}
+
+$('tabs').addEventListener('scroll', updateTabsFade);
+window.addEventListener('resize', updateTabsFade);
 
 window.addEventListener('hashchange', function () {
   showView();
@@ -1181,7 +1313,9 @@ function pickInjury(injury) {
 
 function renderAll() {
   renderStatic();
+  updateTabsFade();
   renderCases();
+  renderLog();
   renderCategories();
   renderPhoto();
   renderQuestions();
@@ -1356,6 +1490,135 @@ $('caseForm').addEventListener('submit', function (e) {
     renderCases();
   });
 });
+
+// ---- Recovery log ----
+// Entries come from this browser's storage (recovery-log.js).
+var log = {status: 'loading', entries: [], photo: null, photoBad: false, saving: false, saved: false, saveFailed: false, problems: []};
+
+function logProblemText(p) {
+  if (p.field === 'date') return t('logProblemDate');
+  if (p.problem === 'tooLong') return t('logProblemTooLong').replace('{0}', LOG_TEXT_MAX);
+  return t('logProblemText');
+}
+
+// "2026年11月9日 周一", "Mon, Nov 9, 2026", ... in the page's language.
+function formatLogDate(dateString) {
+  var parts = dateString.split('-').map(Number);
+  var date = new Date(parts[0], parts[1] - 1, parts[2]);
+  return date.toLocaleDateString(lang === 'zh' ? 'zh-CN' : lang, {year: 'numeric', month: 'short', day: 'numeric', weekday: 'short'});
+}
+
+function logEntryCard(entry) {
+  var article = document.createElement('article');
+  article.className = 'case log-entry';
+  article.innerHTML = '<div class="case-meta"><strong></strong></div><p></p>';
+  article.querySelector('strong').textContent = formatLogDate(entry.date);
+  article.querySelector('p').textContent = entry.text;
+  if (entry.photo) {
+    var img = document.createElement('img');
+    img.src = entry.photo;
+    img.alt = t('logPhotoAlt');
+    article.appendChild(img);
+  }
+  var remove = document.createElement('button');
+  remove.type = 'button';
+  remove.className = 'secondary';
+  remove.textContent = t('logDelete');
+  remove.addEventListener('click', function () {
+    if (!confirm(t('logDeleteConfirm'))) return;
+    logStore.remove(entry.id).catch(function () { log.status = 'error'; }).then(loadLog);
+  });
+  article.appendChild(remove);
+  return article;
+}
+
+function renderLog() {
+  ['logTitle', 'logIntro', 'logDateLabel', 'logTextLabel', 'logPhotoLabel', 'logPhotoRemove', 'logPhotoBad', 'logListTitle']
+    .forEach(function (id) { $(id).textContent = t(id); });
+  $('logText').placeholder = t('logPlaceholder');
+  $('logPhotoBtn').textContent = t(log.photo ? 'logPhotoChange' : 'logPhotoBtn');
+  $('logPhotoRemove').hidden = !log.photo;
+  $('logPhotoPreview').hidden = !log.photo;
+  $('logPhotoPreview').src = log.photo || '';
+  $('logPhotoPreview').alt = t('logPhotoAlt');
+  $('logPhotoBad').hidden = !log.photoBad;
+  $('logSaveBtn').textContent = t(log.saving ? 'logSaving' : 'logSave');
+  $('logSaveBtn').disabled = log.saving;
+  var errors = log.saveFailed ? [t('logSaveFailed')] : log.problems.map(logProblemText);
+  $('logError').textContent = errors.join(' ');
+  $('logError').hidden = errors.length === 0;
+  $('logSaved').textContent = t('logSavedMsg');
+  $('logSaved').hidden = !log.saved;
+
+  var statusKey = {loading: 'logLoading', error: 'logLoadFailed'}[log.status] || (log.entries.length === 0 ? 'logEmpty' : '');
+  $('logStatus').textContent = statusKey ? t(statusKey) : '';
+  $('logStatus').hidden = !statusKey;
+  var list = $('logList');
+  list.innerHTML = '';
+  if (log.status === 'ready') log.entries.forEach(function (entry) { list.appendChild(logEntryCard(entry)); });
+}
+
+function loadLog() {
+  return logStore.all().then(function (entries) {
+    log.entries = sortLogEntries(entries);
+    log.status = 'ready';
+  }).catch(function () {
+    log.status = 'error';
+  }).then(renderLog);
+}
+
+function resetLogDate() {
+  var today = logDateString(new Date());
+  $('logDate').value = today;
+  $('logDate').max = today;
+}
+
+$('logPhotoInput').addEventListener('change', async function () {
+  var file = $('logPhotoInput').files[0];
+  $('logPhotoInput').value = '';
+  if (!file) return;
+  log.saved = false;
+  try {
+    log.photo = (await shrinkPhoto(file)).toDataURL('image/jpeg', 0.8);
+    log.photoBad = false;
+  } catch (e) {
+    log.photo = null;
+    log.photoBad = true;
+  }
+  renderLog();
+});
+
+$('logPhotoRemove').addEventListener('click', function () {
+  log.photo = null;
+  renderLog();
+});
+
+$('logForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var entry = logEntryFromForm({date: $('logDate').value, text: $('logText').value, photo: log.photo}, new Date());
+  log.problems = logEntryProblems(entry);
+  log.saveFailed = false;
+  log.saved = false;
+  if (log.problems.length > 0) { renderLog(); return; }
+  log.saving = true;
+  renderLog();
+  logStore.add(entry).then(function () {
+    log.saved = true;
+    log.photo = null;
+    log.photoBad = false;
+    $('logForm').reset();
+    resetLogDate();
+    return loadLog();
+  }).catch(function () {
+    log.saveFailed = true;
+  }).then(function () {
+    log.saving = false;
+    renderLog();
+  });
+});
+
+resetLogDate();
+loadLog();
 
 $('seeCasesBtn').addEventListener('click', function () {
   cases.filter = currentInjury ? currentInjury.id : '';
