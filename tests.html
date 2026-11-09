@@ -236,6 +236,31 @@ test('plan: running exercises are listed first, finished ones last', function ()
   equal(isPlanItemOver(over, '2026-11-09'), true);
   equal(isPlanItemOver(now, '2026-11-09'), false);
 });
+test('rehab plan: stages with set days follow each other from day 0, and every injury but a fracture has some', function () {
+  INJURIES.forEach(function (injury) {
+    var timed = injury.rehab.filter(function (stage) { return stage.days; });
+    if (injury.id === 'fracture') { equal(timed.length, 0); return; }
+    if (timed.length === 0) throw new Error(injury.id + ' has no stage with set days');
+    equal(timed[0].days[0], 0);
+    timed.forEach(function (stage, index) {
+      if (stage.days[0] >= stage.days[1]) throw new Error(injury.id + ': ' + stage.when.en + ' ends before it starts');
+      if (index > 0 && stage.days[0] !== timed[index - 1].days[1]) throw new Error(injury.id + ': gap or overlap before ' + stage.when.en);
+    });
+  });
+});
+test('rehab plan: an ankle sprain 4 days ago skips the finished stage and dates the rest from the injury', function () {
+  var ankle = INJURIES.filter(function (injury) { return injury.id === 'ankle'; })[0];
+  var items = rehabPlanItems(ankle, '2026-11-05', '2026-11-09', new Date(0));
+  equal(items.length, 2);  // days 0-3 are over; "back to sport" has no set days
+  equal(items[0].start + ' ' + items[0].end, '2026-11-08 2026-11-18');
+  equal(items[1].start + ' ' + items[1].end, '2026-11-19 2026-12-16');
+  equal(items[0].days.length, 7);
+  equal(planItemProblems(items[0]).length, 0);
+  equal(rehabStageOf(items[0]).goal.en, 'Move normally again');
+  equal(isDueOn(items[0], '2026-11-09'), true);
+  equal(untimedRehabStages(ankle).map(function (stage) { return stage.when.en; }).join(), 'Back to sport');
+  equal(rehabStageOf(planItem({})), null);
+});
 test('plan: the calendar file repeats each exercise on its days at the chosen time, until the end date', function () {
   var item = planItem({name: 'Heel raises, slow; 15', days: [2, 4], start: '2026-11-09', end: '2026-11-30'});
   item.id = 7;
@@ -545,7 +570,25 @@ var planStorageChecked = planStore.save(planItem({name: 'test exercise'})).then(
 }).catch(function (e) {
   results.push({name: 'plan: exercises can be stored in this browser', ok: false, msg: String(e && e.message || e)});
 });
-Promise.all([rulesChecked, testSpanishSwitch(), logStorageChecked, planStorageChecked]).then(showResults);
+var rehabReplaceChecked = planStorageChecked.then(function () {
+  var stage = {name: 'stage', amount: '', days: ALL_WEEKDAYS, start: '2000-01-01', end: '2000-01-05', ref: {injury: 'test-injury', stage: 0}, createdAt: 0};
+  var ids = [];
+  return planStore.save(planItem({name: 'typed exercise'})).then(function (id) { ids.push(id); })
+    .then(function () { return planStore.replaceRehab('test-injury', [stage, Object.assign({}, stage, {name: 'second'})]); })
+    .then(function () { return planStore.replaceRehab('test-injury', [Object.assign({}, stage, {name: 'again'})]); })
+    .then(planStore.all)
+    .then(function (items) {
+      test('rehab plan: adding the same injury again replaces its stages and keeps typed exercises', function () {
+        var stages = items.filter(function (item) { return item.ref && item.ref.injury === 'test-injury'; });
+        equal(stages.map(function (item) { return item.name; }).join(), 'again');
+        equal(items.some(function (item) { return item.id === ids[0]; }), true);
+      });
+      return planStore.replaceRehab('test-injury', []).then(function () { return planStore.remove(ids[0]); });
+    });
+}).catch(function (e) {
+  results.push({name: 'rehab plan: stages can be stored in this browser', ok: false, msg: String(e && e.message || e)});
+});
+Promise.all([rulesChecked, testSpanishSwitch(), logStorageChecked, planStorageChecked, rehabReplaceChecked]).then(showResults);
 </script>
 </body>
 </html>

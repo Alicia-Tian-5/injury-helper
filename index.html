@@ -159,7 +159,7 @@ h1 a{color:var(--acc)}
 .city-note{font-size:14px;margin:12px 0 0}
 .plan-progress{font-weight:600;margin:4px 0 8px}
 .plan-today{list-style:none;margin:0 0 12px;padding:0}
-.plan-today li{border-top:1px solid var(--line)}
+.plan-today>li{border-top:1px solid var(--line)}
 .plan-today label{display:flex;align-items:center;gap:12px;padding:10px 0;min-height:44px;cursor:pointer}
 .plan-today input{width:22px;height:22px;flex:0 0 auto;accent-color:var(--acc)}
 .plan-today .done span{color:var(--muted);text-decoration:line-through}
@@ -187,6 +187,11 @@ h1 a{color:var(--acc)}
 .calendar-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
 .calendar-row .field{margin-bottom:0}
 .calendar-row .primary{width:auto}
+.rehab-to-plan{border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
+.rehab-to-plan .success,.rehab-to-plan .muted{margin:10px 0 0}
+.go-plan{display:inline-flex;align-items:center;min-height:40px;margin-top:10px;text-decoration:none;border-radius:4px}
+.plan-moves{margin:0 0 6px 34px;padding-left:18px;color:var(--muted);font-size:15px}
+.plan-moves li{margin:2px 0}
 .home-today{display:block;text-decoration:none;color:var(--text);border-left:4px solid var(--acc);margin:0 0 12px}
 .home-today strong{color:var(--acc)}
 .trend{margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
@@ -367,7 +372,20 @@ h1 a{text-decoration:none}
   <section class="card advice-now"><h2><span class="step-num">1</span><span id="firstAidTitle"></span></h2><ol class="steps" id="firstAid"></ol></section>
   <section class="card advice-where"><h2><span class="step-num">2</span><span id="whereTitle"></span></h2><ul class="points" id="where"></ul></section>
   </div>
-  <section class="card advice-rehab"><h2><span class="step-num">3</span><span id="rehabTitle"></span></h2><p class="muted" id="rehabNote"></p><div id="rehab"></div></section>
+  <section class="card advice-rehab"><h2><span class="step-num">3</span><span id="rehabTitle"></span></h2><p class="muted" id="rehabNote"></p><div id="rehab"></div>
+    <div class="rehab-to-plan">
+      <h3 id="rehabPlanTitle"></h3>
+      <p class="muted" id="rehabPlanHint"></p>
+      <div class="calendar-row" id="rehabPlanForm">
+        <label class="field"><span id="rehabPlanDateLabel"></span><input type="date" id="rehabPlanDate"></label>
+        <button type="button" class="primary" id="rehabPlanBtn"></button>
+      </div>
+      <p class="error" id="rehabPlanError" role="alert" hidden></p>
+      <p class="success" id="rehabPlanDone" role="status" hidden></p>
+      <p class="muted" id="rehabPlanLater" hidden></p>
+      <a class="secondary go-plan" href="#log" id="rehabPlanGo" hidden></a>
+    </div>
+  </section>
   <div class="actions"><button type="button" class="secondary" id="seeComfortBtn"></button><button type="button" class="secondary" id="seeCasesBtn"></button><button type="button" class="secondary" id="restartBtn"></button></div>
 </div>
 </div>
@@ -553,6 +571,18 @@ var T = {
     firstAidTitle: 'Right now',
     whereTitle: 'Where to go',
     rehabTitle: 'Getting back to sport',
+    rehabPlanTitle: 'Add to my rehab plan',
+    rehabPlanHint: 'From your injury date, the stages above that have set days go into your rehab plan, so each day shows which stage to do.',
+    rehabPlanDateLabel: 'Date of the injury',
+    rehabPlanBtn: 'Add to my plan',
+    rehabPlanNone: 'Rehab for this injury follows your doctor\'s schedule. Add the exercises your doctor gives you in the Recovery log section.',
+    rehabPlanBadDate: 'Please choose the date of the injury (not after today).',
+    rehabPlanAllPast: 'With this injury date, all the stages with set days are already over.',
+    rehabPlanAdded: 'Added {0} stage(s) to your plan.',
+    rehabPlanNow: 'Today you are in "{0}".',
+    rehabPlanLater: '"{0}" has no set date: add it yourself when you are ready for it.',
+    rehabPlanGo: 'Open my plan →',
+    rehabPlanFailed: 'Could not add it to your plan. Please try again.',
     comfortTitle: 'Looking after how you feel',
     counselingTitle: 'Talk to a counselor',
     restart: 'Start over',
@@ -765,6 +795,18 @@ var T = {
     firstAidTitle: 'Ahora mismo',
     whereTitle: 'Adónde ir',
     rehabTitle: 'Volver al deporte',
+    rehabPlanTitle: 'Añadir a mi plan de rehabilitación',
+    rehabPlanHint: 'A partir de la fecha de la lesión, las etapas de arriba que tienen días fijos pasan a tu plan, y cada día verás qué etapa hacer.',
+    rehabPlanDateLabel: 'Fecha de la lesión',
+    rehabPlanBtn: 'Añadir a mi plan',
+    rehabPlanNone: 'La rehabilitación de esta lesión sigue el calendario de tu médico. Añade los ejercicios que te dé en la sección Diario de recuperación.',
+    rehabPlanBadDate: 'Elige la fecha de la lesión (no después de hoy).',
+    rehabPlanAllPast: 'Con esta fecha de lesión, todas las etapas con días fijos ya terminaron.',
+    rehabPlanAdded: 'Se añadieron {0} etapa(s) a tu plan.',
+    rehabPlanNow: 'Hoy estás en "{0}".',
+    rehabPlanLater: '"{0}" no tiene fecha fija: añádelo tú cuando estés listo.',
+    rehabPlanGo: 'Abrir mi plan →',
+    rehabPlanFailed: 'No se pudo añadir a tu plan. Inténtalo de nuevo.',
     comfortTitle: 'Cuidar cómo te sientes',
     counselingTitle: 'Habla con un consejero',
     restart: 'Empezar de nuevo',
@@ -975,6 +1017,18 @@ var T = {
     firstAidTitle: '现在马上做',
     whereTitle: '去哪里看',
     rehabTitle: '康复训练',
+    rehabPlanTitle: '加入我的训练计划',
+    rehabPlanHint: '按受伤日期，把上面有固定天数的康复阶段加入训练计划，每天告诉你该做哪个阶段。',
+    rehabPlanDateLabel: '受伤日期',
+    rehabPlanBtn: '加入训练计划',
+    rehabPlanNone: '这种损伤的康复要按医生的安排。请把医生给你的训练，在"康复记录"里手动添加。',
+    rehabPlanBadDate: '请选择受伤日期（不能晚于今天）。',
+    rehabPlanAllPast: '按这个受伤日期，有固定天数的阶段都已经过去了。',
+    rehabPlanAdded: '已加入 {0} 个阶段。',
+    rehabPlanNow: '今天在"{0}"阶段。',
+    rehabPlanLater: '"{0}"没有固定时间，等身体达到条件后可以手动添加。',
+    rehabPlanGo: '去看计划 →',
+    rehabPlanFailed: '没能加入训练计划，请再试一次。',
     comfortTitle: '照顾好你的心情',
     counselingTitle: '找心理咨询师聊聊',
     restart: '重新开始',
@@ -1744,8 +1798,60 @@ function renderResults() {
     });
     rehab.appendChild(div);
   });
+  renderRehabToPlan();
   $('results').hidden = false;
 }
+
+// What happened after "Add to my plan" for the results on screen.
+var rehabToPlan = {added: null, problem: null};
+
+function resetRehabToPlan() {
+  rehabToPlan = {added: null, problem: null};
+  var today = logDateString(new Date());
+  $('rehabPlanDate').value = today;
+  $('rehabPlanDate').max = today;
+}
+
+function renderRehabToPlan() {
+  var timed = currentInjury.rehab.some(function (stage) { return stage.days; });
+  ['rehabPlanTitle', 'rehabPlanDateLabel', 'rehabPlanBtn', 'rehabPlanGo'].forEach(function (id) { $(id).textContent = t(id); });
+  $('rehabPlanHint').textContent = t(timed ? 'rehabPlanHint' : 'rehabPlanNone');
+  $('rehabPlanForm').hidden = !timed;
+  $('rehabPlanError').textContent = rehabToPlan.problem ? t(rehabToPlan.problem) : '';
+  $('rehabPlanError').hidden = !rehabToPlan.problem;
+  var added = rehabToPlan.added;
+  $('rehabPlanDone').hidden = !added;
+  $('rehabPlanGo').hidden = !added;
+  $('rehabPlanLater').hidden = !added;
+  if (!added) return;
+  var now = added.filter(function (item) { return isDueOn(item, logDateString(new Date())); })[0];
+  $('rehabPlanDone').textContent = t('rehabPlanAdded').replace('{0}', added.length) +
+    (now ? (lang === 'zh' ? '' : ' ') + t('rehabPlanNow').replace('{0}', planItemName(now)) : '');
+  var later = untimedRehabStages(currentInjury).map(function (stage) { return L(stage.when); });
+  $('rehabPlanLater').hidden = later.length === 0;
+  $('rehabPlanLater').textContent = t('rehabPlanLater').replace('{0}', later.join(lang === 'zh' ? '、' : ', '));
+}
+
+$('rehabPlanBtn').addEventListener('click', function () {
+  var date = $('rehabPlanDate').value;
+  var today = logDateString(new Date());
+  rehabToPlan.added = null;
+  rehabToPlan.problem = !DATE_PATTERN.test(date) || date > today ? 'rehabPlanBadDate' : null;
+  var items = rehabToPlan.problem ? [] : rehabPlanItems(currentInjury, date, today, new Date());
+  if (!rehabToPlan.problem && items.length === 0) rehabToPlan.problem = 'rehabPlanAllPast';
+  if (rehabToPlan.problem) { renderRehabToPlan(); return; }
+  $('rehabPlanBtn').disabled = true;
+  planStore.replaceRehab(currentInjury.id, items).then(function () {
+    rehabToPlan.added = items;
+    return loadPlan();
+  }).catch(function () {
+    rehabToPlan.problem = 'rehabPlanFailed';
+  }).then(function () {
+    $('rehabPlanBtn').disabled = false;
+    renderRehabToPlan();
+  });
+});
+resetRehabToPlan();
 
 // Mark unanswered questions; returns how many are left.
 function showMissing() {
@@ -1760,6 +1866,7 @@ function clearAnswers() {
   resetPhoto();
   answers = {};
   showingResults = false;
+  resetRehabToPlan();
   $('results').hidden = true;
   $('error').hidden = true;
 }
@@ -2240,9 +2347,15 @@ function planDatesText(item) {
   return t('planRange').replace('{0}', formatShortDate(item.start)).replace('{1}', formatShortDate(item.end));
 }
 
+// A stage added from the results shows its goal in the page's language.
+function planItemName(item) {
+  var stage = rehabStageOf(item);
+  return stage ? L(stage.goal) : item.name;
+}
+
 function planItemLabel(item) {
   var label = document.createElement('span');
-  label.textContent = item.name;
+  label.textContent = planItemName(item);
   if (item.amount) {
     var amount = document.createElement('small');
     amount.textContent = item.amount;
@@ -2312,6 +2425,17 @@ function renderPlan() {
     label.appendChild(box);
     label.appendChild(planItemLabel(item));
     row.appendChild(label);
+    var stage = rehabStageOf(item);
+    if (stage) {
+      var moves = document.createElement('ul');
+      moves.className = 'plan-moves';
+      stage.moves.forEach(function (move) {
+        var li = document.createElement('li');
+        li.textContent = L(move);
+        moves.appendChild(li);
+      });
+      row.appendChild(moves);
+    }
     today.appendChild(row);
   });
   $('planError').textContent = t('planSaveFailed');
@@ -2393,7 +2517,7 @@ function openPlanForm(item) {
   plan.problems = [];
   plan.saveFailed = false;
   plan.saved = false;
-  $('planName').value = item ? item.name : '';
+  $('planName').value = item ? planItemName(item) : '';
   $('planAmount').value = item ? item.amount : '';
   setPickedDays(item ? item.days : ALL_WEEKDAYS);
   $('planStart').value = item ? item.start : plan.today;
@@ -2418,6 +2542,11 @@ $('planForm').addEventListener('submit', function (e) {
   if (plan.editing) {
     item.id = plan.editing.id;
     item.createdAt = plan.editing.createdAt;
+    // A stage keeps its link (and its list of moves) unless it was renamed.
+    if (plan.editing.ref && item.name === planItemName(plan.editing)) {
+      item.name = plan.editing.name;
+      item.ref = plan.editing.ref;
+    }
   }
   plan.problems = planItemProblems(item);
   plan.saveFailed = false;
@@ -2456,7 +2585,7 @@ $('planList').addEventListener('click', function (e) {
   var item = plan.items.filter(function (candidate) { return candidate.id === id; })[0];
   if (!item) return;
   if (e.target.dataset.action === 'edit') { openPlanForm(item); return; }
-  if (e.target.dataset.action !== 'delete' || !confirm(t('planDeleteConfirm').replace('{0}', item.name))) return;
+  if (e.target.dataset.action !== 'delete' || !confirm(t('planDeleteConfirm').replace('{0}', planItemName(item)))) return;
   plan.saved = false;
   plan.calendarDone = false;
   planStore.remove(id).catch(function () { plan.saveFailed = true; }).then(loadPlan);
@@ -2466,7 +2595,8 @@ $('planList').addEventListener('click', function (e) {
 $('calendarBtn').addEventListener('click', function () {
   var time = /^\d{2}:\d{2}$/.test($('calendarTime').value) ? $('calendarTime').value : '20:00';
   var active = plan.items.filter(function (item) { return !isPlanItemOver(item, plan.today); });
-  var file = new Blob([planCalendar(active, time, t('calendarEventTitle'), new Date())], {type: 'text/calendar'});
+  var named = active.map(function (item) { return Object.assign({}, item, {name: planItemName(item)}); });
+  var file = new Blob([planCalendar(named, time, t('calendarEventTitle'), new Date())], {type: 'text/calendar'});
   var link = document.createElement('a');
   link.href = URL.createObjectURL(file);
   link.download = 'rehab-reminders.ics';

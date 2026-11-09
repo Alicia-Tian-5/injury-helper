@@ -1,6 +1,9 @@
 // Injury questions, how answers map to an urgency level, and the advice for
-// each level. Every piece of text is {en, es, zh}. No page code here, so the
-// assessment rules can be tested on their own (see tests.html).
+// each level. Every piece of text is {en, es, zh}. A rehab stage with `days`
+// [from, to] runs from day `from` to the day before `to`, counted from the
+// injury; stages without it depend on how the body is doing, not the date.
+// No page code here, so the assessment rules can be tested on their own (see
+// tests.html).
 
 // Urgency levels, most urgent first.
 var LEVELS = {
@@ -148,6 +151,7 @@ var ANKLE_SPRAIN = {
   rehab: [
     {
       when: {en: 'Days 0–3', es: 'Días 0–3', zh: '第 0–3 天'},
+      days: [0, 3],
       goal: {en: 'Calm the swelling', es: 'Calmar la hinchazón', zh: '消肿'},
       moves: [
         {en: 'Rest, ice and raise the ankle (see above).', es: 'Reposo, hielo y tobillo elevado (ver arriba).', zh: '休息、冰敷、抬高（见上面）。'},
@@ -156,6 +160,7 @@ var ANKLE_SPRAIN = {
     },
     {
       when: {en: 'Days 3–14', es: 'Días 3–14', zh: '第 3–14 天'},
+      days: [3, 14],
       goal: {en: 'Move normally again', es: 'Volver a moverse con normalidad', zh: '恢复正常活动'},
       moves: [
         {en: 'Walk normally as far as pain allows.', es: 'Camina con normalidad hasta donde el dolor lo permita.', zh: '在疼痛允许的范围内正常走路。'},
@@ -165,6 +170,7 @@ var ANKLE_SPRAIN = {
     },
     {
       when: {en: 'Weeks 2–6', es: 'Semanas 2–6', zh: '第 2–6 周'},
+      days: [14, 42],
       goal: {en: 'Strength and balance', es: 'Fuerza y equilibrio', zh: '力量和平衡'},
       moves: [
         {en: 'Stand on the injured foot for 30 seconds. When easy, close your eyes.', es: 'Apóyate sobre el pie lesionado 30 segundos. Cuando sea fácil, cierra los ojos.', zh: '单脚站在受伤的脚上 30 秒，觉得容易了就闭上眼睛做。'},
@@ -275,6 +281,7 @@ var PATELLA_DISLOCATION = {
   rehab: [
     {
       when: {en: 'Weeks 0–2', es: 'Semanas 0–2', zh: '第 0–2 周'},
+      days: [0, 14],
       goal: {en: 'Protect the knee, keep the thigh working', es: 'Proteger la rodilla, mantener el muslo activo', zh: '保护膝盖，保持大腿肌肉不萎缩'},
       moves: [
         {en: 'Wear the brace and use crutches as the doctor says.', es: 'Usa la rodillera y las muletas como diga el médico.', zh: '按医生说的戴护具、用拐杖。'},
@@ -284,6 +291,7 @@ var PATELLA_DISLOCATION = {
     },
     {
       when: {en: 'Weeks 2–6', es: 'Semanas 2–6', zh: '第 2–6 周'},
+      days: [14, 42],
       goal: {en: 'Bend the knee again', es: 'Volver a doblar la rodilla', zh: '恢复弯曲角度'},
       moves: [
         {en: 'Bend the knee a little more each day, only as far as it does not hurt.', es: 'Dobla la rodilla un poco más cada día, solo hasta donde no duela.', zh: '每天多弯一点，只弯到不疼的位置。'},
@@ -293,6 +301,7 @@ var PATELLA_DISLOCATION = {
     },
     {
       when: {en: 'Weeks 6–12', es: 'Semanas 6–12', zh: '第 6–12 周'},
+      days: [42, 84],
       goal: {en: 'Build strength', es: 'Ganar fuerza', zh: '增强力量'},
       moves: [
         {en: 'Mini squats, step-ups, wall sits.', es: 'Mini sentadillas, subir escalones, sentadilla en la pared.', zh: '小幅度深蹲、上台阶、靠墙静蹲。'},
@@ -372,6 +381,7 @@ var OTHER_SPRAIN = {
   rehab: [
     {
       when: {en: 'Days 0–3', es: 'Días 0–3', zh: '第 0–3 天'},
+      days: [0, 3],
       goal: {en: 'Calm the swelling', es: 'Calmar la hinchazón', zh: '消肿'},
       moves: [
         {en: 'Rest, ice and raise it (see above).', es: 'Reposo, hielo y elevación (ver arriba).', zh: '休息、冰敷、抬高（见上面）。'},
@@ -380,6 +390,7 @@ var OTHER_SPRAIN = {
     },
     {
       when: {en: 'Days 3–14', es: 'Días 3–14', zh: '第 3–14 天'},
+      days: [3, 14],
       goal: {en: 'Get the full range of motion back', es: 'Recuperar todo el movimiento', zh: '恢复活动范围'},
       moves: [
         {en: 'Bend and straighten the joint a little further each day.', es: 'Dobla y estira la articulación un poco más cada día.', zh: '每天多弯一点、多伸直一点。'},
@@ -388,6 +399,7 @@ var OTHER_SPRAIN = {
     },
     {
       when: {en: 'Weeks 2–6', es: 'Semanas 2–6', zh: '第 2–6 周'},
+      days: [14, 42],
       goal: {en: 'Strength and control', es: 'Fuerza y control', zh: '力量和控制'},
       moves: [
         {en: 'Resistance band exercises in every direction the joint moves, 3 sets of 10–15.', es: 'Ejercicios con banda elástica en todas las direcciones en que se mueve la articulación, 3 series de 10–15.', zh: '用弹力带往关节能动的每个方向练习，每个方向 3 组，每组 10–15 下。'},
@@ -464,6 +476,7 @@ var MUSCLE_STRAIN = {
   rehab: [
     {
       when: {en: 'Days 0–3', es: 'Días 0–3', zh: '第 0–3 天'},
+      days: [0, 3],
       goal: {en: 'Protect it', es: 'Protegerlo', zh: '保护'},
       moves: [
         {en: 'Rest, ice and gentle walking if it does not hurt.', es: 'Reposo, hielo y caminar suave si no duele.', zh: '休息、冰敷，不疼的话可以慢慢走路。'},
@@ -472,6 +485,7 @@ var MUSCLE_STRAIN = {
     },
     {
       when: {en: 'Days 3–14', es: 'Días 3–14', zh: '第 3–14 天'},
+      days: [3, 14],
       goal: {en: 'Light movement and stretching', es: 'Movimiento suave y estiramientos', zh: '轻度活动和拉伸'},
       moves: [
         {en: 'Gentle stretches held 20–30 seconds, never into pain.', es: 'Estiramientos suaves de 20–30 segundos, nunca hasta el dolor.', zh: '轻柔拉伸，每次 20–30 秒，不要拉到疼。'},
@@ -480,6 +494,7 @@ var MUSCLE_STRAIN = {
     },
     {
       when: {en: 'Weeks 2–6', es: 'Semanas 2–6', zh: '第 2–6 周'},
+      days: [14, 42],
       goal: {en: 'Rebuild strength', es: 'Recuperar la fuerza', zh: '恢复力量'},
       moves: [
         {en: 'Thigh: bridges, then slow hamstring curls. Calf: heel raises. Groin: squeezing a ball between the knees.', es: 'Muslo: puentes, después curl de isquiotibiales lento. Pantorrilla: elevaciones de talones. Ingle: apretar una pelota entre las rodillas.', zh: '大腿：臀桥，再做慢速腿弯举。小腿：提踵。腹股沟：双膝夹球。'},
@@ -568,6 +583,7 @@ var OTHER_DISLOCATION = {
   rehab: [
     {
       when: {en: 'Weeks 0–2', es: 'Semanas 0–2', zh: '第 0–2 周'},
+      days: [0, 14],
       goal: {en: 'Let it settle', es: 'Dejar que se asiente', zh: '让关节稳定下来'},
       moves: [
         {en: 'Shoulder: sling as the doctor says; move the hand and wrist. Finger: tape it to the next finger.', es: 'Hombro: cabestrillo como diga el médico; mueve la mano y la muñeca. Dedo: sujétalo con cinta al dedo de al lado.', zh: '肩膀：按医生说的戴三角巾，活动手和手腕。手指：和旁边的手指绑在一起。'}
@@ -575,6 +591,7 @@ var OTHER_DISLOCATION = {
     },
     {
       when: {en: 'Weeks 2–6', es: 'Semanas 2–6', zh: '第 2–6 周'},
+      days: [14, 42],
       goal: {en: 'Get movement back', es: 'Recuperar el movimiento', zh: '恢复活动范围'},
       moves: [
         {en: 'Shoulder: let the arm swing like a pendulum, then slide the hand up a wall.', es: 'Hombro: deja que el brazo se balancee como un péndulo, después desliza la mano hacia arriba por una pared.', zh: '肩膀：手臂自然下垂、像钟摆一样晃动，然后练手沿着墙往上爬。'},
@@ -583,6 +600,7 @@ var OTHER_DISLOCATION = {
     },
     {
       when: {en: 'Weeks 6–12', es: 'Semanas 6–12', zh: '第 6–12 周'},
+      days: [42, 84],
       goal: {en: 'Build strength', es: 'Ganar fuerza', zh: '增强力量'},
       moves: [
         {en: 'Shoulder: resistance band rotations in and out, shoulder blade squeezes.', es: 'Hombro: rotaciones hacia dentro y hacia fuera con banda elástica, juntar los omóplatos.', zh: '肩膀：弹力带内旋、外旋，夹肩胛骨。'},
@@ -735,6 +753,7 @@ var CONCUSSION = {
   rehab: [
     {
       when: {en: 'Days 1–2', es: 'Días 1–2', zh: '第 1–2 天'},
+      days: [0, 2],
       goal: {en: 'Rest the brain', es: 'Descansar el cerebro', zh: '让大脑休息'},
       moves: [
         {en: 'Light daily activity only. Short breaks from screens and reading.', es: 'Solo actividad diaria ligera. Descansos cortos de pantallas y lectura.', zh: '只做轻度日常活动，少看屏幕、少读书。'}
@@ -828,6 +847,7 @@ var BRUISE = {
   rehab: [
     {
       when: {en: 'Days 0–2', es: 'Días 0–2', zh: '第 0–2 天'},
+      days: [0, 2],
       goal: {en: 'Limit bleeding under the skin', es: 'Limitar el sangrado bajo la piel', zh: '减少皮下出血'},
       moves: [
         {en: 'Rest, ice and compression (see above).', es: 'Reposo, hielo y compresión (ver arriba).', zh: '休息、冰敷、加压包扎（见上面）。'}
@@ -835,6 +855,7 @@ var BRUISE = {
     },
     {
       when: {en: 'Days 2–7', es: 'Días 2–7', zh: '第 2–7 天'},
+      days: [2, 7],
       goal: {en: 'Get movement back', es: 'Recuperar el movimiento', zh: '恢复活动'},
       moves: [
         {en: 'Gentle stretching and walking. Warmth is fine now.', es: 'Estiramientos suaves y caminar. Ahora ya se puede aplicar calor.', zh: '轻柔拉伸和散步。这时可以热敷了。'}
@@ -842,6 +863,7 @@ var BRUISE = {
     },
     {
       when: {en: 'Weeks 1–3', es: 'Semanas 1–3', zh: '第 1–3 周'},
+      days: [7, 21],
       goal: {en: 'Rebuild strength', es: 'Recuperar la fuerza', zh: '恢复力量'},
       moves: [
         {en: 'Light strength exercises for the bruised muscle, then jogging.', es: 'Ejercicios de fuerza ligeros para el músculo golpeado, después trotar.', zh: '对受伤的肌肉做轻度力量练习，然后慢跑。'}
@@ -914,6 +936,7 @@ var WOUND = {
   rehab: [
     {
       when: {en: 'Days 0–2', es: 'Días 0–2', zh: '第 0–2 天'},
+      days: [0, 2],
       goal: {en: 'Keep it clean', es: 'Mantenerla limpia', zh: '保持干净'},
       moves: [
         {en: 'Change the bandage daily or when it gets wet or dirty.', es: 'Cambia el apósito cada día o cuando se moje o ensucie.', zh: '每天换药，弄湿或弄脏了也要换。'}
@@ -921,6 +944,7 @@ var WOUND = {
     },
     {
       when: {en: 'Days 2–7', es: 'Días 2–7', zh: '第 2–7 天'},
+      days: [2, 7],
       goal: {en: 'Watch for infection', es: 'Vigilar la infección', zh: '留意感染'},
       moves: [
         {en: 'Check for spreading redness, heat, pus or fever.', es: 'Revisa si hay enrojecimiento que se extiende, calor, pus o fiebre.', zh: '检查有没有红肿扩散、发热、流脓或发烧。'}
@@ -999,6 +1023,7 @@ var CRAMP = {
   rehab: [
     {
       when: {en: 'Right after', es: 'Justo después', zh: '刚缓解以后'},
+      days: [0, 1],
       goal: {en: 'Let the muscle recover', es: 'Dejar que el músculo se recupere', zh: '让肌肉恢复'},
       moves: [
         {en: 'Light stretching. Stop for the day if it keeps coming back.', es: 'Estiramientos ligeros. Para por hoy si sigue volviendo.', zh: '轻柔拉伸。如果反复抽筋，今天就不要再练了。'}
@@ -1006,6 +1031,7 @@ var CRAMP = {
     },
     {
       when: {en: 'Next 1–2 days', es: 'Los próximos 1–2 días', zh: '之后 1–2 天'},
+      days: [1, 3],
       goal: {en: 'Ease soreness', es: 'Aliviar las molestias', zh: '缓解酸痛'},
       moves: [
         {en: 'Light activity, gentle stretching, drink enough.', es: 'Actividad ligera, estiramientos suaves, bebe lo suficiente.', zh: '轻度活动、轻柔拉伸、多喝水。'}
@@ -1078,6 +1104,7 @@ var OVERUSE = {
   rehab: [
     {
       when: {en: 'Weeks 1–2', es: 'Semanas 1–2', zh: '第 1–2 周'},
+      days: [0, 14],
       goal: {en: 'Calm it down', es: 'Calmarlo', zh: '让疼痛平息'},
       moves: [
         {en: 'Lower the load and cross-train without pain.', es: 'Baja la carga y haz otro deporte sin dolor.', zh: '减少训练量，换成不疼的运动来保持体能。'}
@@ -1085,6 +1112,7 @@ var OVERUSE = {
     },
     {
       when: {en: 'Weeks 2–6', es: 'Semanas 2–6', zh: '第 2–6 周'},
+      days: [14, 42],
       goal: {en: 'Load the tissue slowly', es: 'Cargar el tejido poco a poco', zh: '慢慢给组织加负荷'},
       moves: [
         {en: 'Achilles: slow heel raises and lowers. Knee: wall sits. Elbow: slow wrist lifts with a light weight.', es: 'Aquiles: subir y bajar talones despacio. Rodilla: sentadilla en la pared. Codo: levantar la muñeca despacio con un peso ligero.', zh: '跟腱：慢速提踵、慢慢放下。膝盖：靠墙静蹲。手肘：拿轻重量慢慢抬手腕。'}
@@ -1092,6 +1120,7 @@ var OVERUSE = {
     },
     {
       when: {en: 'Weeks 6–12', es: 'Semanas 6–12', zh: '第 6–12 周'},
+      days: [42, 84],
       goal: {en: 'Build back up', es: 'Volver a aumentar', zh: '逐步恢复训练'},
       moves: [
         {en: 'Return to your sport, adding no more than about 10% more each week.', es: 'Vuelve a tu deporte, sin aumentar más de un 10% aproximadamente cada semana.', zh: '回到原来的运动，每周增加的量不超过约 10%。'}
@@ -1159,6 +1188,7 @@ var HEAT_ILLNESS = {
   rehab: [
     {
       when: {en: 'Days 0–1', es: 'Días 0–1', zh: '第 0–1 天'},
+      days: [0, 1],
       goal: {en: 'Rest and rehydrate', es: 'Descansar e hidratarse', zh: '休息、补水'},
       moves: [
         {en: 'No exercise. Drink until your urine is pale yellow.', es: 'Nada de ejercicio. Bebe hasta que la orina sea amarillo claro.', zh: '不运动。多喝水，直到尿液是淡黄色。'}
@@ -1166,6 +1196,7 @@ var HEAT_ILLNESS = {
     },
     {
       when: {en: 'Days 1–3', es: 'Días 1–3', zh: '第 1–3 天'},
+      days: [1, 3],
       goal: {en: 'Light activity in the cool', es: 'Actividad ligera en un lugar fresco', zh: '在凉爽环境中轻度活动'},
       moves: [
         {en: 'Short, easy sessions indoors or in the early morning.', es: 'Sesiones cortas y fáciles bajo techo o a primera hora de la mañana.', zh: '在室内或清晨做短时间的轻松运动。'}
@@ -1173,6 +1204,7 @@ var HEAT_ILLNESS = {
     },
     {
       when: {en: 'Weeks 1–2', es: 'Semanas 1–2', zh: '第 1–2 周'},
+      days: [3, 14],
       goal: {en: 'Get used to the heat again', es: 'Volver a acostumbrarse al calor', zh: '重新适应高温'},
       moves: [
         {en: 'Over 10–14 days, slowly make sessions in the heat longer and harder.', es: 'Durante 10–14 días, alarga y endurece poco a poco las sesiones con calor.', zh: '用 10–14 天，慢慢延长在高温下运动的时间和强度。'}

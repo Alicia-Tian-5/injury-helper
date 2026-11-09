@@ -69,6 +69,42 @@ function doneKey(itemId, dateString) {
   return dateString + '|' + itemId;
 }
 
+// ---- A plan from the assessment result ----
+
+// One plan item per rehab stage with fixed days (see triage.js), counted from
+// the injury date and done every day. Stages already over by `today` are
+// left out. `ref` points back at the stage, so its text follows the page's
+// language; `name` is the English goal, kept for when the stage is not found.
+function rehabPlanItems(injury, injuryDate, today, now) {
+  var items = [];
+  injury.rehab.forEach(function (stage, index) {
+    if (!stage.days) return;
+    var item = {
+      name: stage.goal.en,
+      amount: '',
+      days: ALL_WEEKDAYS.slice(),
+      start: addDays(injuryDate, stage.days[0]),
+      end: addDays(injuryDate, stage.days[1] - 1),
+      ref: {injury: injury.id, stage: index},
+      createdAt: now.getTime()
+    };
+    if (!isPlanItemOver(item, today)) items.push(item);
+  });
+  return items;
+}
+
+// Stages that start when the body is ready, not on a date.
+function untimedRehabStages(injury) {
+  return injury.rehab.filter(function (stage) { return !stage.days; });
+}
+
+// The rehab stage a plan item came from, or null for an exercise the person typed.
+function rehabStageOf(item) {
+  if (!item.ref) return null;
+  var injury = INJURIES.filter(function (candidate) { return candidate.id === item.ref.injury; })[0];
+  return (injury && injury.rehab[item.ref.stage]) || null;
+}
+
 // ---- Calendar file (iCalendar, .ics) ----
 
 var ICS_WEEKDAYS = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
@@ -148,6 +184,20 @@ var planStore = {
   all: function () { return planRequest('items', 'readonly', function (store) { return store.getAll(); }); },
   save: function (item) { return planRequest('items', 'readwrite', function (store) { return store.put(item); }); },
   remove: function (id) { return planRequest('items', 'readwrite', function (store) { return store.delete(id); }); },
+  // Swaps the stages added earlier for this injury for new ones, in one
+  // transaction, so adding twice never leaves two copies. Typed exercises stay.
+  replaceRehab: function (injuryId, items) {
+    return planRequest('items', 'readwrite', function (store) {
+      var request = store.getAll();
+      request.onsuccess = function () {
+        request.result.forEach(function (item) {
+          if (item.ref && item.ref.injury === injuryId) store.delete(item.id);
+        });
+        items.forEach(function (item) { store.add(item); });
+      };
+      return request;
+    });
+  },
   doneOn: function (dateString) {
     return planRequest('done', 'readonly', function (store) { return store.getAll(); }).then(function (marks) {
       return marks.filter(function (mark) { return mark.date === dateString; }).map(function (mark) { return mark.itemId; });
