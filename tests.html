@@ -155,6 +155,8 @@ test('city hospitals: a city is found in Chinese or English, with spaces, capita
   equal(findCity('Chicago, IL').id, 'chicago');
   equal(findCity('New York City').id, 'newyork');
   equal(findCity('urbana').id, 'champaign');
+  equal(findCity('西安').id, 'xian');
+  equal(findCity("Xi'an").id, 'xian');
 });
 test('city hospitals: an unlisted or empty city finds nothing but still gets a map search there', function () {
   equal(findCity('Tokyo'), null);

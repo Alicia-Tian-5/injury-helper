@@ -98,6 +98,25 @@ var CITY_HOSPITALS = [
     ]
   },
   {
+    id: 'xian',
+    country: 'cn',
+    name: {en: 'Xi\'an', zh: '西安'},
+    aliases: ['xian', 'xi an', 'xi\'an', 'xi’an', '西安', '西安市'],
+    hospitals: [
+      {
+        name: {en: 'Xi\'an Honghui Hospital', zh: '西安市红会医院'},
+        department: {en: 'Sports Medicine (knee and ankle ward, shoulder and elbow ward)', zh: '运动医学科（膝踝病区、肩肘病区）'},
+        knownFor: {en: 'A hospital known for orthopedics: knee, ankle, shoulder and elbow sports injuries, foot and ankle surgery',
+                   zh: '以骨科为特色的医院：膝、踝、肩、肘关节运动损伤，足踝外科'}
+      },
+      {
+        name: {en: 'Xijing Hospital (First Affiliated Hospital of the Air Force Medical University)', zh: '西京医院（空军军医大学第一附属医院）'},
+        department: {en: 'Orthopedics', zh: '骨科'},
+        knownFor: {en: 'Joint injuries, fractures and sports injuries', zh: '关节损伤、骨折和运动损伤'}
+      }
+    ]
+  },
+  {
     id: 'chicago',
     country: 'us',
     name: {en: 'Chicago', zh: '芝加哥'},
