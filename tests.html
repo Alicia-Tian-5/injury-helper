@@ -19,6 +19,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="rehab-plan.js"></script>
 <script src="knowledge.js"></script>
 <script src="city-hospitals.js"></script>
+<script src="account.js"></script>
 <script>
 var results = [];
 function test(name, fn) {
@@ -535,6 +536,51 @@ var rulesChecked = fetch('firestore.rules').then(function (r) { return r.text();
 });
 // A saved record must come back when the page is opened again. The test
 // record is removed afterwards so it never shows up in the real log.
+// ---- Sign-in (account.js) ----
+var signInAt = new Date('2026-11-01T10:00:00Z');
+function signedInUser(fields) {
+  return Object.assign({uid: 'me', email: 'me@example.com', emailVerified: true, lastSignIn: signInAt.toUTCString()}, fields);
+}
+function daysAfterSignIn(days) {
+  return new Date(signInAt.getTime() + days * 86400000);
+}
+test('account: nobody signed in sees the sign-in form', function () {
+  equal(accountState(null, null, daysAfterSignIn(0)), 'signedOut');
+});
+test('account: a sign-in lasts 7 days, then ends', function () {
+  equal(accountState(signedInUser(), null, daysAfterSignIn(6.9)), 'signedIn');
+  equal(accountState(signedInUser(), null, daysAfterSignIn(7.1)), 'expired');
+});
+test('account: an email that is not verified yet does not open the sections', function () {
+  equal(accountState(signedInUser({emailVerified: false}), null, daysAfterSignIn(1)), 'unverified');
+});
+test('account: another account cannot open this device\'s records', function () {
+  var owner = {uid: 'someone-else', email: 'other@example.com'};
+  equal(accountState(signedInUser(), owner, daysAfterSignIn(1)), 'otherAccount');
+  equal(accountState(signedInUser(), {uid: 'me', email: 'me@example.com'}, daysAfterSignIn(1)), 'signedIn');
+});
+test('account: only the recovery log and comfort are locked', function () {
+  equal(['home', 'assess', 'comfort', 'cases', 'hospitals', 'log', 'learn'].filter(isLockedView).join(), 'comfort,log');
+});
+test('account: registering needs a valid email, 6+ characters and the same password twice', function () {
+  function fields(form, mode) {
+    return accountProblems(form, mode).map(function (p) { return p.field + ':' + p.problem; }).join();
+  }
+  equal(fields({email: ' a@b.co ', password: '123456', confirm: '123456'}, 'signUp'), '');
+  equal(fields({email: '', password: '12345', confirm: '12345'}, 'signUp'), 'email:missing,password:tooShort');
+  equal(fields({email: 'not-an-email', password: '123456', confirm: '654321'}, 'signUp'), 'email:bad,confirm:different');
+  equal(fields({email: 'a@b.co', password: '123', confirm: ''}, 'signIn'), '');
+  equal(fields({email: 'a@b.co', password: '', confirm: ''}, 'reset'), '');
+});
+test('account: a wrong password and an unknown email give the same message', function () {
+  equal(accountErrorKey('auth/invalid-credential'), 'accountWrong');
+  equal(accountErrorKey('auth/user-not-found'), 'accountWrong');
+  equal(accountErrorKey('auth/something-new'), 'accountFailed');
+});
+test('account: the device owner\'s email is partly hidden', function () {
+  equal(maskEmail('alicia@gmail.com'), 'a***@gmail.com');
+});
+
 var logStorageChecked = logStore.add({date: '2000-01-01', text: 'test record', photo: null, createdAt: 0}).then(function (id) {
   return logStore.all().then(function (entries) {
     test('log: a saved record can be read back', function () {

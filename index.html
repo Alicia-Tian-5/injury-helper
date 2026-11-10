@@ -136,6 +136,15 @@ ol.steps li,ul.points li{margin-bottom:6px}
 .pain-name{font-weight:600;margin:12px 0 6px}
 .log-photo{display:block;max-width:220px;max-height:220px;object-fit:cover;border-radius:4px;margin-top:10px}
 .link-btn{background:none;color:var(--acc);text-decoration:underline;padding:8px;margin-left:6px}
+.account-lock{max-width:480px;margin-left:auto;margin-right:auto;border-top:4px solid var(--acc)}
+.account-modes{display:flex;gap:8px;margin:4px 0 14px}
+.account-modes button{flex:1;background:transparent;color:var(--text);border:1.5px solid var(--line);padding:10px 12px;font-weight:600}
+.account-modes button[aria-pressed="true"]{border-color:var(--acc);background:var(--acc-soft);color:var(--acc)}
+.account-lock .primary:disabled{opacity:.6}
+.account-lock .link-btn{margin:8px 0 0;padding:8px 0}
+.account-lock .actions{justify-content:flex-start;margin-top:12px}
+.account-bar{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:4px 8px;margin:0 0 8px;font-size:15px;color:var(--muted)}
+.account-bar .link-btn{margin:0}
 .log-entry img{display:block;max-width:100%;max-height:360px;object-fit:contain;border-radius:4px;margin:6px 0 8px}
 .log-entry .secondary{padding:6px 14px;font-size:15px}
 #subPick{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
@@ -308,6 +317,37 @@ h1 a{text-decoration:none}
   </div>
 </header>
 <main>
+
+<!-- The recovery log and comfort sections need a sign-in (account.js). -->
+<section class="card account-lock" id="accountLock" hidden>
+  <h2 id="accountTitle"></h2>
+  <p class="muted" id="accountIntro"></p>
+  <p class="muted" id="accountStatus" role="status" hidden></p>
+  <form id="accountForm" novalidate hidden>
+    <div class="account-modes" id="accountModes" role="group">
+      <button type="button" data-mode="signIn" id="accountModeSignIn"></button>
+      <button type="button" data-mode="signUp" id="accountModeSignUp"></button>
+    </div>
+    <label class="field"><span id="accountEmailLabel"></span><input type="email" id="accountEmail" autocomplete="email" maxlength="100"></label>
+    <label class="field" id="accountPasswordField"><span id="accountPasswordLabel"></span><input type="password" id="accountPassword" autocomplete="current-password" maxlength="100"></label>
+    <label class="field" id="accountConfirmField"><span id="accountConfirmLabel"></span><input type="password" id="accountConfirm" autocomplete="new-password" maxlength="100"></label>
+    <button type="submit" class="primary" id="accountSubmit"></button>
+    <p class="error" id="accountError" role="alert" hidden></p>
+    <p class="success" id="accountDone" role="status" hidden></p>
+    <button type="button" class="link-btn" id="accountForgot"></button>
+  </form>
+  <div id="accountWait" hidden>
+    <p id="accountWaitText"></p>
+    <div class="actions">
+      <button type="button" class="secondary" id="accountVerifiedBtn"></button>
+      <button type="button" class="secondary" id="accountResendBtn"></button>
+      <button type="button" class="secondary" id="accountOtherBtn"></button>
+    </div>
+    <p class="error" id="accountWaitError" role="alert" hidden></p>
+    <p class="success" id="accountWaitDone" role="status" hidden></p>
+  </div>
+</section>
+<div class="account-bar" id="accountBar" hidden><span id="accountWho"></span><button type="button" class="link-btn" id="accountSignOut"></button></div>
 
 <div class="view" id="view-home" hidden>
   <a class="card home-today" id="homeToday" href="#log" hidden></a>
@@ -566,6 +606,7 @@ h1 a{text-decoration:none}
 <script src="knowledge.js"></script>
 <script src="city-hospitals.js"></script>
 <script src="rehab-plan.js"></script>
+<script src="account.js"></script>
 <script>
 // Interface text. Injury content lives in triage.js.
 var T = {
@@ -766,6 +807,44 @@ var T = {
     homeToday: 'Today\'s rehab: {0} of {1} done',
     homeTodayAllDone: 'Today\'s rehab is done ({0}/{0})',
     homeTodayGo: 'Open the plan →',
+    accountTitle: 'Sign in to see this part',
+    accountIntro: 'The recovery log and comfort are only for you. Sign in once and this device stays signed in for 7 days. Your records stay on this device.',
+    accountLoading: 'Checking whether you are signed in…',
+    accountUnavailable: 'Sign-in cannot be reached right now. Check the internet connection and reload the page.',
+    accountExpired: 'It has been more than 7 days, so please sign in again.',
+    accountModes: 'Sign in or create an account',
+    accountSignIn: 'Sign in',
+    accountSignUp: 'Create account',
+    accountCreate: 'Create account',
+    accountEmail: 'Email',
+    accountPassword: 'Password',
+    accountNewPassword: 'Password (at least 6 characters)',
+    accountConfirm: 'Password again',
+    accountBusy: 'Please wait…',
+    accountSendReset: 'Send reset email',
+    accountForgot: 'Forgot your password?',
+    accountBack: 'Back to sign in',
+    accountResetSent: 'If this email has an account, a reset email is on its way. Open the link in it, choose a new password, then sign in here. Your records stay as they are.',
+    accountEmailMissing: 'Enter your email.',
+    accountEmailBad: 'This email does not look right.',
+    accountPasswordMissing: 'Enter your password.',
+    accountPasswordShort: 'The password needs at least 6 characters.',
+    accountPasswordLong: 'The password can be at most 100 characters.',
+    accountConfirmDifferent: 'The two passwords are not the same.',
+    accountWrong: 'The email or password is not right.',
+    accountTaken: 'This email already has an account. Sign in instead, or reset the password.',
+    accountTooMany: 'Too many tries. Wait a few minutes and try again.',
+    accountOffline: 'No internet connection. Check it and try again.',
+    accountFailed: 'That did not work. Please try again.',
+    accountCheckEmail: 'We sent an email to {0}. Press the link in it, then come back and press "I have verified". Not there? Look in the spam folder.',
+    accountVerified: 'I have verified',
+    accountNotVerified: 'The email is not verified yet. Press the link in the email first.',
+    accountResend: 'Send again',
+    accountResent: 'Sent again.',
+    accountUseOther: 'Use another account',
+    accountOtherOwner: 'The records on this device belong to another account ({0}). Sign in with that account to see them.',
+    accountWho: 'Signed in as {0}',
+    accountSignOut: 'Sign out',
     logTrendTitle: 'Pain trend',
     logTrendNone: 'Give a pain score in a record and its trend will appear here.',
     logTrendOneMore: 'Give pain scores on one more day to see the trend.',
@@ -991,6 +1070,44 @@ var T = {
     homeToday: 'Rehabilitación de hoy: {0} de {1} hechos',
     homeTodayAllDone: 'La rehabilitación de hoy está hecha ({0}/{0})',
     homeTodayGo: 'Abrir el plan →',
+    accountTitle: 'Inicia sesión para ver esta parte',
+    accountIntro: 'El registro de recuperación y el apoyo son solo para ti. Inicia sesión una vez y este dispositivo seguirá con la sesión abierta 7 días. Tus registros se quedan en este dispositivo.',
+    accountLoading: 'Comprobando si has iniciado sesión…',
+    accountUnavailable: 'Ahora no se puede conectar con el inicio de sesión. Revisa la conexión a internet y vuelve a cargar la página.',
+    accountExpired: 'Han pasado más de 7 días; vuelve a iniciar sesión.',
+    accountModes: 'Iniciar sesión o crear una cuenta',
+    accountSignIn: 'Iniciar sesión',
+    accountSignUp: 'Crear cuenta',
+    accountCreate: 'Crear cuenta',
+    accountEmail: 'Correo electrónico',
+    accountPassword: 'Contraseña',
+    accountNewPassword: 'Contraseña (al menos 6 caracteres)',
+    accountConfirm: 'Repite la contraseña',
+    accountBusy: 'Un momento…',
+    accountSendReset: 'Enviar correo para restablecer',
+    accountForgot: '¿Olvidaste la contraseña?',
+    accountBack: 'Volver a iniciar sesión',
+    accountResetSent: 'Si este correo tiene una cuenta, te llegará un correo para restablecer la contraseña. Abre el enlace, elige una contraseña nueva y luego inicia sesión aquí. Tus registros no cambian.',
+    accountEmailMissing: 'Escribe tu correo.',
+    accountEmailBad: 'Este correo no parece correcto.',
+    accountPasswordMissing: 'Escribe tu contraseña.',
+    accountPasswordShort: 'La contraseña necesita al menos 6 caracteres.',
+    accountPasswordLong: 'La contraseña puede tener como máximo 100 caracteres.',
+    accountConfirmDifferent: 'Las dos contraseñas no son iguales.',
+    accountWrong: 'El correo o la contraseña no son correctos.',
+    accountTaken: 'Este correo ya tiene una cuenta. Inicia sesión o restablece la contraseña.',
+    accountTooMany: 'Demasiados intentos. Espera unos minutos y vuelve a intentarlo.',
+    accountOffline: 'No hay conexión a internet. Revísala y vuelve a intentarlo.',
+    accountFailed: 'No ha funcionado. Inténtalo de nuevo.',
+    accountCheckEmail: 'Enviamos un correo a {0}. Pulsa el enlace que contiene, vuelve aquí y pulsa «Ya lo verifiqué». ¿No lo ves? Mira en la carpeta de spam.',
+    accountVerified: 'Ya lo verifiqué',
+    accountNotVerified: 'El correo aún no está verificado. Pulsa primero el enlace del correo.',
+    accountResend: 'Enviar de nuevo',
+    accountResent: 'Enviado de nuevo.',
+    accountUseOther: 'Usar otra cuenta',
+    accountOtherOwner: 'Los registros de este dispositivo pertenecen a otra cuenta ({0}). Inicia sesión con esa cuenta para verlos.',
+    accountWho: 'Sesión iniciada como {0}',
+    accountSignOut: 'Cerrar sesión',
     logTrendTitle: 'Evolución del dolor',
     logTrendNone: 'Pon una puntuación de dolor en un registro y aquí aparecerá su evolución.',
     logTrendOneMore: 'Pon puntuaciones de dolor un día más para ver la evolución.',
@@ -1214,6 +1331,44 @@ var T = {
     homeToday: '今天的康复训练：完成 {0}/{1}',
     homeTodayAllDone: '今天的康复训练都完成了（{0}/{0}）',
     homeTodayGo: '去看计划 →',
+    accountTitle: '登录后查看',
+    accountIntro: '康复记录和心理安慰只给你本人看。登录一次，这台设备 7 天内不用再登录。记录仍然只存在这台设备上。',
+    accountLoading: '正在检查登录状态…',
+    accountUnavailable: '现在连不上登录服务。请检查网络，然后刷新页面。',
+    accountExpired: '已经超过 7 天，请重新登录。',
+    accountModes: '登录或注册',
+    accountSignIn: '登录',
+    accountSignUp: '注册',
+    accountCreate: '注册',
+    accountEmail: '邮箱',
+    accountPassword: '密码',
+    accountNewPassword: '密码（至少 6 位）',
+    accountConfirm: '再输一次密码',
+    accountBusy: '请稍候…',
+    accountSendReset: '发送重置邮件',
+    accountForgot: '忘记密码？',
+    accountBack: '返回登录',
+    accountResetSent: '如果这个邮箱注册过，重置邮件马上就到。点邮件里的链接设好新密码，再回来登录。你的记录不会被删除。',
+    accountEmailMissing: '请填写邮箱。',
+    accountEmailBad: '这个邮箱格式不对。',
+    accountPasswordMissing: '请填写密码。',
+    accountPasswordShort: '密码至少要 6 位。',
+    accountPasswordLong: '密码最多 100 位。',
+    accountConfirmDifferent: '两次输入的密码不一样。',
+    accountWrong: '邮箱或密码不对。',
+    accountTaken: '这个邮箱已经注册过了。请直接登录，或者重置密码。',
+    accountTooMany: '尝试次数太多了，请等几分钟再试。',
+    accountOffline: '没有网络，请检查后再试。',
+    accountFailed: '没有成功，请再试一次。',
+    accountCheckEmail: '我们给 {0} 发了一封验证邮件。点邮件里的链接，再回来点"我已经验证了"。没收到的话，看看垃圾邮件。',
+    accountVerified: '我已经验证了',
+    accountNotVerified: '邮箱还没有验证。请先点邮件里的链接。',
+    accountResend: '重新发送',
+    accountResent: '已经重新发送。',
+    accountUseOther: '换个账号',
+    accountOtherOwner: '这台设备上的记录属于另一个账号（{0}）。用那个账号登录才能看到。',
+    accountWho: '已登录：{0}',
+    accountSignOut: '退出登录',
     logTrendTitle: '疼痛趋势',
     logTrendNone: '在记录里填上疼痛分数，这里就会画出变化趋势。',
     logTrendOneMore: '再记一天疼痛分数，就能看到变化趋势。',
@@ -1431,14 +1586,17 @@ function currentView() {
 
 function showView() {
   var view = currentView();
-  VIEWS.forEach(function (name) { $('view-' + name).hidden = name !== view; });
+  var locked = isLockedView(view) && currentAccountState() !== 'signedIn';
+  VIEWS.forEach(function (name) { $('view-' + name).hidden = name !== view || locked; });
+  $('accountLock').hidden = !locked;
+  $('accountBar').hidden = !isLockedView(view) || locked;
   document.querySelectorAll('#tabs a').forEach(function (a) {
     if (a.dataset.view === view) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   });
   scrollToCurrentTab();
   // The chart is sized to its box, which has no width while hidden.
-  if (view === 'log') renderPainTrend();
+  if (view === 'log' && !locked) renderPainTrend();
 }
 
 // On phones not every section fits in the menu: bring the current one into
@@ -1917,6 +2075,7 @@ function renderAll() {
   renderCover();
   updateTabsFade();
   renderCases();
+  renderAccount();
   renderPlan();
   renderLog();
   renderCategories();
@@ -2099,6 +2258,9 @@ $('caseForm').addEventListener('submit', function (e) {
 // Declared up here because the first renderAll() runs before the plan code below.
 var plan = {status: 'loading', items: [], done: [], today: logDateString(new Date()), formOpen: false, editing: null,
   saving: false, saved: false, problems: [], saveFailed: false, calendarDone: false};
+// Firebase's answer about who is signed in comes later (firebase-account.js).
+var account = {status: 'loading', user: null, mode: 'signIn', busy: false, problems: [], error: null, done: null,
+  expired: false, signingOut: false};
 var log = {status: 'loading', entries: [], photo: null, photoBad: false, saving: false, saved: false, saveFailed: false, problems: []};
 
 function logProblemText(p) {
@@ -2506,7 +2668,7 @@ function renderPlan() {
   $('calendarNone').hidden = !ready || active.length > 0;
   $('calendarDone').hidden = !plan.calendarDone;
 
-  $('homeToday').hidden = due.length === 0;
+  $('homeToday').hidden = due.length === 0 || currentAccountState() !== 'signedIn';
   if (due.length > 0) {
     $('homeToday').innerHTML = '<strong></strong> <span class="muted"></span>';
     $('homeToday').querySelector('strong').textContent = doneCount === due.length
@@ -2752,9 +2914,201 @@ document.querySelectorAll('#langs button').forEach(function (b) {
   });
 });
 
+// ---- Sign-in for the private sections ----
+// Firebase checks the email and password; the rules are in account.js.
+
+function currentAccountState() {
+  if (account.status !== 'ready') return account.status;
+  return accountState(account.user, accountOwner.get(), new Date());
+}
+
+var ACCOUNT_PROBLEM_TEXT = {
+  'email|missing': 'accountEmailMissing',
+  'email|bad': 'accountEmailBad',
+  'password|missing': 'accountPasswordMissing',
+  'password|tooShort': 'accountPasswordShort',
+  'password|tooLong': 'accountPasswordLong',
+  'confirm|different': 'accountConfirmDifferent'
+};
+
+function showMessage(id, key) {
+  $(id).hidden = !key;
+  $(id).textContent = key ? t(key) : '';
+}
+
+function renderAccount() {
+  var state = currentAccountState();
+  if (window.accountStore) accountStore.setLanguage(lang === 'zh' ? 'zh-CN' : lang);
+  // A sign-in older than 7 days is ended here; Firebase then reports nobody.
+  if (state === 'expired' && !account.signingOut) {
+    account.signingOut = true;
+    account.expired = true;
+    accountStore.signOut().catch(function () { account.signingOut = false; });
+  }
+  if (state === 'signedIn' && !accountOwner.get()) accountOwner.set(account.user);
+
+  var asking = state === 'signedOut' || state === 'expired';
+  var waiting = state === 'unverified' || state === 'otherAccount';
+  $('accountTitle').textContent = t('accountTitle');
+  $('accountIntro').textContent = t('accountIntro');
+  var status = state === 'loading' ? 'accountLoading' : state === 'error' ? 'accountUnavailable'
+    : asking && account.expired ? 'accountExpired' : null;
+  showMessage('accountStatus', status);
+
+  $('accountForm').hidden = !asking;
+  var mode = account.mode;
+  $('accountModes').hidden = mode === 'reset';
+  $('accountModes').setAttribute('aria-label', t('accountModes'));
+  $('accountModeSignIn').textContent = t('accountSignIn');
+  $('accountModeSignUp').textContent = t('accountSignUp');
+  $('accountModeSignIn').setAttribute('aria-pressed', mode === 'signIn');
+  $('accountModeSignUp').setAttribute('aria-pressed', mode === 'signUp');
+  $('accountEmailLabel').textContent = t('accountEmail');
+  $('accountPasswordLabel').textContent = mode === 'signUp' ? t('accountNewPassword') : t('accountPassword');
+  $('accountPassword').autocomplete = mode === 'signUp' ? 'new-password' : 'current-password';
+  $('accountPasswordField').hidden = mode === 'reset';
+  $('accountConfirmField').hidden = mode !== 'signUp';
+  $('accountConfirmLabel').textContent = t('accountConfirm');
+  $('accountSubmit').disabled = account.busy;
+  $('accountSubmit').textContent = account.busy ? t('accountBusy')
+    : t({signIn: 'accountSignIn', signUp: 'accountCreate', reset: 'accountSendReset'}[mode]);
+  var problemText = account.problems.map(function (p) { return t(ACCOUNT_PROBLEM_TEXT[p.field + '|' + p.problem]); }).join(' ');
+  $('accountError').hidden = !problemText && !account.error;
+  $('accountError').textContent = problemText || (account.error ? t(account.error) : '');
+  showMessage('accountDone', asking ? account.done : null);
+  $('accountForgot').textContent = mode === 'reset' ? t('accountBack') : t('accountForgot');
+
+  $('accountWait').hidden = !waiting;
+  if (waiting) {
+    var owner = accountOwner.get();
+    $('accountWaitText').textContent = state === 'unverified'
+      ? t('accountCheckEmail').replace('{0}', account.user.email)
+      : t('accountOtherOwner').replace('{0}', maskEmail(owner.email));
+    $('accountVerifiedBtn').hidden = state !== 'unverified';
+    $('accountResendBtn').hidden = state !== 'unverified';
+    $('accountVerifiedBtn').textContent = t('accountVerified');
+    $('accountResendBtn').textContent = t('accountResend');
+    $('accountOtherBtn').textContent = t('accountUseOther');
+    $('accountVerifiedBtn').disabled = $('accountResendBtn').disabled = account.busy;
+  }
+  showMessage('accountWaitError', waiting ? account.error : null);
+  showMessage('accountWaitDone', waiting ? account.done : null);
+
+  if (state === 'signedIn') $('accountWho').textContent = t('accountWho').replace('{0}', account.user.email);
+  $('accountSignOut').textContent = t('accountSignOut');
+}
+
+// Redraws everything that depends on being signed in.
+function accountChanged() {
+  renderAccount();
+  renderPlan();
+  showView();
+}
+
+function setAccountMode(mode) {
+  account.mode = mode;
+  account.problems = [];
+  account.error = null;
+  account.done = null;
+  accountChanged();
+}
+
+// Runs one Firebase call with the buttons disabled; `done` is the message to
+// show when it worked.
+function accountAction(call, done) {
+  account.busy = true;
+  account.problems = [];
+  account.error = null;
+  account.done = null;
+  renderAccount();
+  return call().then(function () {
+    account.done = done;
+  }).catch(function (e) {
+    account.error = (e && e.messageKey) || accountErrorKey(e && e.code);
+  }).then(function () {
+    account.busy = false;
+    accountChanged();
+  });
+}
+
+// Called by firebase-account.js whenever the signed-in user changes.
+window.onAccountChange = function (user) {
+  account.status = 'ready';
+  account.user = user;
+  if (!user) account.signingOut = false;
+  if (user && currentAccountState() === 'signedIn') account.expired = false;
+  accountChanged();
+};
+// Called if firebase-account.js or the Firebase library cannot be loaded.
+window.onAccountFailed = function () {
+  account.status = 'error';
+  accountChanged();
+};
+
+$('accountModes').addEventListener('click', function (event) {
+  var button = event.target.closest('button[data-mode]');
+  if (button) setAccountMode(button.dataset.mode);
+});
+
+$('accountForgot').addEventListener('click', function () {
+  setAccountMode(account.mode === 'reset' ? 'signIn' : 'reset');
+});
+
+$('accountForm').addEventListener('submit', function (event) {
+  event.preventDefault();
+  if (account.busy) return;
+  var mode = account.mode;
+  var form = {email: $('accountEmail').value, password: $('accountPassword').value, confirm: $('accountConfirm').value};
+  account.problems = accountProblems(form, mode);
+  account.error = null;
+  account.done = null;
+  if (account.problems.length) {
+    renderAccount();
+    return;
+  }
+  var email = form.email.trim();
+  var call = {
+    signIn: function () { return accountStore.signIn(email, form.password); },
+    signUp: function () { return accountStore.signUp(email, form.password); },
+    reset: function () { return accountStore.resetPassword(email); }
+  }[mode];
+  accountAction(call, mode === 'reset' ? 'accountResetSent' : null).then(function () {
+    if (!account.error) {
+      $('accountPassword').value = '';
+      $('accountConfirm').value = '';
+    }
+  });
+});
+
+$('accountVerifiedBtn').addEventListener('click', function () {
+  accountAction(function () {
+    return accountStore.refresh().then(function (user) {
+      account.user = user;
+      if (user && !user.emailVerified) throw {messageKey: 'accountNotVerified'};
+    });
+  }, null);
+});
+
+$('accountResendBtn').addEventListener('click', function () {
+  accountAction(function () { return accountStore.resendVerification(); }, 'accountResent');
+});
+
+function signOutOfAccount() {
+  account.mode = 'signIn';
+  accountAction(function () { return accountStore.signOut(); }, null);
+}
+$('accountOtherBtn').addEventListener('click', signOutOfAccount);
+$('accountSignOut').addEventListener('click', signOutOfAccount);
+
+// A page left open for days also locks once the sign-in is 7 days old.
+document.addEventListener('visibilitychange', function () {
+  if (!document.hidden && account.status === 'ready') accountChanged();
+});
+
 renderAll();
 showView();
 </script>
 <script type="module" src="firebase-cases.js" onerror="onCaseStoreFailed()"></script>
+<script type="module" src="firebase-account.js" onerror="onAccountFailed()"></script>
 </body>
 </html>
