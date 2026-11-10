@@ -279,6 +279,17 @@ h1 a{text-decoration:none}
 .chat-crisis a{color:var(--red);font-weight:700}
 .start{text-decoration:none}
 @media (prefers-color-scheme:dark){.cover{--veil:15,22,32}.site-footer{background:#0a121b}}
+/* Phones: a narrow screen crops the photos to a thin strip, so the cover is
+   a plain light blue with the usual dark words instead, and the photos are
+   not loaded. */
+@media (max-width:899px){
+  .cover{min-height:0;padding:56px 20px 48px;background:linear-gradient(160deg,#eef4fa 0%,#d9e6f3 100%);border-bottom:1px solid var(--line)}
+  #coverSlides,.cover-veil,.cover-dots{display:none}
+  .cover-text{text-shadow:none}
+}
+@media (max-width:899px) and (prefers-color-scheme:dark){
+  .cover{background:linear-gradient(160deg,#17263a 0%,#1d3550 100%)}
+}
 /* Computers: a wide, full-window layout. Phones keep the single column. */
 @media (min-width:900px){
   main,.site-header .wrap{max-width:1180px;padding-left:32px;padding-right:32px}
@@ -2859,7 +2870,11 @@ function coverImage(slide) {
 }
 
 // A photo is only downloaded when it is shown or about to be, to save data on phones.
+// Photos are only shown, and so only loaded, on wide screens.
+var wideCover = window.matchMedia('(min-width:900px)');
+
 function loadCoverSlide(index) {
+  if (!wideCover.matches) return;
   var layer = $('coverSlides').children[index];
   if (!layer.style.backgroundImage) layer.style.backgroundImage = coverImage(COVER_SLIDES[index]);
 }
@@ -2878,7 +2893,7 @@ function startCoverTimer() {
   clearInterval(cover.timer);
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   cover.timer = setInterval(function () {
-    if (!document.hidden && !$('view-home').hidden) showCoverSlide(cover.current + 1);
+    if (!document.hidden && !$('view-home').hidden && wideCover.matches) showCoverSlide(cover.current + 1);
   }, COVER_SECONDS * 1000);
 }
 
@@ -2920,6 +2935,8 @@ function renderCover() {
 
 buildCover();
 renderCover();
+// A phone turned sideways, or a window made wider, starts showing photos.
+wideCover.addEventListener('change', function () { showCoverSlide(cover.current); });
 loadPlan();
 
 $('seeCasesBtn').addEventListener('click', function () {
