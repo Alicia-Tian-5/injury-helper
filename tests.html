@@ -20,6 +20,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="knowledge.js"></script>
 <script src="city-hospitals.js"></script>
 <script src="account.js"></script>
+<script src="install.js"></script>
 <script>
 var results = [];
 function test(name, fn) {
@@ -581,6 +582,50 @@ test('account: the device owner\'s email is partly hidden', function () {
   equal(maskEmail('alicia@gmail.com'), 'a***@gmail.com');
 });
 
+// ---- Home screen and offline (install.js, sw.js) ----
+test('install: iPhone gets the Share steps, Android the menu steps or the button', function () {
+  var phone = {standalone: false, dismissed: false, canPrompt: false, ios: false, android: false};
+  equal(installHelp(Object.assign({}, phone, {ios: true})), 'ios');
+  equal(installHelp(Object.assign({}, phone, {android: true})), 'android');
+  equal(installHelp(Object.assign({}, phone, {android: true, canPrompt: true})), 'prompt');
+  equal(installHelp(phone), 'none');
+});
+test('install: no help once it is on the home screen or was dismissed', function () {
+  equal(installHelp({standalone: true, dismissed: false, canPrompt: true, ios: true, android: false}), 'none');
+  equal(installHelp({standalone: false, dismissed: true, canPrompt: false, ios: true, android: false}), 'none');
+});
+test('install: an iPad that calls itself a Mac is still an iPad', function () {
+  equal(isIosDevice('Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)', 'iPhone', 5), true);
+  equal(isIosDevice('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)', 'MacIntel', 5), true);
+  equal(isIosDevice('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)', 'MacIntel', 0), false);
+});
+// Every file the page loads must be saved for offline use, or the page
+// breaks without internet.
+var offlineChecked = Promise.all(['index.html', 'sw.js', 'manifest.webmanifest'].map(function (file) {
+  return fetch(file, {cache: 'no-store'}).then(function (r) { return r.text(); });
+})).then(function (texts) {
+  var page = texts[0], worker = texts[1], manifest = JSON.parse(texts[2]);
+  test('offline: every script the page loads is saved by sw.js', function () {
+    var scripts = (page.match(/<script[^>]* src="[^"]+"/g) || []).map(function (tag) { return tag.match(/src="([^"]+)"/)[1]; });
+    var missing = scripts.filter(function (file) { return worker.indexOf("'" + file + "'") < 0; });
+    if (missing.length) throw new Error('not saved: ' + missing.join(', '));
+  });
+  test('offline: the app is named Injury Helper on the home screen', function () {
+    equal(manifest.short_name, 'Injury Helper');
+    equal(manifest.display, 'standalone');
+  });
+  return Promise.all(manifest.icons.map(function (icon) {
+    return fetch(icon.src, {cache: 'no-store'}).then(function (r) { return icon.src + ':' + r.ok; });
+  })).then(function (found) {
+    test('offline: every home screen icon exists', function () {
+      var missing = found.filter(function (f) { return /:false$/.test(f); });
+      if (missing.length) throw new Error('missing: ' + missing.join(', '));
+    });
+  });
+}).catch(function (e) {
+  results.push({name: 'offline: the app files can be read', ok: false, msg: String(e && e.message || e)});
+});
+
 var logStorageChecked = logStore.add({date: '2000-01-01', text: 'test record', photo: null, createdAt: 0}).then(function (id) {
   return logStore.all().then(function (entries) {
     test('log: a saved record can be read back', function () {
@@ -637,7 +682,7 @@ var rehabReplaceChecked = planStorageChecked.then(function () {
 }).catch(function (e) {
   results.push({name: 'rehab plan: stages can be stored in this browser', ok: false, msg: String(e && e.message || e)});
 });
-Promise.all([rulesChecked, testSpanishSwitch(), logStorageChecked, planStorageChecked, rehabReplaceChecked]).then(showResults);
+Promise.all([rulesChecked, testSpanishSwitch(), logStorageChecked, planStorageChecked, rehabReplaceChecked, offlineChecked]).then(showResults);
 </script>
 </body>
 </html>

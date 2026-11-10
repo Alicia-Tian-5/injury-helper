@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>运动损伤急救助手 · Sports Injury Helper</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1f4e79">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Injury Helper">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=Noto+Sans+SC:wght@400;600;700&family=Noto+Serif+SC:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
@@ -203,6 +209,13 @@ h1 a{color:var(--acc)}
 .plan-moves li{margin:2px 0}
 .home-today{display:block;text-decoration:none;color:var(--text);border-left:4px solid var(--acc);margin:0 0 12px}
 .home-today strong{color:var(--acc)}
+.offline-banner{margin:0;padding:10px 16px;background:var(--yellow-soft);color:var(--text);border-bottom:1px solid var(--yellow);font-size:15px;text-align:center}
+.install{border-left:4px solid var(--acc);margin:0 0 18px}
+.install h2{margin:0 0 4px;font-size:19px}
+.install p{margin:0}
+.install .actions{justify-content:flex-start;margin-top:12px}
+.install .primary{width:auto}
+.install .link-btn{margin:0;padding:8px 0}
 .trend{margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .trend svg{display:block;width:100%;height:auto}
 .trend .grid{stroke:var(--line);stroke-width:1}
@@ -316,6 +329,7 @@ h1 a{text-decoration:none}
     <div class="langs" id="langs" role="group"><button data-lang="zh" lang="zh-CN">中</button><button data-lang="en" lang="en">EN</button><button data-lang="es" lang="es">ES</button></div>
   </div>
 </header>
+<p class="offline-banner" id="offlineBanner" role="status" hidden></p>
 <main>
 
 <!-- The recovery log and comfort sections need a sign-in (account.js). -->
@@ -362,6 +376,14 @@ h1 a{text-decoration:none}
         <div class="cover-actions"><a class="primary start" href="#assess" id="startBtn"></a><a class="secondary start" href="#comfort" id="chatCta"></a></div>
         <p class="cover-sos" id="coverSos"></p>
       </div>
+    </div>
+  </section>
+  <section class="card install" id="installCard" hidden>
+    <h2 id="installTitle"></h2>
+    <p id="installText"></p>
+    <div class="actions">
+      <button type="button" class="primary" id="installBtn" hidden></button>
+      <button type="button" class="link-btn" id="installDismiss"></button>
     </div>
   </section>
   <section class="facts">
@@ -607,6 +629,7 @@ h1 a{text-decoration:none}
 <script src="city-hospitals.js"></script>
 <script src="rehab-plan.js"></script>
 <script src="account.js"></script>
+<script src="install.js"></script>
 <script>
 // Interface text. Injury content lives in triage.js.
 var T = {
@@ -807,6 +830,13 @@ var T = {
     homeToday: 'Today\'s rehab: {0} of {1} done',
     homeTodayAllDone: 'Today\'s rehab is done ({0}/{0})',
     homeTodayGo: 'Open the plan →',
+    installTitle: 'Keep it on your phone',
+    installPromptText: 'Add Injury Helper to your home screen: it opens like an app, and first aid works even without internet.',
+    installIos: 'Add Injury Helper to your home screen: press the Share button (the square with an arrow), then "Add to Home Screen". It opens like an app, and first aid works even without internet.',
+    installAndroid: 'Add Injury Helper to your home screen: open the browser menu (⋮), then "Add to Home screen" or "Install app". It opens like an app, and first aid works even without internet.',
+    installBtn: 'Add to home screen',
+    installDismiss: 'Not now',
+    offlineBanner: 'No internet right now. First aid and advice still work; sign-in, shared cases and maps need a connection.',
     accountTitle: 'Sign in to see this part',
     accountIntro: 'The recovery log and comfort are only for you. Sign in once and this device stays signed in for 7 days. Your records stay on this device.',
     accountLoading: 'Checking whether you are signed in…',
@@ -1070,6 +1100,13 @@ var T = {
     homeToday: 'Rehabilitación de hoy: {0} de {1} hechos',
     homeTodayAllDone: 'La rehabilitación de hoy está hecha ({0}/{0})',
     homeTodayGo: 'Abrir el plan →',
+    installTitle: 'Tenlo en tu teléfono',
+    installPromptText: 'Añade Injury Helper a tu pantalla de inicio: se abre como una app y los primeros auxilios funcionan incluso sin internet.',
+    installIos: 'Añade Injury Helper a tu pantalla de inicio: pulsa el botón Compartir (el cuadrado con una flecha) y luego «Añadir a pantalla de inicio». Se abre como una app y los primeros auxilios funcionan incluso sin internet.',
+    installAndroid: 'Añade Injury Helper a tu pantalla de inicio: abre el menú del navegador (⋮) y luego «Añadir a pantalla de inicio» o «Instalar app». Se abre como una app y los primeros auxilios funcionan incluso sin internet.',
+    installBtn: 'Añadir a la pantalla de inicio',
+    installDismiss: 'Ahora no',
+    offlineBanner: 'Ahora no hay internet. Los primeros auxilios y los consejos siguen funcionando; el inicio de sesión, los casos compartidos y los mapas necesitan conexión.',
     accountTitle: 'Inicia sesión para ver esta parte',
     accountIntro: 'El registro de recuperación y el apoyo son solo para ti. Inicia sesión una vez y este dispositivo seguirá con la sesión abierta 7 días. Tus registros se quedan en este dispositivo.',
     accountLoading: 'Comprobando si has iniciado sesión…',
@@ -1331,6 +1368,13 @@ var T = {
     homeToday: '今天的康复训练：完成 {0}/{1}',
     homeTodayAllDone: '今天的康复训练都完成了（{0}/{0}）',
     homeTodayGo: '去看计划 →',
+    installTitle: '放到手机桌面上',
+    installPromptText: '把 Injury Helper 添加到主屏幕：点开就像一个 App，没有网络也能看急救建议。',
+    installIos: '把 Injury Helper 添加到主屏幕：点浏览器的"分享"按钮（带向上箭头的方框），再选"添加到主屏幕"。点开就像一个 App，没有网络也能看急救建议。',
+    installAndroid: '把 Injury Helper 添加到主屏幕：点浏览器右上角的菜单（⋮），再选"添加到主屏幕"或"安装应用"。点开就像一个 App，没有网络也能看急救建议。',
+    installBtn: '添加到主屏幕',
+    installDismiss: '暂时不用',
+    offlineBanner: '现在没有网络。急救建议照常可用，登录、案例分享和地图需要网络。',
     accountTitle: '登录后查看',
     accountIntro: '康复记录和心理安慰只给你本人看。登录一次，这台设备 7 天内不用再登录。记录仍然只存在这台设备上。',
     accountLoading: '正在检查登录状态…',
@@ -2076,6 +2120,8 @@ function renderAll() {
   updateTabsFade();
   renderCases();
   renderAccount();
+  renderInstall();
+  renderOffline();
   renderPlan();
   renderLog();
   renderCategories();
@@ -3104,6 +3150,67 @@ $('accountSignOut').addEventListener('click', signOutOfAccount);
 document.addEventListener('visibilitychange', function () {
   if (!document.hidden && account.status === 'ready') accountChanged();
 });
+
+// ---- On the home screen, and offline ----
+// sw.js keeps a copy of the site; install.js decides which help to show.
+
+var install = {prompt: null, dismissed: false};
+try { install.dismissed = localStorage.getItem(INSTALL_DISMISSED_KEY) === 'yes'; } catch (e) { /* storage blocked */ }
+
+function renderInstall() {
+  var help = installHelp({
+    standalone: window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true,
+    dismissed: install.dismissed,
+    canPrompt: install.prompt !== null,
+    ios: isIosDevice(navigator.userAgent, navigator.platform, navigator.maxTouchPoints),
+    android: /Android/.test(navigator.userAgent)
+  });
+  $('installCard').hidden = help === 'none';
+  $('installTitle').textContent = t('installTitle');
+  $('installText').textContent = t({prompt: 'installPromptText', ios: 'installIos', android: 'installAndroid', none: 'installPromptText'}[help]);
+  $('installBtn').hidden = help !== 'prompt';
+  $('installBtn').textContent = t('installBtn');
+  $('installDismiss').textContent = t('installDismiss');
+}
+
+function renderOffline() {
+  $('offlineBanner').hidden = navigator.onLine;
+  $('offlineBanner').textContent = t('offlineBanner');
+}
+
+// Android Chrome offers its own install window; keep it for the button.
+window.addEventListener('beforeinstallprompt', function (event) {
+  event.preventDefault();
+  install.prompt = event;
+  renderInstall();
+});
+window.addEventListener('appinstalled', function () {
+  install.prompt = null;
+  install.dismissed = true;
+  renderInstall();
+});
+
+$('installBtn').addEventListener('click', function () {
+  if (!install.prompt) return;
+  install.prompt.prompt();
+  install.prompt.userChoice.then(function () {
+    install.prompt = null;
+    renderInstall();
+  });
+});
+
+$('installDismiss').addEventListener('click', function () {
+  install.dismissed = true;
+  try { localStorage.setItem(INSTALL_DISMISSED_KEY, 'yes'); } catch (e) { /* storage blocked: shown again next time */ }
+  renderInstall();
+});
+
+window.addEventListener('online', renderOffline);
+window.addEventListener('offline', renderOffline);
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(function () { /* the site still works online */ });
+}
 
 renderAll();
 showView();
