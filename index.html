@@ -163,6 +163,8 @@ h1 a{color:var(--acc)}
 .tabs.more-right{-webkit-mask-image:linear-gradient(90deg,#000 75%,transparent);mask-image:linear-gradient(90deg,#000 75%,transparent)}
 .tabs a{flex:0 0 auto;text-decoration:none;color:var(--muted);font-weight:600;border-radius:4px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--line)}
 .tabs a[aria-current="page"]{background:var(--acc);border-color:var(--acc);color:#fff}
+/* Home stays at the left while the other sections scroll under it. */
+.tabs a[data-view="home"]{position:sticky;left:0;z-index:1;box-shadow:6px 0 0 var(--card)}
 .place{padding:12px 0}
 .place+.place{border-top:1px solid var(--line)}
 .place .detail{color:var(--muted);font-size:15px}
@@ -330,6 +332,7 @@ h1 a{text-decoration:none}
   <div class="wrap">
     <h1><a href="#home" id="title"></a></h1>
     <nav class="tabs" id="tabs">
+      <a href="#home" data-view="home"><span id="navHome"></span></a>
       <a href="#assess" data-view="assess"><span id="navAssess"></span></a>
       <a href="#comfort" data-view="comfort"><span id="navComfort"></span></a>
       <a href="#cases" data-view="cases"><span id="navCases"></span></a>
@@ -723,6 +726,7 @@ var T = {
     chatUnsupported: 'This browser\'s AI cannot chat (it needs a recent desktop Chrome). The counselors above are always there for you.',
     chatError: 'The AI could not answer. Please try again, or reach out to one of the counselors above.',
     chatCrisis: 'You matter, and you deserve help right now. Please call or text 988 (US), call 12356 (China), or call emergency services. You can also tell someone near you.',
+    navHome: 'Home',
     navAssess: 'Check my injury',
     navComfort: 'Comfort',
     navCases: 'Shared cases',
@@ -993,6 +997,7 @@ var T = {
     chatUnsupported: 'La IA de este navegador no puede conversar (necesita un Chrome de escritorio reciente). Los consejeros de arriba siempre están para ti.',
     chatError: 'La IA no pudo responder. Inténtalo de nuevo o contacta con uno de los consejeros de arriba.',
     chatCrisis: 'Importas, y mereces ayuda ahora mismo. Llama o escribe al 988 (EE. UU.), llama al 12356 (China) o llama a emergencias. También puedes decírselo a alguien cercano.',
+    navHome: 'Inicio',
     navAssess: 'Revisar mi lesión',
     navComfort: 'Apoyo emocional',
     navCases: 'Casos compartidos',
@@ -1261,6 +1266,7 @@ var T = {
     chatUnsupported: '这个浏览器的 AI 还不能聊天（需要较新的电脑版 Chrome）。上面的心理咨询热线随时都在。',
     chatError: 'AI 暂时没能回答。请再试一次，或者联系上面的心理咨询热线。',
     chatCrisis: '你很重要，你值得马上得到帮助。请打 12356（中国），或打电话、发短信给 988（美国），也可以打急救电话。也可以告诉身边的人。',
+    navHome: '首页',
     navAssess: '急救自测',
     navComfort: '心理安慰',
     navCases: '分享案例',
@@ -1487,7 +1493,7 @@ function renderStatic() {
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
   document.title = t('title');
   ['title', 'welcomeTitle', 'welcomeText', 'alertTitle', 'numbers', 'pickTitle', 'subTitle', 'questionsTitle', 'firstAidTitle', 'whereTitle', 'rehabTitle', 'comfortTitle', 'counselingTitle', 'disclaimer',
-   'navAssess', 'navComfort', 'navCases', 'navHospitals', 'navLog', 'navLearn', 'learnTitle', 'learnIntro', 'cityTitle', 'cityIntro', 'cityLabel', 'citySearch', 'hospitalsTitle', 'hospitalsIntro', 'hospitalsEmergency',
+   'navHome', 'navAssess', 'navComfort', 'navCases', 'navHospitals', 'navLog', 'navLearn', 'learnTitle', 'learnIntro', 'cityTitle', 'cityIntro', 'cityLabel', 'citySearch', 'hospitalsTitle', 'hospitalsIntro', 'hospitalsEmergency',
    'slogan', 'coverIntro', 'startBtn', 'coverSos', 'featAssess', 'featAssessText', 'featComfort', 'featComfortText',
    'featCases', 'featCasesText', 'featHospitals', 'featHospitalsText', 'chatTitle', 'chatIntro', 'chatInputLabel', 'chatSend', 'chatCrisis',
    'chatCta', 'fact1', 'fact2', 'fact3', 'fact4', 'featuresTitle', 'footerName', 'footerSos', 'photoCredit']
@@ -1659,10 +1665,12 @@ function showView() {
 function scrollToCurrentTab() {
   var tabs = $('tabs');
   var current = tabs.querySelector('[aria-current="page"]');
-  if (current) {
+  if (current && current.dataset.view !== 'home') {
+    // The home tab covers the left edge, so the current one goes next to it.
+    var left = tabs.querySelector('[data-view="home"]').getBoundingClientRect().right + 6;
     var tabsBox = tabs.getBoundingClientRect();
     var box = current.getBoundingClientRect();
-    if (box.left < tabsBox.left || box.right > tabsBox.right) tabs.scrollLeft += box.left - tabsBox.left - 16;
+    if (box.left < left || box.right > tabsBox.right) tabs.scrollLeft += box.left - left;
   }
   updateTabsFade();
 }
@@ -1679,6 +1687,13 @@ window.addEventListener('resize', function () { if (!$('view-log').hidden) rende
 window.addEventListener('hashchange', function () {
   showView();
   window.scrollTo(0, 0);
+});
+
+// The address does not change when the current section is picked again, so
+// scroll back to its top by hand.
+$('tabs').addEventListener('click', function (event) {
+  var link = event.target.closest('a[data-view]');
+  if (link && link.dataset.view === currentView()) window.scrollTo({top: 0, behavior: 'smooth'});
 });
 
 // The comfort card is the same for every injury, so it changes only with
