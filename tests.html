@@ -501,6 +501,24 @@ function testSpanishSwitch() {
           .map(function (element) { return element.id || element.className || element.tagName; });
         if (empty.length) throw new Error('empty: ' + empty.join(', '));
       });
+      // Japanese covers the home page only, so it is checked by what shows
+      // there, and by English filling in everywhere else.
+      test('language: the 日 button shows the home page in Japanese, other pages in English', function () {
+        var button = doc.querySelector('#langs [data-lang="ja"]');
+        if (!button) throw new Error('there is no 日 button');
+        button.click();
+        equal(doc.documentElement.lang, 'ja');
+        equal(doc.getElementById('navHome').textContent, 'ホーム');
+        equal(doc.getElementById('startBtn').textContent, 'チェックを始める');
+        equal(doc.getElementById('featuresTitle').textContent, 'ここでできること');
+        equal(doc.getElementById('pickTitle').textContent, page.T.en.pickTitle);
+      });
+      test('language: switching back to 中 after 日 shows Chinese again', function () {
+        doc.querySelector('#langs [data-lang="zh"]').click();
+        equal(doc.documentElement.lang, 'zh-CN');
+        equal(doc.getElementById('navHome').textContent, page.T.zh.navHome);
+        equal(doc.getElementById('pickTitle').textContent, page.T.zh.pickTitle);
+      });
       test('language: Spanish has every interface text that English has', function () {
         if (!page.T.es) throw new Error('there is no Spanish interface text');
         Object.keys(page.T.en).forEach(function (key) {
@@ -510,6 +528,62 @@ function testSpanishSwitch() {
       try {
         if (saved === null) localStorage.removeItem('injury-helper-lang');
         else localStorage.setItem('injury-helper-lang', saved);
+      } catch (e) { /* storage blocked: nothing was saved either */ }
+      frame.remove();
+      resolve();
+    };
+    document.body.appendChild(frame);
+  });
+}
+
+// Opens the real page and pretends Firebase reports who is signed in, then
+// opens the private sections. The rule in account.js can be right while the
+// page forgets to use it, so this checks the page itself. Puts back the
+// device's owner afterwards, since the frame shares this site's storage.
+function testAccountLock() {
+  var savedOwner = null;
+  try { savedOwner = localStorage.getItem(ACCOUNT_OWNER_KEY); } catch (e) { /* storage blocked */ }
+  return new Promise(function (resolve) {
+    var frame = document.createElement('iframe');
+    frame.style.display = 'none';
+    frame.src = 'index.html';
+    frame.onload = function () {
+      var page = frame.contentWindow;
+      var doc = frame.contentDocument;
+      function open(view) {
+        page.location.hash = view;
+        page.showView();
+        return {section: !doc.getElementById('view-' + view).hidden, signIn: !doc.getElementById('accountLock').hidden};
+      }
+      function user(daysAgo) {
+        return {uid: 'lock-test', email: 'lock-test@example.com', emailVerified: true,
+          lastSignIn: new Date(Date.now() - daysAgo * 86400000).toUTCString()};
+      }
+      test('account: signed out, the recovery log and comfort show the sign-in form instead', function () {
+        page.onAccountChange(null);
+        ['log', 'comfort'].forEach(function (view) {
+          var shown = open(view);
+          if (shown.section) throw new Error(view + ' is shown while signed out');
+          if (!shown.signIn) throw new Error('no sign-in form on ' + view);
+        });
+        equal(open('assess').section, true);
+      });
+      test('account: a sign-in older than 7 days locks the recovery log again', function () {
+        try { localStorage.setItem(ACCOUNT_OWNER_KEY, JSON.stringify({uid: 'lock-test', email: 'lock-test@example.com'})); } catch (e) { /* storage blocked */ }
+        page.onAccountChange(user(8));
+        var shown = open('log');
+        equal(shown.section, false);
+        equal(shown.signIn, true);
+      });
+      test('account: signed in, the recovery log opens', function () {
+        page.onAccountChange(user(1));
+        var shown = open('log');
+        equal(shown.section, true);
+        equal(shown.signIn, false);
+      });
+      try {
+        if (savedOwner === null) localStorage.removeItem(ACCOUNT_OWNER_KEY);
+        else localStorage.setItem(ACCOUNT_OWNER_KEY, savedOwner);
       } catch (e) { /* storage blocked: nothing was saved either */ }
       frame.remove();
       resolve();
@@ -682,7 +756,7 @@ var rehabReplaceChecked = planStorageChecked.then(function () {
 }).catch(function (e) {
   results.push({name: 'rehab plan: stages can be stored in this browser', ok: false, msg: String(e && e.message || e)});
 });
-Promise.all([rulesChecked, testSpanishSwitch(), logStorageChecked, planStorageChecked, rehabReplaceChecked, offlineChecked]).then(showResults);
+Promise.all([rulesChecked, testSpanishSwitch(), testAccountLock(), logStorageChecked, planStorageChecked, rehabReplaceChecked, offlineChecked]).then(showResults);
 </script>
 </body>
 </html>

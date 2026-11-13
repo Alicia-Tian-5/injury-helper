@@ -340,7 +340,7 @@ h1 a{text-decoration:none}
       <a href="#log" data-view="log"><span id="navLog"></span></a>
       <a href="#learn" data-view="learn"><span id="navLearn"></span></a>
     </nav>
-    <div class="langs" id="langs" role="group"><button data-lang="zh" lang="zh-CN">中</button><button data-lang="en" lang="en">EN</button><button data-lang="es" lang="es">ES</button></div>
+    <div class="langs" id="langs" role="group"><button data-lang="zh" lang="zh-CN">中</button><button data-lang="en" lang="en">EN</button><button data-lang="es" lang="es">ES</button><button data-lang="ja" lang="ja">日</button></div>
   </div>
 </header>
 <p class="offline-banner" id="offlineBanner" role="status" hidden></p>
@@ -1187,6 +1187,52 @@ var T = {
     painExerciseShown: 'En rehabilitación {0}/10',
     logProblemPain: 'Elige un nivel de dolor del 0 al 10.'
   },
+  // Japanese covers the header, home page and footer for now; every other
+  // text falls back to English (see t()).
+  ja: {
+    title: 'スポーツけがヘルパー',
+    langGroup: '表示言語',
+    navHome: 'ホーム',
+    navAssess: 'けがをチェック',
+    navComfort: '心のケア',
+    navCases: 'みんなの体験',
+    navHospitals: '近くの病院',
+    navLog: '回復記録',
+    navLearn: 'スポーツと健康',
+    slogan: 'スポーツに戻るその日まで、ずっとそばにいます。',
+    coverIntro: 'スポーツでけがをしても大丈夫。まずは深呼吸しましょう。あなたのせいではないし、スポーツが終わるわけでもありません。今すぐやること、どこに行けばいいかを一緒に考え、大好きなスポーツに戻るまで一歩ずつ寄り添います。',
+    startBtn: 'チェックを始める',
+    chatCta: 'AIと話す',
+    coverSos: '緊急時はすぐに 911（米国）・120（中国）へ。',
+    fact1: 'よくあるスポーツのけがに対応',
+    fact2: 'ステップ：応急処置、受診先、リハビリ',
+    fact3: 'いつでも相談できる窓口',
+    fact4: '全ページ対応、日本語はホームのみ',
+    featuresTitle: 'ここでできること',
+    featAssess: 'けがをチェック',
+    featAssessText: 'いくつかの質問に答えると、次にやることが分かります。',
+    featComfort: '心のケア',
+    featComfortText: '回復の段階ごとの言葉と、相談できる人。',
+    featCases: 'みんなの体験',
+    featCasesText: '回復した人たちの本当の話。',
+    featHospitals: '近くの病院',
+    featHospitalsText: '地図で行くべき場所を探せます。',
+    homeToday: '今日のリハビリ：{1}個中{0}個完了',
+    homeTodayAllDone: '今日のリハビリは完了です（{0}/{0}）',
+    homeTodayGo: 'プランを開く →',
+    installTitle: 'スマホに入れておこう',
+    installPromptText: 'ホーム画面に追加すると、アプリのように開けて、ネットがなくても応急処置が見られます。',
+    installIos: 'ホーム画面に追加するには、共有ボタン（矢印付きの四角）を押して「ホーム画面に追加」を選んでください。アプリのように開けて、ネットがなくても応急処置が見られます。',
+    installAndroid: 'ホーム画面に追加するには、ブラウザのメニュー（⋮）から「ホーム画面に追加」または「アプリをインストール」を選んでください。アプリのように開けて、ネットがなくても応急処置が見られます。',
+    installBtn: 'ホーム画面に追加',
+    installDismiss: 'あとで',
+    offlineBanner: '今はネットにつながっていません。応急処置とアドバイスは使えます。ログイン、みんなの体験、地図には接続が必要です。',
+    footerName: 'スポーツけがヘルパー・スポーツに戻るその日まで、ずっとそばにいます。',
+    photoCredit: '表紙の写真（Unsplash）：',
+    coverSlide: '写真 {0}',
+    footerSos: '緊急：911（米国）・120（中国）・心の相談：988（米国）・12356（中国）',
+    disclaimer: '参考情報です。このページはけがを診断できず、医師の代わりにはなりません。'
+  },
   zh: {
     title: '运动损伤急救助手',
     welcomeTitle: '先深呼吸，别着急',
@@ -1473,7 +1519,9 @@ function loadLang() {
 function saveLang() {
   try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* storage blocked: the choice just is not remembered */ }
 }
-function t(key) { return T[lang][key]; }
+// English when the current language has no text for this key yet
+// (Japanese outside the home page, for now).
+function t(key) { return key in T[lang] ? T[lang][key] : T.en[key]; }
 // Pick the current language from a {en, zh} object; English when that
 // language has no text yet (Spanish injury content, for now).
 function L(text) { return text[lang] || text.en; }
