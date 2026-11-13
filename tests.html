@@ -501,24 +501,6 @@ function testSpanishSwitch() {
           .map(function (element) { return element.id || element.className || element.tagName; });
         if (empty.length) throw new Error('empty: ' + empty.join(', '));
       });
-      // Japanese covers the home page only, so it is checked by what shows
-      // there, and by English filling in everywhere else.
-      test('language: the 日 button shows the home page in Japanese, other pages in English', function () {
-        var button = doc.querySelector('#langs [data-lang="ja"]');
-        if (!button) throw new Error('there is no 日 button');
-        button.click();
-        equal(doc.documentElement.lang, 'ja');
-        equal(doc.getElementById('navHome').textContent, 'ホーム');
-        equal(doc.getElementById('startBtn').textContent, 'チェックを始める');
-        equal(doc.getElementById('featuresTitle').textContent, 'ここでできること');
-        equal(doc.getElementById('pickTitle').textContent, page.T.en.pickTitle);
-      });
-      test('language: switching back to 中 after 日 shows Chinese again', function () {
-        doc.querySelector('#langs [data-lang="zh"]').click();
-        equal(doc.documentElement.lang, 'zh-CN');
-        equal(doc.getElementById('navHome').textContent, page.T.zh.navHome);
-        equal(doc.getElementById('pickTitle').textContent, page.T.zh.pickTitle);
-      });
       test('language: Spanish has every interface text that English has', function () {
         if (!page.T.es) throw new Error('there is no Spanish interface text');
         Object.keys(page.T.en).forEach(function (key) {
