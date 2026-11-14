@@ -145,10 +145,11 @@ test('city hospitals: every listed hospital has a name, department and specialty
       ['name', 'department', 'knownFor'].forEach(function (field) {
         if (!hospital[field].en || !hospital[field].zh) throw new Error('missing ' + field + ' for ' + hospital.name.en);
       });
-      // Names stay in English in Spanish and French, so they can be searched on a map.
+      // Names stay in English in Spanish, French and Russian, so they can be searched on a map.
       ['department', 'knownFor'].forEach(function (field) {
         if (!hospital[field].es) throw new Error('no Spanish ' + field + ' for ' + hospital.name.en);
         if (!hospital[field].fr) throw new Error('no French ' + field + ' for ' + hospital.name.en);
+        if (!hospital[field].ru) throw new Error('no Russian ' + field + ' for ' + hospital.name.en);
       });
       var links = hospitalMapLinks(city, hospital);
       if (links.google.indexOf('https://www.google.com/maps/') !== 0) throw new Error('bad Google link ' + links.google);
@@ -173,7 +174,7 @@ test('city hospitals: an unlisted or empty city finds nothing but still gets a m
   equal(links.amap, 'https://uri.amap.com/search?keyword=' + encodeURIComponent('杭州 运动医学科'));
   equal(links.google, 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('sports medicine orthopedics in 杭州'));
 });
-[['es', 'Spanish'], ['fr', 'French']].forEach(function (language) {
+[['es', 'Spanish'], ['fr', 'French'], ['ru', 'Russian']].forEach(function (language) {
   var code = language[0], name = language[1];
   test(name.toLowerCase() + ': every injury question, piece of advice, comfort and place has a ' + name + ' version', function () {
     var missing = [];
