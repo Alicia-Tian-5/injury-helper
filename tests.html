@@ -145,9 +145,10 @@ test('city hospitals: every listed hospital has a name, department and specialty
       ['name', 'department', 'knownFor'].forEach(function (field) {
         if (!hospital[field].en || !hospital[field].zh) throw new Error('missing ' + field + ' for ' + hospital.name.en);
       });
-      // Names stay in English in Spanish, so they can be searched on a map.
+      // Names stay in English in Spanish and French, so they can be searched on a map.
       ['department', 'knownFor'].forEach(function (field) {
         if (!hospital[field].es) throw new Error('no Spanish ' + field + ' for ' + hospital.name.en);
+        if (!hospital[field].fr) throw new Error('no French ' + field + ' for ' + hospital.name.en);
       });
       var links = hospitalMapLinks(city, hospital);
       if (links.google.indexOf('https://www.google.com/maps/') !== 0) throw new Error('bad Google link ' + links.google);
@@ -172,19 +173,22 @@ test('city hospitals: an unlisted or empty city finds nothing but still gets a m
   equal(links.amap, 'https://uri.amap.com/search?keyword=' + encodeURIComponent('杭州 运动医学科'));
   equal(links.google, 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('sports medicine orthopedics in 杭州'));
 });
-test('spanish: every injury question, piece of advice, comfort and place has a Spanish version', function () {
-  var missing = [];
-  function check(value, path) {
-    if (!value || typeof value !== 'object') return;
-    if (typeof value.en === 'string' && typeof value.zh === 'string') {
-      if (!value.es) missing.push(path + ': ' + value.en);
-      return;
+[['es', 'Spanish'], ['fr', 'French']].forEach(function (language) {
+  var code = language[0], name = language[1];
+  test(name.toLowerCase() + ': every injury question, piece of advice, comfort and place has a ' + name + ' version', function () {
+    var missing = [];
+    function check(value, path) {
+      if (!value || typeof value !== 'object') return;
+      if (typeof value.en === 'string' && typeof value.zh === 'string') {
+        if (!value[code]) missing.push(path + ': ' + value.en);
+        return;
+      }
+      Object.keys(value).forEach(function (key) { check(value[key], path + '.' + key); });
     }
-    Object.keys(value).forEach(function (key) { check(value[key], path + '.' + key); });
-  }
-  check({LEVELS: LEVELS, CATEGORIES: CATEGORIES, INJURIES: INJURIES, RED_FLAGS: RED_FLAGS, COMFORT_STAGES: COMFORT_STAGES, COUNSELING: COUNSELING,
-         HOSPITAL_KINDS: HOSPITAL_KINDS, KNOWLEDGE: KNOWLEDGE}, '');
-  if (missing.length) throw new Error(missing.length + ' without Spanish, e.g. ' + missing[0]);
+    check({LEVELS: LEVELS, CATEGORIES: CATEGORIES, INJURIES: INJURIES, RED_FLAGS: RED_FLAGS, COMFORT_STAGES: COMFORT_STAGES, COUNSELING: COUNSELING,
+           HOSPITAL_KINDS: HOSPITAL_KINDS, KNOWLEDGE: KNOWLEDGE}, '');
+    if (missing.length) throw new Error(missing.length + ' without ' + name + ', e.g. ' + missing[0]);
+  });
 });
 test('log trend: one point per day with a score, oldest first, several records on a day averaged', function () {
   var entries = [
@@ -512,10 +516,22 @@ function testSpanishSwitch() {
         equal(localStorage.getItem('injury-helper-lang'), 'es');
         equal(page.loadLang(), 'es');
       });
-      test('language: every language in the list has interface text', function () {
+      test('language: every language in the list has every interface text that English has', function () {
         [].forEach.call(list.querySelectorAll('[data-lang]'), function (button) {
-          if (!page.T[button.dataset.lang]) throw new Error('no text for ' + button.dataset.lang);
+          var code = button.dataset.lang;
+          if (!page.T[code]) throw new Error('no text for ' + code);
+          Object.keys(page.T.en).forEach(function (key) {
+            if (!page.T[code][key]) throw new Error(code + ' is missing ' + key);
+          });
         });
+      });
+      test('language: French shows the machine translation note, English does not', function () {
+        list.querySelector('[data-lang="fr"]').click();
+        equal(doc.documentElement.lang, 'fr');
+        equal(doc.getElementById('navAssess').textContent, 'Évaluer ma blessure');
+        equal(doc.getElementById('translatedNote').hidden, false);
+        list.querySelector('[data-lang="en"]').click();
+        equal(doc.getElementById('translatedNote').hidden, true);
       });
       // If any start-up code throws, the texts after it stay empty. Parts
       // that are not shown yet (results, the trend) are filled later.

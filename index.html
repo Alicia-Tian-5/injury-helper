@@ -162,7 +162,7 @@ ol.steps li,ul.points li{margin-bottom:6px}
 .site-header{position:sticky;top:0;z-index:10;background:var(--card);border-top:4px solid var(--acc);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
 h1 a{color:var(--acc)}
 .site-header .wrap{max-width:680px;margin:0 auto;padding:10px 16px 8px;display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap}
-.site-header h1{flex:1 1 auto}
+.site-header h1{flex:1 1 0;min-width:0}
 .tabs{order:3;width:100%;display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
 /* On phones the menu scrolls sideways; the fading right edge shows there is more. */
 .tabs.more-right{-webkit-mask-image:linear-gradient(90deg,#000 75%,transparent);mask-image:linear-gradient(90deg,#000 75%,transparent)}
@@ -216,6 +216,7 @@ h1 a{color:var(--acc)}
 .plan-moves li{margin:2px 0}
 .home-today{display:block;text-decoration:none;color:var(--text);border-left:4px solid var(--acc);margin:0 0 12px}
 .home-today strong{color:var(--acc)}
+.translated-note{margin:0;padding:6px 16px;background:var(--tint);color:var(--muted);border-bottom:1px solid var(--line);font-size:14px;text-align:center}
 .offline-banner{margin:0;padding:10px 16px;background:var(--yellow-soft);color:var(--text);border-bottom:1px solid var(--yellow);font-size:15px;text-align:center}
 .install{border-left:4px solid var(--acc);margin:0 0 18px}
 .install h2{margin:0 0 4px;font-size:19px}
@@ -351,10 +352,12 @@ h1 a{text-decoration:none}
         <li><button data-lang="en" lang="en">English</button></li>
         <li><button data-lang="zh" lang="zh-CN">中文</button></li>
         <li><button data-lang="es" lang="es">Español</button></li>
+        <li><button data-lang="fr" lang="fr">Français</button></li>
       </ul>
     </div>
   </div>
 </header>
+<p class="translated-note" id="translatedNote" hidden></p>
 <p class="offline-banner" id="offlineBanner" role="status" hidden></p>
 <main>
 
@@ -928,13 +931,13 @@ var T = {
     painExerciseShown: 'During rehab {0}/10',
     logProblemPain: 'Choose a pain score from 0 to 10.'
   },
-  // Spanish covers the interface. Injury content has no Spanish yet, so L()
-  // shows it in English.
+  // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
     title: 'Ayuda para lesiones deportivas',
     welcomeTitle: 'Respira hondo. No estás solo.',
     welcomeText: 'Lesionarse da miedo. Iremos paso a paso y sabrás qué hacer a continuación.',
     langGroup: 'Idioma de la interfaz',
+    translatedNote: 'Traducción automática, solo como referencia. Si tienes dudas, consulta la versión en inglés o a un médico.',
     alertTitle: 'Pide ayuda de inmediato si:',
     numbers: 'Emergencias: 911 (EE. UU.) · 120 (China)',
     pickTitle: '¿Qué pasó?',
@@ -1198,6 +1201,277 @@ var T = {
     painRestShown: 'Dolor en reposo {0}/10',
     painExerciseShown: 'En rehabilitación {0}/10',
     logProblemPain: 'Elige un nivel de dolor del 0 al 10.'
+  },
+  // French: written by Claude, not yet checked by a French speaker.
+  fr: {
+    title: 'Aide pour les blessures sportives',
+    welcomeTitle: 'Respire. Tu n’es pas seul.',
+    welcomeText: 'Se blesser fait peur. On va avancer étape par étape, et tu sauras quoi faire ensuite.',
+    langGroup: 'Langue de l’interface',
+    translatedNote: 'Traduction automatique, à titre indicatif. En cas de doute, fie-toi à la version anglaise ou à un médecin.',
+    alertTitle: 'Demande de l’aide tout de suite si :',
+    numbers: 'Urgences : 911 (États-Unis) · 120 (Chine)',
+    pickTitle: 'Que s’est-il passé ?',
+    subTitle: 'Laquelle de ces blessures ?',
+    questionsTitle: 'Réponds à quelques questions',
+    assess: 'Voir quoi faire',
+    missing: 'Réponds à toutes les questions (il en manque {0}).',
+    firstAidTitle: 'Tout de suite',
+    whereTitle: 'Où aller',
+    rehabTitle: 'Retour au sport',
+    rehabPlanTitle: 'Ajouter à mon programme de rééducation',
+    rehabPlanHint: 'À partir de la date de la blessure, les étapes ci-dessus qui ont des jours fixes sont ajoutées à ton programme, et chaque jour tu vois quelle étape faire.',
+    rehabPlanDateLabel: 'Date de la blessure',
+    rehabPlanBtn: 'Ajouter à mon programme',
+    rehabPlanNone: 'La rééducation de cette blessure suit le calendrier de ton médecin. Ajoute les exercices qu’il te donne dans la section Journal de récupération.',
+    rehabPlanBadDate: 'Choisis la date de la blessure (pas après aujourd’hui).',
+    rehabPlanAllPast: 'Avec cette date de blessure, toutes les étapes à jours fixes sont déjà terminées.',
+    rehabPlanAdded: '{0} étape(s) ajoutée(s) à ton programme.',
+    rehabPlanNow: 'Aujourd’hui, tu es à l’étape « {0} ».',
+    rehabPlanLater: '« {0} » n’a pas de date fixe : ajoute-la toi-même quand tu seras prêt.',
+    rehabPlanGo: 'Ouvrir mon programme →',
+    rehabPlanFailed: 'Impossible d’ajouter à ton programme. Réessaie.',
+    comfortTitle: 'Prendre soin de ce que tu ressens',
+    counselingTitle: 'Parler à un conseiller',
+    restart: 'Recommencer',
+    disclaimer: 'À titre indicatif seulement. Cette page ne peut pas diagnostiquer une blessure et ne remplace pas un médecin.',
+    photoTitle: 'Ajouter une photo (facultatif)',
+    photoHint: 'Prends une photo de la blessure. L’IA intégrée de Chrome la regarde sur cet ordinateur et remplit ce qu’elle peut voir. La photo n’est envoyée nulle part.',
+    photoBtn: 'Choisir ou prendre une photo',
+    photoChange: 'Utiliser une autre photo',
+    photoAlt: 'La photo de ta blessure',
+    photoChecking: 'L’IA regarde la photo…',
+    photoDownloading: 'Téléchargement du modèle d’IA de Chrome (la première fois seulement)… {0} %',
+    photoFilled: '{0} rempli(es) d’après la photo, marqué(es) « d’après la photo ». Vérifie-les et corrige celles qui sont fausses.',
+    photoNothing: 'La photo n’a permis de répondre à aucune question. Réponds-y toi-même.',
+    photoNotInjury: 'Cette photo ne semble pas montrer une blessure. Essaie avec une autre.',
+    photoUnsupported: 'L’IA de ce navigateur ne peut pas regarder les photos (il faut un Chrome récent sur ordinateur). Réponds aux questions toi-même.',
+    photoBadImage: 'Impossible de lire cette image. Essaie avec un JPG ou un PNG.',
+    photoError: 'L’IA n’a pas pu regarder la photo. Réponds aux questions toi-même.',
+    photoTag: 'd’après la photo',
+    seeCases: 'Voir l’expérience d’autres personnes',
+    seeComfort: 'Prendre soin de ce que tu ressens',
+    slogan: 'Sur ton chemin de retour au sport, je suis toujours là.',
+    coverIntro: 'Blessé en faisant du sport ? Ce n’est pas grave. Respire. Ce n’est pas ta faute, et ce n’est pas la fin de ton sport. On t’aide à savoir quoi faire maintenant et où aller, et on t’accompagne, pas à pas, jusqu’au sport que tu aimes.',
+    startBtn: 'Commencer l’évaluation',
+    coverSos: 'Urgence ? Appelle tout de suite le 911 (États-Unis) · 120 (Chine).',
+    featAssess: 'Évaluer ma blessure',
+    featAssessText: 'Quelques questions, puis des étapes claires.',
+    featComfort: 'Soutien émotionnel',
+    featComfortText: 'Des mots pour chaque étape et des personnes à qui parler.',
+    featCases: 'Témoignages',
+    featCasesText: 'Histoires vraies de personnes qui se sont rétablies.',
+    featHospitals: 'Hôpitaux proches',
+    featHospitalsText: 'Trouve le bon type d’endroit sur une carte.',
+    chatCta: 'Parler à l’IA',
+    fact1: 'blessures sportives courantes couvertes',
+    fact2: 'étapes : premiers secours, où aller, rééducation',
+    fact3: 'lignes d’écoute, à toute heure',
+    fact4: 'tout le site en plusieurs langues',
+    featuresTitle: 'Ce que tu peux faire ici',
+    footerName: 'Aide pour les blessures sportives · Sur ton chemin de retour au sport, je suis toujours là.',
+    photoCredit: 'Photos de couverture (Unsplash) :',
+    coverSlide: 'Photo {0}',
+    footerSos: 'Urgences : 911 (États-Unis) · 120 (Chine) · Ligne de crise : 988 (États-Unis) · 12356 (Chine)',
+    chatTitle: 'Parler à l’IA',
+    chatIntro: 'Dis-lui ce que tu ressens. Elle répond avec du soutien et quelques petites choses que tu peux faire. C’est une IA, pas un conseiller, et la conversation reste sur cet ordinateur.',
+    chatInputLabel: 'Ton message',
+    chatPlaceholder: 'Par exemple : je me sens vraiment mal en ce moment',
+    chatSend: 'Envoyer',
+    chatThinking: 'L’IA réfléchit…',
+    chatDownloading: 'Téléchargement du modèle d’IA de Chrome (la première fois seulement)… {0} %',
+    chatUnsupported: 'L’IA de ce navigateur ne peut pas discuter (il faut un Chrome récent sur ordinateur). Les conseillers ci-dessus sont toujours là pour toi.',
+    chatError: 'L’IA n’a pas pu répondre. Réessaie ou contacte l’un des conseillers ci-dessus.',
+    chatCrisis: 'Tu comptes, et tu mérites de l’aide maintenant. Appelle ou écris au 988 (États-Unis), appelle le 12356 (Chine) ou les urgences. Tu peux aussi en parler à un proche.',
+    navHome: 'Accueil',
+    navAssess: 'Évaluer ma blessure',
+    navComfort: 'Soutien émotionnel',
+    navCases: 'Témoignages',
+    navHospitals: 'Hôpitaux proches',
+    cityTitle: 'Trouver des hôpitaux reconnus par ville',
+    cityIntro: 'Écris ta ville pour voir les hôpitaux connus pour soigner les blessures sportives, et ce qui fait la force de chacun.',
+    cityLabel: 'Ville',
+    cityPlaceholder: 'Par exemple : Chicago, 北京',
+    citySearch: 'Rechercher',
+    cityMissing: 'Écris d’abord une ville.',
+    cityTooLong: 'C’est trop long pour un nom de ville.',
+    cityFound: '{0} : hôpitaux pour les blessures sportives',
+    cityKnownFor: 'Connu pour : ',
+    cityNotListed: 'Pas encore d’hôpitaux pour « {0} ». Cherche la médecine du sport là-bas sur la carte :',
+    cityListed: 'Villes disponibles pour l’instant : {0}.',
+    cityNote: 'Informations rassemblées par ce site à titre indicatif. Les services et les horaires changent : appelle avant d’y aller.',
+    hospitalsTitle: 'Trouver des soins près de chez toi',
+    hospitalsIntro: 'Choisis le type d’endroit dont tu as besoin. La carte s’ouvre avec ta propre position ; cette page ne la voit jamais.',
+    hospitalsEmergency: 'En cas d’urgence, ne conduis pas toi-même : appelle le 911 (États-Unis) · 120 (Chine).',
+    googleMaps: 'Google Maps',
+    amap: 'Amap (Chine)',
+    casesTitle: 'Témoignages',
+    casesIntro: 'Expériences réelles d’autres personnes. Des histoires personnelles, pas des conseils médicaux.',
+    shareBtn: 'Partager mon expérience',
+    shareCancel: 'Annuler',
+    caseInjuryLabel: 'Blessure',
+    choose: 'Choisis…',
+    caseLabels: {
+      nickname: 'Pseudo (facultatif)',
+      story: 'Comment est-ce arrivé ? (obligatoire)',
+      treatment: 'Qu’as-tu fait et où es-tu allé ?',
+      recovery: 'Combien de temps a duré ta récupération ?',
+      lesson: 'Que dirais-tu aux autres ?'
+    },
+    caseNames: {injury: 'Blessure', nickname: 'Pseudo', story: 'Comment c’est arrivé', treatment: 'Traitement', recovery: 'Récupération', lesson: 'Conseil'},
+    privacyNote: 'Ta publication est visible par tous immédiatement et ne peut pas être modifiée. N’indique pas ton vrai nom, tes coordonnées ni rien qui permette de t’identifier.',
+    postBtn: 'Publier',
+    posting: 'Publication…',
+    posted: 'Publié ! Merci d’avoir partagé.',
+    problem_missing: '{0} : remplis ce champ.',
+    problem_tooShort: '{0} : écris au moins {1} caractères.',
+    problem_tooLong: '{0} : {1} caractères au maximum.',
+    postFailed: 'Impossible de publier. Vérifie ta connexion internet et réessaie.',
+    filterLabel: 'Afficher',
+    filterAll: 'Toutes les blessures',
+    casesLoading: 'Chargement des témoignages…',
+    casesEmpty: 'Pas encore de témoignages. Sois le premier à partager !',
+    casesEmptyFilter: 'Pas encore de témoignages pour cette blessure.',
+    casesError: 'Impossible de charger les témoignages. Vérifie ta connexion internet et recharge la page.',
+    casesNotSetUp: 'Le partage de témoignages n’est pas encore configuré.',
+    anonymous: 'Anonyme',
+    navLog: 'Journal de récupération',
+    logTitle: 'Écrire le journal du jour',
+    logIntro: 'Note comment se passe ta récupération, avec une photo si tu veux. Tes notes restent uniquement sur cet appareil : elles ne sont pas envoyées et personne d’autre ne les voit.',
+    logDateLabel: 'Date',
+    logTextLabel: 'Comment ça va aujourd’hui ?',
+    logPlaceholder: 'Par exemple : le gonflement a un peu diminué ; j’ai fait 3 séries d’élévations jambe tendue.',
+    logPhotoLabel: 'Photo (facultatif)',
+    logPhotoBtn: 'Choisir ou prendre une photo',
+    logPhotoChange: 'Utiliser une autre photo',
+    logPhotoRemove: 'Retirer la photo',
+    logPhotoAlt: 'Photo de cette note',
+    logPhotoBad: 'Impossible de lire cette image. Essaie avec un JPG ou un PNG.',
+    logSave: 'Enregistrer la note',
+    logSaving: 'Enregistrement…',
+    logSavedMsg: 'Enregistré. Bravo de tenir ton journal !',
+    logSaveFailed: 'Impossible d’enregistrer. Ton navigateur bloque peut-être le stockage (par exemple dans une fenêtre privée).',
+    logListTitle: 'Tes notes',
+    planTitle: 'Programme de rééducation',
+    planIntro: 'Ajoute les exercices donnés par ton médecin ou ton kiné. Chaque jour, tu vois quoi faire et tu peux les cocher.',
+    planTodayTitle: 'Aujourd’hui, {0}',
+    planEmpty: 'Pas encore d’exercices. Ajoute le premier d’après tes consignes.',
+    planNoneToday: 'Rien de prévu aujourd’hui. Repose-toi bien.',
+    planProgress: 'Fait aujourd’hui : {0} sur {1}',
+    planAllDone: 'Tout est fait pour aujourd’hui. Bravo !',
+    planAdd: 'Ajouter un exercice',
+    planFormAdd: 'Nouvel exercice',
+    planFormEdit: 'Modifier l’exercice',
+    planNameLabel: 'Exercice',
+    planNamePlaceholder: 'Par exemple : élévations jambe tendue',
+    planAmountLabel: 'Séries / répétitions / durée (facultatif)',
+    planAmountPlaceholder: 'Par exemple : 3 séries de 10',
+    planDaysLabel: 'Quels jours',
+    planEveryDay: 'Tous les jours',
+    weekdays: ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'],
+    planWeekly: 'Chaque {0}',
+    planStartLabel: 'Date de début',
+    planEndLabel: 'Date de fin (facultatif)',
+    planSave: 'Enregistrer l’exercice',
+    planUpdate: 'Enregistrer les modifications',
+    planCancel: 'Annuler',
+    planSavedMsg: 'Enregistré.',
+    planListTitle: 'Tous les exercices ({0})',
+    planFrom: 'à partir du {0}',
+    planRange: 'du {0} au {1}',
+    planOver: 'terminé',
+    planNotYet: 'pas encore commencé',
+    planEdit: 'Modifier',
+    planDelete: 'Supprimer',
+    planDeleteConfirm: 'Supprimer « {0} » de ton programme ?',
+    planProblemName: 'Écris l’exercice.',
+    planProblemNameLong: 'Le nom de l’exercice est trop long ({0} caractères au maximum).',
+    planProblemAmountLong: 'Séries / répétitions est trop long ({0} caractères au maximum).',
+    planProblemDays: 'Choisis au moins un jour.',
+    planProblemStart: 'Choisis une date de début.',
+    planProblemEnd: 'La date de fin ne peut pas être avant la date de début.',
+    planSaveFailed: 'Impossible d’enregistrer. Réessaie.',
+    planLoadFailed: 'Impossible de charger ton programme. Ton navigateur bloque peut-être le stockage (par exemple dans une fenêtre privée).',
+    calendarTitle: 'Rappel quotidien',
+    calendarHint: 'Télécharge un fichier de calendrier et ouvre-le pour ajouter les exercices au calendrier de ton téléphone ou de ton ordinateur. Il te préviendra à cette heure chaque jour d’exercice. Si tu modifies le programme, ajoute-le à nouveau.',
+    calendarTimeLabel: 'Heure du rappel',
+    calendarBtn: 'Ajouter au calendrier',
+    calendarNone: 'Ajoute d’abord un exercice.',
+    calendarDone: 'Fichier de calendrier téléchargé. Ouvre-le et choisis « Ajouter » pour enregistrer les rappels.',
+    calendarEventTitle: 'Rééducation',
+    homeToday: 'Rééducation du jour : {0} sur {1} faits',
+    homeTodayAllDone: 'La rééducation du jour est faite ({0}/{0})',
+    homeTodayGo: 'Ouvrir le programme →',
+    installTitle: 'Garde-le sur ton téléphone',
+    installPromptText: 'Ajoute Injury Helper à ton écran d’accueil : il s’ouvre comme une app, et les premiers secours marchent même sans internet.',
+    installIos: 'Ajoute Injury Helper à ton écran d’accueil : touche le bouton Partager (le carré avec une flèche), puis « Sur l’écran d’accueil ». Il s’ouvre comme une app, et les premiers secours marchent même sans internet.',
+    installAndroid: 'Ajoute Injury Helper à ton écran d’accueil : ouvre le menu du navigateur (⋮), puis « Ajouter à l’écran d’accueil » ou « Installer l’application ». Il s’ouvre comme une app, et les premiers secours marchent même sans internet.',
+    installBtn: 'Ajouter à l’écran d’accueil',
+    installDismiss: 'Pas maintenant',
+    offlineBanner: 'Pas d’internet pour l’instant. Les premiers secours et les conseils marchent toujours ; la connexion, les témoignages et les cartes ont besoin d’internet.',
+    accountTitle: 'Connecte-toi pour voir cette partie',
+    accountIntro: 'Le journal de récupération et le soutien sont pour toi seul. Connecte-toi une fois et cet appareil reste connecté 7 jours. Tes notes restent sur cet appareil.',
+    accountLoading: 'Vérification de ta connexion…',
+    accountUnavailable: 'Impossible de joindre la connexion pour l’instant. Vérifie internet et recharge la page.',
+    accountExpired: 'Plus de 7 jours ont passé ; reconnecte-toi.',
+    accountModes: 'Se connecter ou créer un compte',
+    accountSignIn: 'Se connecter',
+    accountSignUp: 'Créer un compte',
+    accountCreate: 'Créer le compte',
+    accountEmail: 'E-mail',
+    accountPassword: 'Mot de passe',
+    accountNewPassword: 'Mot de passe (au moins 6 caractères)',
+    accountConfirm: 'Répète le mot de passe',
+    accountBusy: 'Un instant…',
+    accountSendReset: 'Envoyer l’e-mail de réinitialisation',
+    accountForgot: 'Mot de passe oublié ?',
+    accountBack: 'Retour à la connexion',
+    accountResetSent: 'Si cet e-mail a un compte, tu vas recevoir un e-mail pour réinitialiser le mot de passe. Ouvre le lien, choisis un nouveau mot de passe, puis connecte-toi ici. Tes notes ne changent pas.',
+    accountEmailMissing: 'Écris ton e-mail.',
+    accountEmailBad: 'Cet e-mail ne semble pas correct.',
+    accountPasswordMissing: 'Écris ton mot de passe.',
+    accountPasswordShort: 'Le mot de passe doit faire au moins 6 caractères.',
+    accountPasswordLong: 'Le mot de passe peut faire 100 caractères au maximum.',
+    accountConfirmDifferent: 'Les deux mots de passe ne sont pas identiques.',
+    accountWrong: 'L’e-mail ou le mot de passe est incorrect.',
+    accountTaken: 'Cet e-mail a déjà un compte. Connecte-toi ou réinitialise le mot de passe.',
+    accountTooMany: 'Trop d’essais. Attends quelques minutes et réessaie.',
+    accountOffline: 'Pas de connexion internet. Vérifie-la et réessaie.',
+    accountFailed: 'Ça n’a pas marché. Réessaie.',
+    accountCheckEmail: 'On a envoyé un e-mail à {0}. Touche le lien qu’il contient, reviens ici et touche « C’est vérifié ». Tu ne le vois pas ? Regarde dans les spams.',
+    accountVerified: 'C’est vérifié',
+    accountNotVerified: 'L’e-mail n’est pas encore vérifié. Touche d’abord le lien dans l’e-mail.',
+    accountResend: 'Renvoyer',
+    accountResent: 'Renvoyé.',
+    accountUseOther: 'Utiliser un autre compte',
+    accountOtherOwner: 'Les notes de cet appareil appartiennent à un autre compte ({0}). Connecte-toi avec ce compte pour les voir.',
+    accountWho: 'Connecté en tant que {0}',
+    accountSignOut: 'Se déconnecter',
+    logTrendTitle: 'Évolution de la douleur',
+    logTrendNone: 'Mets un score de douleur dans une note et son évolution apparaîtra ici.',
+    logTrendOneMore: 'Mets des scores de douleur un jour de plus pour voir l’évolution.',
+    logTrendHint: 'Douleur de 0 à 10 au fil du temps. S’il y a plusieurs notes le même jour, on prend la moyenne.',
+    trendRest: 'Douleur au repos',
+    trendExercise: 'Douleur en rééducation',
+    trendChange: '{0} → {1}',
+    logLoading: 'Chargement de tes notes…',
+    logEmpty: 'Pas encore de notes. Écris la première ci-dessus : chaque petit pas compte.',
+    logLoadFailed: 'Impossible de charger tes notes. Ton navigateur bloque peut-être le stockage (par exemple dans une fenêtre privée).',
+    logDelete: 'Supprimer',
+    logDeleteConfirm: 'Supprimer cette note ? C’est définitif.',
+    logProblemDate: 'Choisis une date.',
+    logProblemText: 'Écris quelques mots sur aujourd’hui.',
+    logProblemTooLong: '{0} caractères au maximum.',
+    navLearn: 'Santé sportive',
+    learnTitle: 'Les bases de la santé sportive',
+    learnIntro: 'Comment réduire le risque de te blesser, et quoi faire dans les premières minutes et les premiers jours si tu te blesses. Des informations générales, pas un diagnostic. Touche un sujet pour l’ouvrir.',
+    logPainLabel: 'Score de douleur (facultatif)',
+    logPainHint: '0 = aucune douleur, 10 = la pire douleur imaginable. Touche à nouveau le chiffre choisi pour l’enlever.',
+    painRestLabel: 'Douleur au repos (sans faire les exercices)',
+    painExerciseLabel: 'Douleur pendant les exercices de rééducation',
+    painRestShown: 'Au repos {0}/10',
+    painExerciseShown: 'En rééducation {0}/10',
+    logProblemPain: 'Choisis un score de douleur de 0 à 10.'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -1486,8 +1760,8 @@ function saveLang() {
   try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* storage blocked: the choice just is not remembered */ }
 }
 function t(key) { return T[lang][key]; }
-// Pick the current language from a {en, zh} object; English when that
-// language has no text yet (Spanish injury content, for now).
+// Pick the current language from a {en, es, fr, zh} object; English when
+// that language has no text for it.
 function L(text) { return text[lang] || text.en; }
 function $(id) { return document.getElementById(id); }
 
@@ -1515,6 +1789,9 @@ function renderStatic() {
   $('seeCasesBtn').textContent = t('seeCases');
   $('seeComfortBtn').textContent = t('seeComfort');
   $('langList').setAttribute('aria-label', t('langGroup'));
+  // Languages Claude translated say so on every page.
+  $('translatedNote').hidden = !T[lang].translatedNote;
+  $('translatedNote').textContent = T[lang].translatedNote || '';
   document.querySelectorAll('#langList button').forEach(function (b) {
     b.setAttribute('aria-current', b.dataset.lang === lang);
   });
@@ -2315,7 +2592,7 @@ $('caseForm').addEventListener('submit', function (e) {
   e.preventDefault();
   var input = {injury: $('caseInjury').value};
   Object.keys(CASE_FIELDS).forEach(function (field) { input[field] = $('case-' + field).value; });
-  // firestore.rules only accepts zh and en, so Spanish posts are tagged en.
+  // firestore.rules only accepts zh and en, so posts in other languages are tagged en.
   var sharedCase = caseFromForm(input, lang === 'zh' ? 'zh' : 'en');
   cases.problems = caseProblems(sharedCase);
   cases.postFailed = false;

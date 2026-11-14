@@ -22,7 +22,7 @@ var CHAT_SYSTEM_PROMPT = [
 ].join(' ');
 
 // Languages the model may write itself instead of English.
-var CHAT_LANGUAGE_NAMES = {es: 'Spanish', zh: 'Chinese'};
+var CHAT_LANGUAGE_NAMES = {es: 'Spanish', fr: 'French', zh: 'Chinese'};
 
 // The instructions for a chat in one language. When the model writes that
 // language itself (no translation), it is told to sound like a native
