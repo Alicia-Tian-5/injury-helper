@@ -424,7 +424,7 @@ h1 a{text-decoration:none}
     <div><strong>12</strong><span id="fact1"></span></div>
     <div><strong>3</strong><span id="fact2"></span></div>
     <div><strong>24h</strong><span id="fact3"></span></div>
-    <div><strong>中 / EN</strong><span id="fact4"></span></div>
+    <div><strong id="languageCount"></strong><span id="fact4"></span></div>
   </section>
   <h2 class="section-title" id="featuresTitle"></h2>
   <div class="features">
@@ -730,7 +730,7 @@ var T = {
     fact1: 'common sports injuries covered',
     fact2: 'steps: first aid, where to go, rehab',
     fact3: 'counseling hotlines, any time',
-    fact4: 'the whole site in two languages',
+    fact4: 'languages for the whole site',
     featuresTitle: 'What you can do here',
     footerName: 'Sports Injury Helper · On your road back to sport, I\'m always here.',
     photoCredit: 'Cover photos (Unsplash):',
@@ -1001,7 +1001,7 @@ var T = {
     fact1: 'lesiones deportivas comunes incluidas',
     fact2: 'pasos: primeros auxilios, adónde ir, rehabilitación',
     fact3: 'líneas de ayuda emocional, a cualquier hora',
-    fact4: 'todo el sitio en varios idiomas',
+    fact4: 'idiomas en todo el sitio',
     featuresTitle: 'Lo que puedes hacer aquí',
     footerName: 'Ayuda para lesiones deportivas · En tu camino de vuelta al deporte, siempre estoy aquí.',
     photoCredit: 'Fotos de portada (Unsplash):',
@@ -1272,7 +1272,7 @@ var T = {
     fact1: 'blessures sportives courantes couvertes',
     fact2: 'étapes : premiers secours, où aller, rééducation',
     fact3: 'lignes d’écoute, à toute heure',
-    fact4: 'tout le site en plusieurs langues',
+    fact4: 'langues pour tout le site',
     featuresTitle: 'Ce que tu peux faire ici',
     footerName: 'Aide pour les blessures sportives · Sur ton chemin de retour au sport, je suis toujours là.',
     photoCredit: 'Photos de couverture (Unsplash) :',
@@ -1543,7 +1543,7 @@ var T = {
     fact1: 'частых спортивных травм',
     fact2: 'шага: первая помощь, куда идти, реабилитация',
     fact3: 'линии психологической помощи, круглосуточно',
-    fact4: 'весь сайт на нескольких языках',
+    fact4: 'языков на всём сайте',
     featuresTitle: 'Что здесь можно сделать',
     footerName: 'Помощь при спортивных травмах · На твоём пути обратно в спорт я всегда рядом.',
     photoCredit: 'Фото на обложке (Unsplash):',
@@ -1815,7 +1815,7 @@ var T = {
     fact1: 'إصابة رياضية شائعة',
     fact2: 'خطوات: الإسعاف الأولي، إلى أين تذهب، التأهيل',
     fact3: 'خطوط دعم نفسي، على مدار الساعة',
-    fact4: 'الموقع كله بعدة لغات',
+    fact4: 'لغات للموقع كله',
     featuresTitle: 'ماذا يمكنك أن تفعل هنا',
     footerName: 'مساعد الإصابات الرياضية · في طريق عودتك إلى الرياضة، أنا دائمًا معك.',
     photoCredit: 'صور الغلاف (Unsplash):',
@@ -2084,7 +2084,7 @@ var T = {
     fact1: '种常见运动损伤',
     fact2: '步建议：急救、就医、康复',
     fact3: '心理热线，随时可打',
-    fact4: '全站中英双语',
+    fact4: '种语言，全站可用',
     featuresTitle: '你可以在这里',
     footerName: '运动损伤急救助手 · 运动康复路上，我一直都在',
     photoCredit: '封面照片（Unsplash）：',
@@ -2345,6 +2345,8 @@ function renderStatic() {
   // Languages Claude translated say so on every page.
   $('translatedNote').hidden = !T[lang].translatedNote;
   $('translatedNote').textContent = T[lang].translatedNote || '';
+  // Counted from the Language menu, so the home card stays right when a language is added.
+  $('languageCount').textContent = document.querySelectorAll('#langList [data-lang]').length;
   document.querySelectorAll('#langList button').forEach(function (b) {
     b.setAttribute('aria-current', b.dataset.lang === lang);
   });

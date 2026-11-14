@@ -535,6 +535,10 @@ function testSpanishSwitch() {
         list.querySelector('[data-lang="en"]').click();
         equal(doc.getElementById('translatedNote').hidden, true);
       });
+      test('home: the languages card shows how many languages the Language menu has', function () {
+        equal(doc.getElementById('languageCount').textContent, '6');
+        equal(list.querySelectorAll('[data-lang]').length, 6);
+      });
       test('language: Arabic turns the page right to left, and English turns it back', function () {
         list.querySelector('[data-lang="ar"]').click();
         equal(doc.documentElement.lang, 'ar');
