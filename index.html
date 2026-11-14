@@ -16,7 +16,7 @@
 <style>
 :root{
   --bg:#f4f6f9;--card:#fff;--text:#1b2733;--muted:#56626f;--line:#d9e0e8;
-  --acc:#1f4e79;--acc-dark:#163a5c;--acc-soft:#e7eef6;--tint:#f0f4f8;--shadow:0 1px 3px rgba(20,40,70,.08);
+  --acc:#1f4e79;--acc-dark:#163a5c;--on-acc:#fff;--acc-soft:#e7eef6;--tint:#f0f4f8;--shadow:0 1px 3px rgba(20,40,70,.08);
   --red:#c62828;--red-soft:#fdecec;--orange:#d9480f;--orange-soft:#fff1e6;
   --yellow:#a86400;--yellow-soft:#fff8e1;--green:#2e7d32;--green-soft:#e8f5e9;
   --sans:"IBM Plex Sans","Noto Sans SC","PingFang SC","Microsoft YaHei",Arial,sans-serif;
@@ -24,7 +24,7 @@
 }
 @media (prefers-color-scheme:dark){:root{
   --bg:#0f1620;--card:#17212c;--text:#e6ebf1;--muted:#9eabb9;--line:#2b3846;
-  --acc:#7fb0e0;--acc-dark:#a6c8ea;--acc-soft:#1c2b3c;--tint:#141e29;--shadow:none;
+  --acc:#7fb0e0;--acc-dark:#a6c8ea;--on-acc:#0f1620;--acc-soft:#1c2b3c;--tint:#141e29;--shadow:none;
   --red:#ff6b6b;--red-soft:#3a1d1f;--orange:#ff9b5c;--orange-soft:#3a2617;
   --yellow:#f2c14e;--yellow-soft:#352d17;--green:#6fcf73;--green-soft:#1c3220;
 }}
@@ -40,10 +40,15 @@ h1{font-size:21px;font-weight:700;margin:0;line-height:1.3;letter-spacing:.01em}
 h2{font-size:20px;font-weight:600;margin:0 0 10px}
 h3{font-size:17px;font-weight:600;margin:0 0 6px}
 button{font:inherit;cursor:pointer;border:0;border-radius:4px}
-.langs{flex:0 0 auto;display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
-.langs button{background:var(--card);color:var(--muted);border-radius:0;padding:8px 14px;font-size:15px;white-space:nowrap}
-.langs button+button{border-left:1px solid var(--line)}
-.langs button.on{background:var(--acc);color:#fff;font-weight:600}
+.lang-menu{flex:0 0 auto;position:relative}
+#langBtn{display:inline-flex;align-items:center;gap:6px;background:var(--card);color:var(--text);border:1px solid var(--line);padding:8px 12px;min-height:40px;font-size:15px;white-space:nowrap}
+#langBtn svg{width:18px;height:18px;color:var(--acc)}
+#langBtn[aria-expanded="true"]{border-color:var(--acc)}
+.lang-list{position:absolute;right:0;top:calc(100% + 4px);z-index:20;min-width:160px;margin:0;padding:4px;list-style:none;background:var(--card);border:1px solid var(--line);border-radius:6px;box-shadow:0 4px 14px rgba(20,40,70,.18)}
+.lang-list button{display:flex;justify-content:space-between;width:100%;background:none;color:var(--text);text-align:left;padding:10px 12px;min-height:44px;font-size:16px}
+.lang-list button:hover{background:var(--acc-soft)}
+.lang-list button[aria-current="true"]{color:var(--acc);font-weight:600}
+.lang-list button[aria-current="true"]::after{content:"✓"}
 .card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
 .alert{background:var(--red-soft);border-color:var(--red)}
 .alert h2{color:var(--red)}
@@ -66,7 +71,7 @@ legend{font-weight:600;margin-bottom:8px;padding:0}
 .options label{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:4px;padding:10px 14px;cursor:pointer;min-height:44px}
 .options input{width:18px;height:18px;margin:0;accent-color:var(--acc)}
 .options label:has(input:checked){border-color:var(--acc);background:var(--acc-soft)}
-.primary{background:var(--acc);color:#fff;font-weight:600;padding:13px 22px;width:100%;font-size:18px}
+.primary{background:var(--acc);color:var(--on-acc);font-weight:600;padding:13px 22px;width:100%;font-size:18px}
 .primary:hover{background:var(--acc-dark)}
 .secondary{background:transparent;color:var(--acc);border:1.5px solid var(--acc);padding:10px 18px;font-weight:600}
 .secondary:hover{background:var(--acc-soft)}
@@ -88,7 +93,7 @@ legend{font-weight:600;margin-bottom:8px;padding:0}
 .level-today{background:var(--orange-soft);border-color:var(--orange)}.level-today h2{color:var(--orange)}
 .level-soon{background:var(--yellow-soft);border-color:var(--yellow)}.level-soon h2{color:var(--yellow)}
 .level-selfCare{background:var(--green-soft);border-color:var(--green)}.level-selfCare h2{color:var(--green)}
-.step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--acc);color:#fff;font-size:15px;margin-right:8px;vertical-align:2px}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--acc);color:var(--on-acc);font-size:15px;margin-right:8px;vertical-align:2px}
 .advice-now,.advice-where,.advice-rehab,.advice-comfort{border-top:4px solid var(--acc)}
 .comfort-stage{border-left:3px solid var(--acc);padding:4px 0 4px 12px;margin-top:12px}
 .comfort-stage .when{font-weight:700}
@@ -100,7 +105,7 @@ legend{font-weight:600;margin-bottom:8px;padding:0}
 .counselor+.counselor{border-top:1px solid var(--line)}
 .counselor .detail{color:var(--muted);font-size:14px}
 .counselor .links{display:flex;gap:8px}
-.counselor a{background:var(--acc);color:#fff;text-decoration:none;font-weight:600;border-radius:4px;padding:8px 16px;min-height:40px;display:inline-flex;align-items:center}
+.counselor a{background:var(--acc);color:var(--on-acc);text-decoration:none;font-weight:600;border-radius:4px;padding:8px 16px;min-height:40px;display:inline-flex;align-items:center}
 ol.steps,ul.points{margin:0;padding-left:22px}
 ol.steps li,ul.points li{margin-bottom:6px}
 .phase{border-left:3px solid var(--acc);padding:4px 0 4px 12px;margin-top:14px}
@@ -136,7 +141,7 @@ ol.steps li,ul.points li{margin-bottom:6px}
 .pain-scale{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-width:560px}
 @media (min-width:520px){.pain-scale{grid-template-columns:repeat(11,1fr)}}
 .pain-scale label{position:relative;min-height:40px;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--line);border-radius:4px;cursor:pointer;font-weight:600}
-.pain-scale label:has(input:checked){background:var(--acc);border-color:var(--acc);color:#fff}
+.pain-scale label:has(input:checked){background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
 .pain-scale label:focus-within{outline:2px solid var(--acc);outline-offset:2px}
 #logPainHint{margin:0}
 .pain-name{font-weight:600;margin:12px 0 6px}
@@ -162,7 +167,7 @@ h1 a{color:var(--acc)}
 /* On phones the menu scrolls sideways; the fading right edge shows there is more. */
 .tabs.more-right{-webkit-mask-image:linear-gradient(90deg,#000 75%,transparent);mask-image:linear-gradient(90deg,#000 75%,transparent)}
 .tabs a{flex:0 0 auto;text-decoration:none;color:var(--muted);font-weight:600;border-radius:4px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--line)}
-.tabs a[aria-current="page"]{background:var(--acc);border-color:var(--acc);color:#fff}
+.tabs a[aria-current="page"]{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
 /* Home stays at the left while the other sections scroll under it. */
 .tabs a[data-view="home"]{position:sticky;left:0;z-index:1;box-shadow:6px 0 0 var(--card)}
 .place{padding:12px 0}
@@ -186,7 +191,7 @@ h1 a{color:var(--acc)}
 .day-picks{display:flex;flex-wrap:wrap;gap:6px}
 .day-picks label{position:relative}
 .day-picks span{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:40px;padding:0 10px;border:1.5px solid var(--line);border-radius:4px;background:var(--card)}
-.day-picks input:checked+span{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+.day-picks input:checked+span{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:600}
 .day-picks input:focus-visible+span{outline:2px solid var(--acc);outline-offset:2px}
 .plan-dates{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .plan-dates .field,.plan-dates input{min-width:0}
@@ -228,7 +233,7 @@ h1 a{color:var(--acc)}
 .trend-rest{color:var(--acc);stroke:var(--acc);fill:var(--acc)}
 .trend-exercise{color:var(--orange);stroke:var(--orange);fill:var(--orange)}
 .trend-legend li span{color:var(--text)}
-.place a{background:var(--acc);color:#fff;text-decoration:none;font-weight:600;border-radius:4px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center}
+.place a{background:var(--acc);color:var(--on-acc);text-decoration:none;font-weight:600;border-radius:4px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center}
 /* Cover photos are free under the Unsplash License; COVER_SLIDES in the
    script lists each one with its photographer. */
 /* Photos change every few seconds behind a light veil that keeps the words readable. */
@@ -271,7 +276,7 @@ h1 a{color:var(--acc)}
 h1 a{text-decoration:none}
 .chat-log{display:flex;flex-direction:column;gap:8px;margin:12px 0}
 .bubble{max-width:85%;padding:10px 14px;border-radius:8px;white-space:pre-wrap}
-.bubble.me{align-self:flex-end;background:var(--acc);color:#fff;border-bottom-right-radius:2px}
+.bubble.me{align-self:flex-end;background:var(--acc);color:var(--on-acc);border-bottom-right-radius:2px}
 .bubble.ai{align-self:flex-start;background:var(--acc-soft);color:var(--text);border-bottom-left-radius:2px}
 .chat-form{display:flex;gap:8px;align-items:flex-end}
 .chat-form textarea{flex:1;font:inherit;color:var(--text);background:var(--card);border:1.5px solid var(--line);border-radius:4px;padding:10px 12px;resize:vertical}
@@ -340,7 +345,14 @@ h1 a{text-decoration:none}
       <a href="#log" data-view="log"><span id="navLog"></span></a>
       <a href="#learn" data-view="learn"><span id="navLearn"></span></a>
     </nav>
-    <div class="langs" id="langs" role="group"><button data-lang="zh" lang="zh-CN">中</button><button data-lang="en" lang="en">EN</button><button data-lang="es" lang="es">ES</button></div>
+    <div class="lang-menu" id="langMenu">
+      <button id="langBtn" aria-haspopup="true" aria-expanded="false" aria-controls="langList"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9M12 3c-2.5 2.6-3.8 5.6-3.8 9s1.3 6.4 3.8 9"/></svg>Language</button>
+      <ul class="lang-list" id="langList" hidden>
+        <li><button data-lang="en" lang="en">English</button></li>
+        <li><button data-lang="zh" lang="zh-CN">中文</button></li>
+        <li><button data-lang="es" lang="es">Español</button></li>
+      </ul>
+    </div>
   </div>
 </header>
 <p class="offline-banner" id="offlineBanner" role="status" hidden></p>
@@ -1468,7 +1480,7 @@ var showingResults = false;
 var photo = {run: 0, filled: {}, status: null, statusArg: '', description: '', url: null};
 
 function loadLang() {
-  try { var v = localStorage.getItem(LANG_KEY); return T[v] ? v : 'zh'; } catch (e) { return 'zh'; }
+  try { var v = localStorage.getItem(LANG_KEY); return T[v] ? v : 'en'; } catch (e) { return 'en'; }
 }
 function saveLang() {
   try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* storage blocked: the choice just is not remembered */ }
@@ -1502,10 +1514,9 @@ function renderStatic() {
   $('restartBtn').textContent = t('restart');
   $('seeCasesBtn').textContent = t('seeCases');
   $('seeComfortBtn').textContent = t('seeComfort');
-  $('langs').setAttribute('aria-label', t('langGroup'));
-  document.querySelectorAll('#langs button').forEach(function (b) {
-    b.classList.toggle('on', b.dataset.lang === lang);
-    b.setAttribute('aria-pressed', b.dataset.lang === lang);
+  $('langList').setAttribute('aria-label', t('langGroup'));
+  document.querySelectorAll('#langList button').forEach(function (b) {
+    b.setAttribute('aria-current', b.dataset.lang === lang);
   });
   fillList('redFlags', RED_FLAGS);
   renderComfort();
@@ -2984,10 +2995,29 @@ $('restartBtn').addEventListener('click', function () {
   window.scrollTo({top: 0, behavior: 'smooth'});
 });
 
-document.querySelectorAll('#langs button').forEach(function (b) {
+// The language list opens under the Language button and closes after a
+// choice, a tap anywhere else, or Escape.
+function setLangListOpen(open) {
+  $('langList').hidden = !open;
+  $('langBtn').setAttribute('aria-expanded', open);
+}
+$('langBtn').addEventListener('click', function () {
+  setLangListOpen($('langList').hidden);
+});
+document.addEventListener('click', function (e) {
+  if (!$('langMenu').contains(e.target)) setLangListOpen(false);
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && !$('langList').hidden) {
+    setLangListOpen(false);
+    $('langBtn').focus();
+  }
+});
+document.querySelectorAll('#langList button').forEach(function (b) {
   b.addEventListener('click', function () {
     lang = b.dataset.lang;
     saveLang();
+    setLangListOpen(false);
     renderAll();
   });
 });

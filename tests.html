@@ -469,12 +469,16 @@ results.forEach(function (r) {
 });
 }
 
-// Opens the real page in a hidden frame and clicks the ES button, the way a
-// visitor would. Puts back the visitor's saved language afterwards, since the
-// frame shares this site's storage.
+// Opens the real page in a hidden frame as a first-time visitor (no saved
+// language) and picks Spanish from the Language menu, the way a visitor
+// would. Puts back the visitor's saved language afterwards, since the frame
+// shares this site's storage.
 function testSpanishSwitch() {
   var saved = null;
-  try { saved = localStorage.getItem('injury-helper-lang'); } catch (e) { /* storage blocked */ }
+  try {
+    saved = localStorage.getItem('injury-helper-lang');
+    localStorage.removeItem('injury-helper-lang');
+  } catch (e) { /* storage blocked */ }
   return new Promise(function (resolve) {
     var frame = document.createElement('iframe');
     frame.style.display = 'none';
@@ -482,13 +486,36 @@ function testSpanishSwitch() {
     frame.onload = function () {
       var page = frame.contentWindow;
       var doc = frame.contentDocument;
-      test('language: the ES button switches the interface to Spanish', function () {
-        var button = doc.querySelector('#langs [data-lang="es"]');
-        if (!button) throw new Error('there is no ES button');
+      var list = doc.getElementById('langList');
+      test('language: a first visit is in English, with the language list closed', function () {
+        equal(doc.documentElement.lang, 'en');
+        equal(doc.getElementById('navAssess').textContent, page.T.en.navAssess);
+        equal(list.hidden, true);
+      });
+      test('language: the Language button opens the list, and a second tap closes it', function () {
+        doc.getElementById('langBtn').click();
+        equal(list.hidden, false);
+        equal(doc.getElementById('langBtn').getAttribute('aria-expanded'), 'true');
+        doc.getElementById('langBtn').click();
+        equal(list.hidden, true);
+      });
+      test('language: choosing Español switches to Spanish, closes the list and is remembered', function () {
+        doc.getElementById('langBtn').click();
+        var button = list.querySelector('[data-lang="es"]');
+        if (!button) throw new Error('there is no Español in the list');
         button.click();
         equal(doc.documentElement.lang, 'es');
         equal(doc.getElementById('navAssess').textContent, 'Revisar mi lesión');
         equal(doc.getElementById('startBtn').textContent, 'Empezar la evaluación');
+        equal(list.hidden, true);
+        equal(button.getAttribute('aria-current'), 'true');
+        equal(localStorage.getItem('injury-helper-lang'), 'es');
+        equal(page.loadLang(), 'es');
+      });
+      test('language: every language in the list has interface text', function () {
+        [].forEach.call(list.querySelectorAll('[data-lang]'), function (button) {
+          if (!page.T[button.dataset.lang]) throw new Error('no text for ' + button.dataset.lang);
+        });
       });
       // If any start-up code throws, the texts after it stay empty. Parts
       // that are not shown yet (results, the trend) are filled later.
