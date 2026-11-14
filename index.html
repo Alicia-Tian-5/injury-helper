@@ -44,24 +44,24 @@ button{font:inherit;cursor:pointer;border:0;border-radius:4px}
 #langBtn{display:inline-flex;align-items:center;gap:6px;background:var(--card);color:var(--text);border:1px solid var(--line);padding:8px 12px;min-height:40px;font-size:15px;white-space:nowrap}
 #langBtn svg{width:18px;height:18px;color:var(--acc)}
 #langBtn[aria-expanded="true"]{border-color:var(--acc)}
-.lang-list{position:absolute;right:0;top:calc(100% + 4px);z-index:20;min-width:160px;margin:0;padding:4px;list-style:none;background:var(--card);border:1px solid var(--line);border-radius:6px;box-shadow:0 4px 14px rgba(20,40,70,.18)}
-.lang-list button{display:flex;justify-content:space-between;width:100%;background:none;color:var(--text);text-align:left;padding:10px 12px;min-height:44px;font-size:16px}
+.lang-list{position:absolute;inset-inline-end:0;top:calc(100% + 4px);z-index:20;min-width:160px;margin:0;padding:4px;list-style:none;background:var(--card);border:1px solid var(--line);border-radius:6px;box-shadow:0 4px 14px rgba(20,40,70,.18)}
+.lang-list button{display:flex;justify-content:space-between;width:100%;background:none;color:var(--text);text-align:start;padding:10px 12px;min-height:44px;font-size:16px}
 .lang-list button:hover{background:var(--acc-soft)}
 .lang-list button[aria-current="true"]{color:var(--acc);font-weight:600}
 .lang-list button[aria-current="true"]::after{content:"✓"}
 .card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
 .alert{background:var(--red-soft);border-color:var(--red)}
 .alert h2{color:var(--red)}
-.alert ul{margin:0 0 8px;padding-left:20px}
+.alert ul{margin:0 0 8px;padding-inline-start:20px}
 .alert .numbers{font-weight:700;margin:0}
 .muted{color:var(--muted);font-size:15px}
 .injuries{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.injury{background:var(--card);color:var(--text);border:1.5px solid var(--line);border-radius:6px;padding:12px 14px;text-align:left;min-height:72px}
+.injury{background:var(--card);color:var(--text);border:1.5px solid var(--line);border-radius:6px;padding:12px 14px;text-align:start;min-height:72px}
 .injury strong{display:block;font-size:18px;font-weight:600;color:var(--acc)}
 .injury small{display:block;color:var(--muted);font-size:14px}
 .injury:hover{border-color:var(--acc)}
 .injury[aria-pressed="true"]{border-color:var(--acc);background:var(--acc-soft);box-shadow:inset 0 0 0 1px var(--acc)}
-.welcome{border-left:4px solid var(--acc)}
+.welcome{border-inline-start:4px solid var(--acc)}
 .welcome h2{margin:0 0 2px;color:var(--acc)}
 .welcome p{margin:0}
 fieldset{border:0;margin:0 0 16px;padding:0}
@@ -85,7 +85,7 @@ legend{font-weight:600;margin-bottom:8px;padding:0}
 .photo-result img{width:96px;height:96px;object-fit:cover;border-radius:4px;flex:0 0 auto;background:var(--line)}
 .photo-result p{margin:0 0 6px}
 #photoDesc{font-style:italic}
-.tag{font-size:12px;font-weight:600;color:var(--acc);background:var(--acc-soft);border-radius:3px;padding:1px 6px;margin-left:4px;white-space:nowrap}
+.tag{font-size:12px;font-weight:600;color:var(--acc);background:var(--acc-soft);border-radius:3px;padding:1px 6px;margin-inline-start:4px;white-space:nowrap}
 .level{border-width:2px}
 .level h2{margin-bottom:4px}
 .level p{margin:0}
@@ -93,9 +93,9 @@ legend{font-weight:600;margin-bottom:8px;padding:0}
 .level-today{background:var(--orange-soft);border-color:var(--orange)}.level-today h2{color:var(--orange)}
 .level-soon{background:var(--yellow-soft);border-color:var(--yellow)}.level-soon h2{color:var(--yellow)}
 .level-selfCare{background:var(--green-soft);border-color:var(--green)}.level-selfCare h2{color:var(--green)}
-.step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--acc);color:var(--on-acc);font-size:15px;margin-right:8px;vertical-align:2px}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--acc);color:var(--on-acc);font-size:15px;margin-inline-end:8px;vertical-align:2px}
 .advice-now,.advice-where,.advice-rehab,.advice-comfort{border-top:4px solid var(--acc)}
-.comfort-stage{border-left:3px solid var(--acc);padding:4px 0 4px 12px;margin-top:12px}
+.comfort-stage{border-inline-start:3px solid var(--acc);padding:4px 0;padding-inline-start:12px;margin-top:12px}
 .comfort-stage .when{font-weight:700}
 .comfort-stage p{margin:2px 0}
 .comfort-stage .try{color:var(--muted);font-size:15px}
@@ -106,12 +106,12 @@ legend{font-weight:600;margin-bottom:8px;padding:0}
 .counselor .detail{color:var(--muted);font-size:14px}
 .counselor .links{display:flex;gap:8px}
 .counselor a{background:var(--acc);color:var(--on-acc);text-decoration:none;font-weight:600;border-radius:4px;padding:8px 16px;min-height:40px;display:inline-flex;align-items:center}
-ol.steps,ul.points{margin:0;padding-left:22px}
+ol.steps,ul.points{margin:0;padding-inline-start:22px}
 ol.steps li,ul.points li{margin-bottom:6px}
-.phase{border-left:3px solid var(--acc);padding:4px 0 4px 12px;margin-top:14px}
+.phase{border-inline-start:3px solid var(--acc);padding:4px 0;padding-inline-start:12px;margin-top:14px}
 .phase .when{font-weight:700}
 .phase .goal{color:var(--muted);font-size:15px;margin-bottom:4px}
-.phase ul{margin:0;padding-left:20px}
+.phase ul{margin:0;padding-inline-start:20px}
 .actions{display:flex;justify-content:center;margin-top:6px}
 .actions{gap:10px;flex-wrap:wrap}
 .cases-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
@@ -134,7 +134,7 @@ ol.steps li,ul.points li{margin-bottom:6px}
 .learn-intro{margin:-4px 0 16px}
 .learn-part details{border-top:1px solid var(--line)}
 .learn-part summary{cursor:pointer;font-weight:600;color:var(--acc);padding:12px 0;min-height:44px}
-.learn-part details ul{margin:0 0 14px;padding-left:22px}
+.learn-part details ul{margin:0 0 14px;padding-inline-start:22px}
 .learn-part details li{margin-bottom:6px}
 .log-date input{max-width:240px}
 /* 0-5 and 6-10 on two rows on phones, all eleven on one row when there is room. */
@@ -146,8 +146,8 @@ ol.steps li,ul.points li{margin-bottom:6px}
 #logPainHint{margin:0}
 .pain-name{font-weight:600;margin:12px 0 6px}
 .log-photo{display:block;max-width:220px;max-height:220px;object-fit:cover;border-radius:4px;margin-top:10px}
-.link-btn{background:none;color:var(--acc);text-decoration:underline;padding:8px;margin-left:6px}
-.account-lock{max-width:480px;margin-left:auto;margin-right:auto;border-top:4px solid var(--acc)}
+.link-btn{background:none;color:var(--acc);text-decoration:underline;padding:8px;margin-inline-start:6px}
+.account-lock{max-width:480px;margin-inline:auto;border-top:4px solid var(--acc)}
 .account-modes{display:flex;gap:8px;margin:4px 0 14px}
 .account-modes button{flex:1;background:transparent;color:var(--text);border:1.5px solid var(--line);padding:10px 12px;font-weight:600}
 .account-modes button[aria-pressed="true"]{border-color:var(--acc);background:var(--acc-soft);color:var(--acc)}
@@ -164,12 +164,14 @@ h1 a{color:var(--acc)}
 .site-header .wrap{max-width:680px;margin:0 auto;padding:10px 16px 8px;display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap}
 .site-header h1{flex:1 1 0;min-width:0}
 .tabs{order:3;width:100%;display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
-/* On phones the menu scrolls sideways; the fading right edge shows there is more. */
-.tabs.more-right{-webkit-mask-image:linear-gradient(90deg,#000 75%,transparent);mask-image:linear-gradient(90deg,#000 75%,transparent)}
+/* On phones the menu scrolls sideways; the fading far edge shows there is more. */
+.tabs.more-end{-webkit-mask-image:linear-gradient(90deg,#000 75%,transparent);mask-image:linear-gradient(90deg,#000 75%,transparent)}
+[dir=rtl] .tabs.more-end{-webkit-mask-image:linear-gradient(270deg,#000 75%,transparent);mask-image:linear-gradient(270deg,#000 75%,transparent)}
 .tabs a{flex:0 0 auto;text-decoration:none;color:var(--muted);font-weight:600;border-radius:4px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--line)}
 .tabs a[aria-current="page"]{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
-/* Home stays at the left while the other sections scroll under it. */
-.tabs a[data-view="home"]{position:sticky;left:0;z-index:1;box-shadow:6px 0 0 var(--card)}
+/* Home stays at the start while the other sections scroll under it. */
+.tabs a[data-view="home"]{position:sticky;inset-inline-start:0;z-index:1;box-shadow:6px 0 0 var(--card)}
+[dir=rtl] .tabs a[data-view="home"]{box-shadow:-6px 0 0 var(--card)}
 .place{padding:12px 0}
 .place+.place{border-top:1px solid var(--line)}
 .place .detail{color:var(--muted);font-size:15px}
@@ -185,7 +187,7 @@ h1 a{color:var(--acc)}
 .plan-today label{display:flex;align-items:center;gap:12px;padding:10px 0;min-height:44px;cursor:pointer}
 .plan-today input{width:22px;height:22px;flex:0 0 auto;accent-color:var(--acc)}
 .plan-today .done span{color:var(--muted);text-decoration:line-through}
-.plan-today small{color:var(--muted);font-size:15px;margin-left:6px}
+.plan-today small{color:var(--muted);font-size:15px;margin-inline-start:6px}
 .plan-form{border:1px solid var(--line);border-radius:6px;padding:14px;margin:12px 0;background:var(--tint)}
 .plan-form h3{margin-top:0}
 .day-picks{display:flex;flex-wrap:wrap;gap:6px}
@@ -203,8 +205,8 @@ h1 a{color:var(--acc)}
 .plan-all summary{cursor:pointer;font-weight:600;color:var(--acc);padding:10px 0;min-height:44px}
 .plan-item{border-top:1px solid var(--line);padding:10px 0}
 .plan-item .case-meta{margin:2px 0 6px}
-.plan-item small{color:var(--muted);font-weight:400;font-size:15px;margin-left:6px}
-.plan-item button{margin-right:6px}
+.plan-item small{color:var(--muted);font-weight:400;font-size:15px;margin-inline-start:6px}
+.plan-item button{margin-inline-end:6px}
 .plan-calendar{border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
 .calendar-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
 .calendar-row .field{margin-bottom:0}
@@ -212,13 +214,13 @@ h1 a{color:var(--acc)}
 .rehab-to-plan{border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
 .rehab-to-plan .success,.rehab-to-plan .muted{margin:10px 0 0}
 .go-plan{display:inline-flex;align-items:center;min-height:40px;margin-top:10px;text-decoration:none;border-radius:4px}
-.plan-moves{margin:0 0 6px 34px;padding-left:18px;color:var(--muted);font-size:15px}
+.plan-moves{margin:0 0 6px;margin-inline-start:34px;padding-inline-start:18px;color:var(--muted);font-size:15px}
 .plan-moves li{margin:2px 0}
-.home-today{display:block;text-decoration:none;color:var(--text);border-left:4px solid var(--acc);margin:0 0 12px}
+.home-today{display:block;text-decoration:none;color:var(--text);border-inline-start:4px solid var(--acc);margin:0 0 12px}
 .home-today strong{color:var(--acc)}
 .translated-note{margin:0;padding:6px 16px;background:var(--tint);color:var(--muted);border-bottom:1px solid var(--line);font-size:14px;text-align:center}
 .offline-banner{margin:0;padding:10px 16px;background:var(--yellow-soft);color:var(--text);border-bottom:1px solid var(--yellow);font-size:15px;text-align:center}
-.install{border-left:4px solid var(--acc);margin:0 0 18px}
+.install{border-inline-start:4px solid var(--acc);margin:0 0 18px}
 .install h2{margin:0 0 4px;font-size:19px}
 .install p{margin:0}
 .install .actions{justify-content:flex-start;margin-top:12px}
@@ -230,7 +232,7 @@ h1 a{color:var(--acc)}
 .trend .axis-label{fill:var(--muted);font-size:13px}
 .trend polyline{fill:none;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
 .trend-legend{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:15px}
-.trend-legend li::before{content:"";display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle;background:currentColor}
+.trend-legend li::before{content:"";display:inline-block;width:14px;height:4px;border-radius:2px;margin-inline-end:6px;vertical-align:middle;background:currentColor}
 .trend-rest{color:var(--acc);stroke:var(--acc);fill:var(--acc)}
 .trend-exercise{color:var(--orange);stroke:var(--orange);fill:var(--orange)}
 .trend-legend li span{color:var(--text)}
@@ -277,8 +279,8 @@ h1 a{color:var(--acc)}
 h1 a{text-decoration:none}
 .chat-log{display:flex;flex-direction:column;gap:8px;margin:12px 0}
 .bubble{max-width:85%;padding:10px 14px;border-radius:8px;white-space:pre-wrap}
-.bubble.me{align-self:flex-end;background:var(--acc);color:var(--on-acc);border-bottom-right-radius:2px}
-.bubble.ai{align-self:flex-start;background:var(--acc-soft);color:var(--text);border-bottom-left-radius:2px}
+.bubble.me{align-self:flex-end;background:var(--acc);color:var(--on-acc);border-end-end-radius:2px}
+.bubble.ai{align-self:flex-start;background:var(--acc-soft);color:var(--text);border-end-start-radius:2px}
 .chat-form{display:flex;gap:8px;align-items:flex-end}
 .chat-form textarea{flex:1;font:inherit;color:var(--text);background:var(--card);border:1.5px solid var(--line);border-radius:4px;padding:10px 12px;resize:vertical}
 .chat-form textarea:focus{outline:2px solid var(--acc);border-color:var(--acc)}
@@ -300,21 +302,22 @@ h1 a{text-decoration:none}
 }
 /* Computers: a wide, full-window layout. Phones keep the single column. */
 @media (min-width:900px){
-  main,.site-header .wrap{max-width:1180px;padding-left:32px;padding-right:32px}
+  main,.site-header .wrap{max-width:1180px;padding-inline:32px}
   .site-header .wrap{flex-wrap:nowrap;padding-top:12px;padding-bottom:12px}
-  .site-header h1{flex:0 0 auto;margin-right:24px}
+  .site-header h1{flex:0 0 auto;margin-inline-end:24px}
   .tabs{order:0;width:auto;flex:1 1 auto;gap:4px}
   .tabs a{background:none;border:0;border-radius:0;border-bottom:3px solid transparent;padding:8px 12px}
   .tabs a[aria-current="page"]{background:none;color:var(--acc);border-bottom-color:var(--acc)}
-  .cover{text-align:left;padding:72px 32px;margin-bottom:28px;min-height:calc(100vh - 70px);
+  .cover{text-align:start;padding:72px 32px;margin-bottom:28px;min-height:calc(100vh - 70px);
   }
   .cover-slide{background-position:var(--wide)}
   .cover-veil{background:linear-gradient(90deg,rgba(var(--veil),.94) 0%,rgba(var(--veil),.86) 38%,rgba(var(--veil),.35) 68%,rgba(var(--veil),.25) 100%)}
   .cover-inner{width:100%}
   .cover-text{max-width:700px}
   .cover-actions{justify-content:flex-start}
+  [dir=rtl] .cover-veil{background:linear-gradient(270deg,rgba(var(--veil),.94) 0%,rgba(var(--veil),.86) 38%,rgba(var(--veil),.35) 68%,rgba(var(--veil),.25) 100%)}
   .slogan{font-size:52px;margin-top:0}
-  .cover-intro{font-size:20px;margin-left:0;max-width:600px}
+  .cover-intro{font-size:20px;margin-inline-start:0;max-width:600px}
   .facts{grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:36px}
   .facts strong{font-size:40px}
   .section-title{font-size:28px}
@@ -354,6 +357,7 @@ h1 a{text-decoration:none}
         <li><button data-lang="es" lang="es">Español</button></li>
         <li><button data-lang="fr" lang="fr">Français</button></li>
         <li><button data-lang="ru" lang="ru">Русский</button></li>
+        <li><button data-lang="ar" lang="ar" dir="rtl">العربية</button></li>
       </ul>
     </div>
   </div>
@@ -1745,6 +1749,278 @@ var T = {
     painExerciseShown: 'При упражнениях {0}/10',
     logProblemPain: 'Выбери уровень боли от 0 до 10.'
   },
+  // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
+  // reads right to left in Arabic (see isRightToLeft).
+  ar: {
+    title: 'مساعد الإصابات الرياضية',
+    welcomeTitle: 'خذ نفسًا عميقًا. أنت لست وحدك.',
+    welcomeText: 'الإصابة شيء مخيف. سنمضي خطوة بخطوة، وستعرف ماذا تفعل بعد ذلك.',
+    langGroup: 'لغة الواجهة',
+    translatedNote: 'ترجمة آلية، للاسترشاد فقط. إن كان لديك شك، فارجع إلى النسخة الإنجليزية أو اسأل طبيبًا.',
+    alertTitle: 'اطلب المساعدة فورًا إذا:',
+    numbers: 'الطوارئ: 911 (الولايات المتحدة) · 120 (الصين)',
+    pickTitle: 'ماذا حدث؟',
+    subTitle: 'ما هي بالضبط؟',
+    questionsTitle: 'أجب عن بضعة أسئلة',
+    assess: 'اعرف ماذا تفعل',
+    missing: 'أجب عن كل الأسئلة (المتبقي: {0}).',
+    firstAidTitle: 'الآن فورًا',
+    whereTitle: 'إلى أين تذهب',
+    rehabTitle: 'العودة إلى الرياضة',
+    rehabPlanTitle: 'أضف إلى خطة التأهيل',
+    rehabPlanHint: 'ابتداءً من تاريخ الإصابة، تُضاف المراحل التي لها أيام محددة أعلاه إلى خطتك، وسترى كل يوم المرحلة التي عليك القيام بها.',
+    rehabPlanDateLabel: 'تاريخ الإصابة',
+    rehabPlanBtn: 'أضف إلى خطتي',
+    rehabPlanNone: 'التأهيل من هذه الإصابة يسير وفق جدول طبيبك. أضف التمارين التي يعطيك إياها في قسم «سجل التعافي».',
+    rehabPlanBadDate: 'اختر تاريخ الإصابة (ليس بعد اليوم).',
+    rehabPlanAllPast: 'بهذا التاريخ للإصابة، انتهت كل المراحل التي لها أيام محددة.',
+    rehabPlanAdded: 'المراحل المضافة إلى خطتك: {0}.',
+    rehabPlanNow: 'اليوم أنت في مرحلة «{0}».',
+    rehabPlanLater: '«{0}» غير مرتبطة بتاريخ: أضفها بنفسك عندما تكون مستعدًا.',
+    rehabPlanGo: 'افتح خطتي ←',
+    rehabPlanFailed: 'تعذّرت الإضافة إلى الخطة. حاول مرة أخرى.',
+    comfortTitle: 'اعتنِ بمشاعرك',
+    counselingTitle: 'تحدّث مع مستشار نفسي',
+    restart: 'ابدأ من جديد',
+    disclaimer: 'للاسترشاد فقط. هذه الصفحة لا تستطيع التشخيص ولا تغني عن الطبيب.',
+    photoTitle: 'أضف صورة (اختياري)',
+    photoHint: 'التقط صورة للإصابة. سينظر الذكاء الاصطناعي المدمج في Chrome إلى الصورة على هذا الكمبيوتر ويملأ ما يستطيع رؤيته. لا تُرسل الصورة إلى أي مكان.',
+    photoBtn: 'اختر صورة أو التقطها',
+    photoChange: 'صورة أخرى',
+    photoAlt: 'صورة إصابتك',
+    photoChecking: 'الذكاء الاصطناعي ينظر إلى الصورة…',
+    photoDownloading: 'جارٍ تنزيل نموذج الذكاء الاصطناعي في Chrome (المرة الأولى فقط)… {0}%',
+    photoFilled: 'مُلئ من الصورة: {0}، مع علامة «من الصورة». راجعها وصحّح الخطأ.',
+    photoNothing: 'لم تُجب الصورة عن أي سؤال. أجب بنفسك.',
+    photoNotInjury: 'يبدو أن هذه الصورة لا تُظهر إصابة. جرّب صورة أخرى.',
+    photoUnsupported: 'الذكاء الاصطناعي في هذا المتصفح لا يستطيع النظر إلى الصور (يلزم إصدار حديث من Chrome على الكمبيوتر). أجب عن الأسئلة بنفسك.',
+    photoBadImage: 'تعذّرت قراءة هذه الصورة. جرّب JPG أو PNG.',
+    photoError: 'لم يستطع الذكاء الاصطناعي النظر إلى الصورة. أجب عن الأسئلة بنفسك.',
+    photoTag: 'من الصورة',
+    seeCases: 'اطّلع على تجارب الآخرين',
+    seeComfort: 'اعتنِ بمشاعرك',
+    slogan: 'في طريق عودتك إلى الرياضة، أنا دائمًا معك.',
+    coverIntro: 'أُصبت أثناء التمرين؟ لا بأس. خذ نفسًا. ليس ذنبك، وليست نهاية رياضتك. سنساعدك على معرفة ما تفعله الآن وإلى أين تذهب، ونرافقك خطوة بخطوة حتى تعود إلى الرياضة التي تحبها.',
+    startBtn: 'ابدأ الفحص',
+    coverSos: 'حالة طارئة؟ اتصل الآن: 911 (الولايات المتحدة) · 120 (الصين).',
+    featAssess: 'افحص إصابتك',
+    featAssessText: 'بضعة أسئلة، ثم خطوات واضحة.',
+    featComfort: 'دعم نفسي',
+    featComfortText: 'كلمات لكل مرحلة، وأشخاص يمكنك التحدث إليهم.',
+    featCases: 'قصص الآخرين',
+    featCasesText: 'قصص حقيقية لأشخاص تعافوا.',
+    featHospitals: 'مستشفيات قريبة',
+    featHospitalsText: 'جد المكان المناسب على الخريطة.',
+    chatCta: 'تحدّث مع الذكاء الاصطناعي',
+    fact1: 'إصابة رياضية شائعة',
+    fact2: 'خطوات: الإسعاف الأولي، إلى أين تذهب، التأهيل',
+    fact3: 'خطوط دعم نفسي، على مدار الساعة',
+    fact4: 'الموقع كله بعدة لغات',
+    featuresTitle: 'ماذا يمكنك أن تفعل هنا',
+    footerName: 'مساعد الإصابات الرياضية · في طريق عودتك إلى الرياضة، أنا دائمًا معك.',
+    photoCredit: 'صور الغلاف (Unsplash):',
+    coverSlide: 'الصورة {0}',
+    footerSos: 'الطوارئ: 911 (الولايات المتحدة) · 120 (الصين) · خط الأزمات: 988 (الولايات المتحدة) · 12356 (الصين)',
+    chatTitle: 'تحدّث مع الذكاء الاصطناعي',
+    chatIntro: 'أخبرنا بما تشعر به. سيرد الذكاء الاصطناعي بدعم ويقترح أمرين صغيرين يمكنك فعلهما. إنه ذكاء اصطناعي وليس مستشارًا نفسيًا، والمحادثة تبقى على هذا الكمبيوتر.',
+    chatInputLabel: 'رسالتك',
+    chatPlaceholder: 'مثلًا: أشعر بسوء شديد الآن',
+    chatSend: 'إرسال',
+    chatThinking: 'الذكاء الاصطناعي يفكر…',
+    chatDownloading: 'جارٍ تنزيل نموذج الذكاء الاصطناعي في Chrome (المرة الأولى فقط)… {0}%',
+    chatUnsupported: 'الذكاء الاصطناعي في هذا المتصفح لا يستطيع المحادثة (يلزم إصدار حديث من Chrome على الكمبيوتر). المستشارون أعلاه مستعدون دائمًا للمساعدة.',
+    chatError: 'لم يستطع الذكاء الاصطناعي الرد. حاول مرة أخرى أو تواصل مع أحد المستشارين أعلاه.',
+    chatCrisis: 'أنت مهم، وتستحق المساعدة الآن. اتصل أو راسل 988 (الولايات المتحدة)، أو اتصل بـ 12356 (الصين) أو بالطوارئ. يمكنك أيضًا أن تخبر شخصًا قريبًا منك.',
+    navHome: 'الرئيسية',
+    navAssess: 'افحص إصابتك',
+    navComfort: 'الدعم',
+    navCases: 'قصص الآخرين',
+    navHospitals: 'مستشفيات قريبة',
+    cityTitle: 'مستشفيات موثوقة حسب المدينة',
+    cityIntro: 'اكتب مدينتك لترى المستشفيات المعروفة بعلاج الإصابات الرياضية، وبماذا يتميز كل منها.',
+    cityLabel: 'المدينة',
+    cityPlaceholder: 'مثلًا: Chicago، 北京',
+    citySearch: 'بحث',
+    cityMissing: 'اكتب مدينة أولًا.',
+    cityTooLong: 'هذا طويل جدًا ليكون اسم مدينة.',
+    cityFound: '{0}: مستشفيات للإصابات الرياضية',
+    cityKnownFor: 'معروف بـ: ',
+    cityNotListed: 'لا توجد مستشفيات لـ«{0}» بعد. ابحث عن الطب الرياضي هناك على الخريطة:',
+    cityListed: 'المدن الموجودة الآن: {0}.',
+    cityNote: 'جمع هذا الموقع هذه المعلومات للاسترشاد العام. الخدمات والمواعيد تتغير؛ اتصل قبل أن تذهب.',
+    hospitalsTitle: 'جد المساعدة قريبًا منك',
+    hospitalsIntro: 'اختر نوع المكان الذي تحتاجه. ستفتح الخريطة بموقعك؛ هذه الصفحة لا تراه.',
+    hospitalsEmergency: 'في الحالات الطارئة لا تقُد بنفسك: اتصل بـ 911 (الولايات المتحدة) · 120 (الصين).',
+    googleMaps: 'خرائط Google',
+    amap: 'Amap (الصين)',
+    casesTitle: 'قصص الآخرين',
+    casesIntro: 'تجارب حقيقية لأشخاص آخرين. قصص شخصية، وليست نصائح طبية.',
+    shareBtn: 'شارك قصتك',
+    shareCancel: 'إلغاء',
+    caseInjuryLabel: 'الإصابة',
+    choose: 'اختر…',
+    caseLabels: {
+      nickname: 'اسم مستعار (اختياري)',
+      story: 'كيف حدث ذلك؟ (مطلوب)',
+      treatment: 'ماذا فعلت وإلى أين ذهبت؟',
+      recovery: 'كم استغرق التعافي؟',
+      lesson: 'ماذا تقول للآخرين؟'
+    },
+    caseNames: {injury: 'الإصابة', nickname: 'الاسم المستعار', story: 'كيف حدثت', treatment: 'العلاج', recovery: 'التعافي', lesson: 'نصيحة'},
+    privacyNote: 'يظهر منشورك للجميع فورًا ولا يمكن تعديله. لا تكتب اسمك الحقيقي أو بيانات الاتصال أو أي شيء يدل عليك.',
+    postBtn: 'نشر',
+    posting: 'جارٍ النشر…',
+    posted: 'تم النشر! شكرًا لمشاركتك.',
+    problem_missing: '{0}: املأ هذا الحقل.',
+    problem_tooShort: '{0}: الحد الأدنى للأحرف: {1}.',
+    problem_tooLong: '{0}: الحد الأقصى للأحرف: {1}.',
+    postFailed: 'تعذّر النشر. تحقق من اتصالك بالإنترنت وحاول مرة أخرى.',
+    filterLabel: 'عرض',
+    filterAll: 'كل الإصابات',
+    casesLoading: 'جارٍ تحميل القصص…',
+    casesEmpty: 'لا توجد قصص بعد. كن أول من يشارك!',
+    casesEmptyFilter: 'لا توجد قصص عن هذه الإصابة بعد.',
+    casesError: 'تعذّر تحميل القصص. تحقق من اتصالك بالإنترنت وحدّث الصفحة.',
+    casesNotSetUp: 'مشاركة القصص غير مُعدّة بعد.',
+    anonymous: 'مجهول',
+    navLog: 'سجل التعافي',
+    logTitle: 'تسجيل اليوم',
+    logIntro: 'سجّل كيف يسير تعافيك، مع صورة إن أردت. تُحفظ التسجيلات على هذا الجهاز فقط: لا تُرسل إلى أي مكان ولا يراها أحد غيرك.',
+    logDateLabel: 'التاريخ',
+    logTextLabel: 'كيف حالك اليوم؟',
+    logPlaceholder: 'مثلًا: خفّ التورم قليلًا؛ أدّيت 3 مجموعات من رفع الساق المستقيمة.',
+    logPhotoLabel: 'صورة (اختياري)',
+    logPhotoBtn: 'اختر صورة أو التقطها',
+    logPhotoChange: 'صورة أخرى',
+    logPhotoRemove: 'أزل الصورة',
+    logPhotoAlt: 'صورة هذا التسجيل',
+    logPhotoBad: 'تعذّرت قراءة هذه الصورة. جرّب JPG أو PNG.',
+    logSave: 'احفظ التسجيل',
+    logSaving: 'جارٍ الحفظ…',
+    logSavedMsg: 'تم الحفظ. أحسنت بالمواظبة على السجل!',
+    logSaveFailed: 'تعذّر الحفظ. ربما يمنع المتصفح التخزين (مثلًا في وضع التصفح الخاص).',
+    logListTitle: 'تسجيلاتك',
+    planTitle: 'خطة التأهيل',
+    planIntro: 'أضف التمارين التي أعطاك إياها الطبيب أو أخصائي العلاج الطبيعي. سترى كل يوم ما عليك فعله، ويمكنك تعليم ما أنجزته.',
+    planTodayTitle: 'اليوم، {0}',
+    planEmpty: 'لا توجد تمارين بعد. أضف أول تمرين حسب تعليمات طبيبك.',
+    planNoneToday: 'لا شيء مقرر اليوم. استرح جيدًا.',
+    planProgress: 'أُنجز اليوم: {0} من {1}',
+    planAllDone: 'أنجزت كل شيء اليوم. رائع!',
+    planAdd: 'أضف تمرينًا',
+    planFormAdd: 'تمرين جديد',
+    planFormEdit: 'عدّل التمرين',
+    planNameLabel: 'التمرين',
+    planNamePlaceholder: 'مثلًا: رفع الساق المستقيمة',
+    planAmountLabel: 'المجموعات / التكرارات / المدة (اختياري)',
+    planAmountPlaceholder: 'مثلًا: 3 مجموعات × 10',
+    planDaysLabel: 'في أي أيام',
+    planEveryDay: 'كل يوم',
+    weekdays: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+    planWeekly: 'الأيام: {0}',
+    planStartLabel: 'تاريخ البدء',
+    planEndLabel: 'تاريخ الانتهاء (اختياري)',
+    planSave: 'احفظ التمرين',
+    planUpdate: 'احفظ التغييرات',
+    planCancel: 'إلغاء',
+    planSavedMsg: 'تم الحفظ.',
+    planListTitle: 'كل التمارين ({0})',
+    planFrom: 'من {0}',
+    planRange: 'من {0} إلى {1}',
+    planOver: 'انتهى',
+    planNotYet: 'لم يبدأ بعد',
+    planEdit: 'تعديل',
+    planDelete: 'حذف',
+    planDeleteConfirm: 'هل تحذف «{0}» من الخطة؟',
+    planProblemName: 'اكتب اسم التمرين.',
+    planProblemNameLong: 'اسم التمرين طويل جدًا (الحد الأقصى للأحرف: {0}).',
+    planProblemAmountLong: 'المجموعات / التكرارات طويلة جدًا (الحد الأقصى للأحرف: {0}).',
+    planProblemDays: 'اختر يومًا واحدًا على الأقل.',
+    planProblemStart: 'اختر تاريخ البدء.',
+    planProblemEnd: 'لا يمكن أن يكون تاريخ الانتهاء قبل تاريخ البدء.',
+    planSaveFailed: 'تعذّر الحفظ. حاول مرة أخرى.',
+    planLoadFailed: 'تعذّر تحميل الخطة. ربما يمنع المتصفح التخزين (مثلًا في وضع التصفح الخاص).',
+    calendarTitle: 'تذكير يومي',
+    calendarHint: 'نزّل ملف التقويم وافتحه لإضافة التمارين إلى تقويم هاتفك أو الكمبيوتر. سيذكّرك في هذا الوقت في كل يوم تمرين. إذا غيّرت الخطة، فأضفه مرة أخرى.',
+    calendarTimeLabel: 'وقت التذكير',
+    calendarBtn: 'أضف إلى التقويم',
+    calendarNone: 'أضف تمرينًا أولًا.',
+    calendarDone: 'تم تنزيل ملف التقويم. افتحه واختر «إضافة» لحفظ التذكيرات.',
+    calendarEventTitle: 'التأهيل',
+    homeToday: 'تأهيل اليوم: أُنجز {0} من {1}',
+    homeTodayAllDone: 'اكتمل تأهيل اليوم ({0}/{0})',
+    homeTodayGo: 'افتح الخطة ←',
+    installTitle: 'احتفظ به على هاتفك',
+    installPromptText: 'أضف Injury Helper إلى الشاشة الرئيسية: يفتح مثل التطبيق، والإسعاف الأولي يعمل حتى دون إنترنت.',
+    installIos: 'أضف Injury Helper إلى الشاشة الرئيسية: اضغط زر المشاركة (مربع فيه سهم)، ثم «إضافة إلى الشاشة الرئيسية». يفتح مثل التطبيق، والإسعاف الأولي يعمل حتى دون إنترنت.',
+    installAndroid: 'أضف Injury Helper إلى الشاشة الرئيسية: افتح قائمة المتصفح (⋮)، ثم «إضافة إلى الشاشة الرئيسية» أو «تثبيت التطبيق». يفتح مثل التطبيق، والإسعاف الأولي يعمل حتى دون إنترنت.',
+    installBtn: 'أضف إلى الشاشة الرئيسية',
+    installDismiss: 'ليس الآن',
+    offlineBanner: 'لا يوجد إنترنت الآن. الإسعاف الأولي والنصائح يعملان؛ تسجيل الدخول والقصص والخرائط تحتاج إلى اتصال.',
+    accountTitle: 'سجّل الدخول لفتح هذا القسم',
+    accountIntro: 'سجل التعافي والدعم لك وحدك. سجّل الدخول مرة واحدة، وسيتذكر هذا الجهاز دخولك 7 أيام. تبقى تسجيلاتك على هذا الجهاز.',
+    accountLoading: 'جارٍ التحقق من تسجيل الدخول…',
+    accountUnavailable: 'تعذّر الوصول إلى خدمة تسجيل الدخول الآن. تحقق من الإنترنت وحدّث الصفحة.',
+    accountExpired: 'مرّ أكثر من 7 أيام؛ سجّل الدخول مرة أخرى.',
+    accountModes: 'سجّل الدخول أو أنشئ حسابًا',
+    accountSignIn: 'تسجيل الدخول',
+    accountSignUp: 'إنشاء حساب',
+    accountCreate: 'إنشاء حساب',
+    accountEmail: 'البريد الإلكتروني',
+    accountPassword: 'كلمة المرور',
+    accountNewPassword: 'كلمة المرور (6 أحرف على الأقل)',
+    accountConfirm: 'أعد كتابة كلمة المرور',
+    accountBusy: 'لحظة…',
+    accountSendReset: 'أرسل رسالة إعادة التعيين',
+    accountForgot: 'نسيت كلمة المرور؟',
+    accountBack: 'العودة إلى تسجيل الدخول',
+    accountResetSent: 'إذا كان هناك حساب بهذا البريد، فستصلك رسالة لإعادة تعيين كلمة المرور. افتح الرابط، واختر كلمة مرور جديدة، ثم سجّل الدخول هنا. لن تتغير تسجيلاتك.',
+    accountEmailMissing: 'اكتب بريدك الإلكتروني.',
+    accountEmailBad: 'يبدو أن عنوان البريد غير صحيح.',
+    accountPasswordMissing: 'اكتب كلمة المرور.',
+    accountPasswordShort: 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.',
+    accountPasswordLong: 'يمكن أن تتكون كلمة المرور من 100 حرف على الأكثر.',
+    accountConfirmDifferent: 'كلمتا المرور غير متطابقتين.',
+    accountWrong: 'البريد أو كلمة المرور غير صحيحين.',
+    accountTaken: 'يوجد حساب بهذا البريد بالفعل. سجّل الدخول أو أعد تعيين كلمة المرور.',
+    accountTooMany: 'محاولات كثيرة جدًا. انتظر بضع دقائق ثم حاول مرة أخرى.',
+    accountOffline: 'لا يوجد اتصال بالإنترنت. تحقق منه وحاول مرة أخرى.',
+    accountFailed: 'لم ينجح ذلك. حاول مرة أخرى.',
+    accountCheckEmail: 'أرسلنا رسالة إلى {0}. اضغط الرابط فيها، ثم عد إلى هنا واضغط «لقد أكّدت». لا تجد الرسالة؟ تحقق من مجلد الرسائل غير المرغوب فيها.',
+    accountVerified: 'لقد أكّدت',
+    accountNotVerified: 'لم يُؤكَّد البريد بعد. اضغط الرابط في الرسالة أولًا.',
+    accountResend: 'أعد الإرسال',
+    accountResent: 'أُعيد الإرسال.',
+    accountUseOther: 'حساب آخر',
+    accountOtherOwner: 'التسجيلات على هذا الجهاز تخص حسابًا آخر ({0}). سجّل الدخول إليه لتراها.',
+    accountWho: 'تم تسجيل الدخول: {0}',
+    accountSignOut: 'تسجيل الخروج',
+    logTrendTitle: 'كيف يتغير الألم',
+    logTrendNone: 'سجّل مستوى الألم في تسجيل، وسيظهر الرسم البياني هنا.',
+    logTrendOneMore: 'سجّل مستوى الألم في يوم آخر لترى التغيّر.',
+    logTrendHint: 'الألم من 0 إلى 10 مع مرور الوقت. إذا كان في اليوم أكثر من تسجيل، يُؤخذ المتوسط.',
+    trendRest: 'الألم أثناء الراحة',
+    trendExercise: 'الألم أثناء التمارين',
+    trendChange: '{0} ← {1}',
+    logLoading: 'جارٍ تحميل التسجيلات…',
+    logEmpty: 'لا توجد تسجيلات بعد. اكتب أول تسجيل أعلاه: كل خطوة صغيرة مهمة.',
+    logLoadFailed: 'تعذّر تحميل التسجيلات. ربما يمنع المتصفح التخزين (مثلًا في وضع التصفح الخاص).',
+    logDelete: 'حذف',
+    logDeleteConfirm: 'هل تحذف هذا التسجيل؟ لا يمكن التراجع عن ذلك.',
+    logProblemDate: 'اختر تاريخًا.',
+    logProblemText: 'اكتب بضع كلمات عن يومك.',
+    logProblemTooLong: 'الحد الأقصى للأحرف: {0}.',
+    navLearn: 'الرياضة والصحة',
+    learnTitle: 'أساسيات الصحة الرياضية',
+    learnIntro: 'كيف تقلّل خطر الإصابة، وماذا تفعل في الدقائق والأيام الأولى إذا أُصبت رغم ذلك. معلومات عامة، وليست تشخيصًا. اضغط على موضوع لفتحه.',
+    logPainLabel: 'مستوى الألم (اختياري)',
+    logPainHint: '0 = لا ألم، 10 = أشد ألم يمكن تخيّله. اضغط الرقم المختار مرة أخرى لإزالته.',
+    painRestLabel: 'الألم أثناء الراحة (دون تمارين)',
+    painExerciseLabel: 'الألم أثناء التمارين',
+    painRestShown: 'أثناء الراحة {0}/10',
+    painExerciseShown: 'أثناء التمارين {0}/10',
+    logProblemPain: 'اختر مستوى ألم من 0 إلى 10.'
+  },
   zh: {
     title: '运动损伤急救助手',
     welcomeTitle: '先深呼吸，别着急',
@@ -2032,7 +2308,7 @@ function saveLang() {
   try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* storage blocked: the choice just is not remembered */ }
 }
 function t(key) { return T[lang][key]; }
-// Pick the current language from a {en, es, fr, ru, zh} object; English when
+// Pick the current language from a {en, es, fr, ru, ar, zh} object; English when
 // that language has no text for it.
 function L(text) { return text[lang] || text.en; }
 function $(id) { return document.getElementById(id); }
@@ -2047,8 +2323,13 @@ function fillList(listId, items) {
   });
 }
 
+function isRightToLeft() {
+  return lang === 'ar';
+}
+
 function renderStatic() {
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
+  document.documentElement.dir = isRightToLeft() ? 'rtl' : 'ltr';
   document.title = t('title');
   ['title', 'welcomeTitle', 'welcomeText', 'alertTitle', 'numbers', 'pickTitle', 'subTitle', 'questionsTitle', 'firstAidTitle', 'whereTitle', 'rehabTitle', 'comfortTitle', 'counselingTitle', 'disclaimer',
    'navHome', 'navAssess', 'navComfort', 'navCases', 'navHospitals', 'navLog', 'navLearn', 'learnTitle', 'learnIntro', 'cityTitle', 'cityIntro', 'cityLabel', 'citySearch', 'hospitalsTitle', 'hospitalsIntro', 'hospitalsEmergency',
@@ -2221,23 +2502,31 @@ function showView() {
 }
 
 // On phones not every section fits in the menu: bring the current one into
-// sight, and fade the right edge while more sections are hidden there.
+// sight, and fade the far edge while more sections are hidden there. The menu
+// starts on the left, or on the right in Arabic.
 function scrollToCurrentTab() {
   var tabs = $('tabs');
   var current = tabs.querySelector('[aria-current="page"]');
   if (current && current.dataset.view !== 'home') {
-    // The home tab covers the left edge, so the current one goes next to it.
-    var left = tabs.querySelector('[data-view="home"]').getBoundingClientRect().right + 6;
+    // The home tab covers the starting edge, so the current one goes next to it.
+    var homeBox = tabs.querySelector('[data-view="home"]').getBoundingClientRect();
     var tabsBox = tabs.getBoundingClientRect();
     var box = current.getBoundingClientRect();
-    if (box.left < left || box.right > tabsBox.right) tabs.scrollLeft += box.left - left;
+    if (isRightToLeft()) {
+      var right = homeBox.left - 6;
+      if (box.right > right || box.left < tabsBox.left) tabs.scrollLeft += box.right - right;
+    } else {
+      var left = homeBox.right + 6;
+      if (box.left < left || box.right > tabsBox.right) tabs.scrollLeft += box.left - left;
+    }
   }
   updateTabsFade();
 }
 
 function updateTabsFade() {
   var tabs = $('tabs');
-  tabs.classList.toggle('more-right', tabs.scrollLeft + tabs.clientWidth < tabs.scrollWidth - 2);
+  // Scrolling from the right gives negative scrollLeft, so use its size.
+  tabs.classList.toggle('more-end', Math.abs(tabs.scrollLeft) + tabs.clientWidth < tabs.scrollWidth - 2);
 }
 
 $('tabs').addEventListener('scroll', updateTabsFade);
@@ -2984,7 +3273,8 @@ function painTrendChart(points, width) {
   var totalDays = Math.max(1, daysBetween(points[0].date, points[points.length - 1].date));
   function x(date) { return left + daysBetween(points[0].date, date) / totalDays * (width - left - right); }
   function y(score) { return top + (1 - score / LOG_PAIN_MAX) * (height - top - bottom); }
-  var svg = svgElement('svg', {viewBox: '0 0 ' + width + ' ' + height, role: 'img', 'aria-labelledby': 'logTrendTitle'});
+  // Time runs left to right in every language, Arabic too, so the labels keep their places.
+  var svg = svgElement('svg', {viewBox: '0 0 ' + width + ' ' + height, role: 'img', 'aria-labelledby': 'logTrendTitle', direction: 'ltr'});
   [0, 5, 10].forEach(function (score) {
     svg.appendChild(svgElement('line', {class: 'grid', x1: left, x2: width - right, y1: y(score), y2: y(score)}));
     var label = svgElement('text', {class: 'axis-label', x: left - 8, y: y(score) + 4, 'text-anchor': 'end'});
