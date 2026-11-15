@@ -239,6 +239,10 @@ h1 a{color:var(--acc)}
 /* While the report is open it is the only thing in the log, and the only thing printed. */
 #view-log.reporting > section:not(#report){display:none}
 .report-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+#backupCard .plan-buttons{flex-wrap:wrap}
+#backupCard .plan-buttons>*{flex:1 1 180px;text-align:center}
+.backup-ask{background:var(--acc-soft);border-radius:4px;padding:12px;margin-top:12px}
+.backup-ask p{margin:0 0 10px}
 .report-actions button{width:auto}
 #reportSheet h2{margin:0}
 #reportSheet h3{margin:20px 0 8px;padding-top:12px;border-top:1px solid var(--line)}
@@ -660,6 +664,22 @@ h1 a{text-decoration:none}
     <p class="muted" id="logStatus" role="status"></p>
     <div id="logList"></div>
   </section>
+  <section class="card" id="backupCard">
+    <h2 id="backupTitle"></h2>
+    <p class="muted" id="backupIntro"></p>
+    <div class="plan-buttons">
+      <button type="button" class="primary" id="backupMake"></button>
+      <label class="secondary file-btn"><input type="file" accept=".json,application/json" id="backupFile" class="visually-hidden"><span id="backupRestore"></span></label>
+    </div>
+    <p class="muted" id="backupEmpty" role="status" hidden></p>
+    <p class="success" id="backupMade" role="status" hidden></p>
+    <div class="backup-ask" id="backupAsk" hidden>
+      <p id="backupAskText"></p>
+      <div class="plan-buttons"><button type="button" class="primary" id="backupConfirmYes"></button><button type="button" class="secondary" id="backupCancel"></button></div>
+    </div>
+    <p class="success" id="backupRestored" role="status" hidden></p>
+    <p class="error" id="backupProblem" role="alert" hidden></p>
+  </section>
 </div>
 
 <div class="view" id="view-cases" hidden>
@@ -699,6 +719,7 @@ h1 a{text-decoration:none}
 <script src="city-hospitals.js"></script>
 <script src="rehab-plan.js"></script>
 <script src="report.js"></script>
+<script src="backup.js"></script>
 <script src="account.js"></script>
 <script src="install.js"></script>
 <script>
@@ -989,7 +1010,19 @@ var T = {
     reportExerciseDone: 'done on {0} of {1} planned days',
     reportExercisesNone: 'No exercises in the plan.',
     reportRecords: 'Daily records',
-    reportRecordsNone: 'No daily records.'
+    reportRecordsNone: 'No daily records.',
+    backupTitle: 'Backup and restore',
+    backupIntro: 'Your records, photos and rehab plan are kept only in this browser. Download a backup file to get them back on a new phone or after clearing the browser. The file holds your photos and notes, so keep it to yourself.',
+    backupMake: 'Download backup',
+    backupEmpty: 'There is nothing to back up yet.',
+    backupMade: 'Backup saved to your downloads.',
+    backupRestore: 'Restore from a backup',
+    backupBad: 'This is not a backup file from this site, or it is damaged. Nothing was changed.',
+    backupConfirm: 'Backup date: {0}. Records: {1}. Exercises: {2}. Add them to what is here? Nothing here is deleted, and nothing is added twice.',
+    backupConfirmYes: 'Restore',
+    backupCancel: 'Cancel',
+    backupRestored: 'Restored. Records added: {0}. Exercises added: {1}. Already here, so not added again: {2}.',
+    backupFailed: 'Restoring did not finish. Try again: what was already added will not be added twice.'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -1278,7 +1311,19 @@ var T = {
     reportExerciseDone: 'hecho {0} de {1} días previstos',
     reportExercisesNone: 'No hay ejercicios en el plan.',
     reportRecords: 'Registros diarios',
-    reportRecordsNone: 'No hay registros diarios.'
+    reportRecordsNone: 'No hay registros diarios.',
+    backupTitle: 'Copia de seguridad',
+    backupIntro: 'Tus registros, fotos y plan de rehabilitación se guardan solo en este navegador. Descarga una copia para recuperarlos en un móvil nuevo o después de borrar los datos del navegador. El archivo contiene tus fotos y notas, así que guárdalo para ti.',
+    backupMake: 'Descargar copia',
+    backupEmpty: 'Todavía no hay nada que copiar.',
+    backupMade: 'Copia guardada en tus descargas.',
+    backupRestore: 'Restaurar desde una copia',
+    backupBad: 'Este no es un archivo de copia de este sitio, o está dañado. No se cambió nada.',
+    backupConfirm: 'Fecha de la copia: {0}. Registros: {1}. Ejercicios: {2}. ¿Añadirlos a lo que hay aquí? No se borra nada de aquí y nada se añade dos veces.',
+    backupConfirmYes: 'Restaurar',
+    backupCancel: 'Cancelar',
+    backupRestored: 'Restaurado. Registros añadidos: {0}. Ejercicios añadidos: {1}. Ya estaban aquí y no se añadieron otra vez: {2}.',
+    backupFailed: 'La restauración no terminó. Inténtalo de nuevo: lo que ya se añadió no se añadirá dos veces.'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -1567,7 +1612,19 @@ var T = {
     reportExerciseDone: 'fait {0} jours sur {1} prévus',
     reportExercisesNone: 'Aucun exercice dans le programme.',
     reportRecords: 'Notes quotidiennes',
-    reportRecordsNone: 'Aucune note quotidienne.'
+    reportRecordsNone: 'Aucune note quotidienne.',
+    backupTitle: 'Sauvegarde et restauration',
+    backupIntro: 'Tes notes, tes photos et ton plan de rééducation sont gardés seulement dans ce navigateur. Télécharge une sauvegarde pour les retrouver sur un nouveau téléphone ou après avoir effacé les données du navigateur. Le fichier contient tes photos et tes notes : garde-le pour toi.',
+    backupMake: 'Télécharger la sauvegarde',
+    backupEmpty: 'Il n’y a encore rien à sauvegarder.',
+    backupMade: 'Sauvegarde enregistrée dans tes téléchargements.',
+    backupRestore: 'Restaurer une sauvegarde',
+    backupBad: 'Ce n’est pas un fichier de sauvegarde de ce site, ou il est abîmé. Rien n’a été modifié.',
+    backupConfirm: 'Date de la sauvegarde : {0}. Notes : {1}. Exercices : {2}. Les ajouter à ce qui est ici ? Rien d’ici n’est effacé, et rien n’est ajouté deux fois.',
+    backupConfirmYes: 'Restaurer',
+    backupCancel: 'Annuler',
+    backupRestored: 'Restauré. Notes ajoutées : {0}. Exercices ajoutés : {1}. Déjà là, donc pas ajoutés de nouveau : {2}.',
+    backupFailed: 'La restauration n’a pas abouti. Réessaie : ce qui a déjà été ajouté ne le sera pas deux fois.'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -1856,7 +1913,19 @@ var T = {
     reportExerciseDone: 'выполнено дней: {0} из {1} запланированных',
     reportExercisesNone: 'В плане нет упражнений.',
     reportRecords: 'Записи по дням',
-    reportRecordsNone: 'Записей по дням нет.'
+    reportRecordsNone: 'Записей по дням нет.',
+    backupTitle: 'Резервная копия',
+    backupIntro: 'Твои записи, фото и план реабилитации хранятся только в этом браузере. Скачай резервную копию, чтобы вернуть их на новом телефоне или после очистки данных браузера. В файле есть твои фото и записи, поэтому никому его не передавай.',
+    backupMake: 'Скачать копию',
+    backupEmpty: 'Пока нечего сохранять.',
+    backupMade: 'Копия сохранена в загрузках.',
+    backupRestore: 'Восстановить из копии',
+    backupBad: 'Это не файл резервной копии этого сайта, или он повреждён. Ничего не изменено.',
+    backupConfirm: 'Дата копии: {0}. Записей в ней: {1}, упражнений: {2}. Добавить их к тому, что уже здесь? Здесь ничего не удалится, и ничего не добавится дважды.',
+    backupConfirmYes: 'Восстановить',
+    backupCancel: 'Отмена',
+    backupRestored: 'Восстановлено. Добавлено записей: {0}, упражнений: {1}. Уже были здесь и не добавлены снова: {2}.',
+    backupFailed: 'Восстановление не завершилось. Попробуй ещё раз: то, что уже добавлено, не добавится дважды.'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -2146,7 +2215,19 @@ var T = {
     reportExerciseDone: 'الأيام المنجزة: {0} من {1}',
     reportExercisesNone: 'لا توجد تمارين في الخطة.',
     reportRecords: 'التسجيلات اليومية',
-    reportRecordsNone: 'لا توجد تسجيلات يومية.'
+    reportRecordsNone: 'لا توجد تسجيلات يومية.',
+    backupTitle: 'النسخة الاحتياطية',
+    backupIntro: 'تُحفظ تسجيلاتك وصورك وخطة إعادة التأهيل في هذا المتصفح فقط. نزّل نسخة احتياطية لتستعيدها على هاتف جديد أو بعد مسح بيانات المتصفح. يحتوي الملف على صورك وملاحظاتك، فاحتفظ به لنفسك.',
+    backupMake: 'تنزيل نسخة احتياطية',
+    backupEmpty: 'لا يوجد شيء لحفظه بعد.',
+    backupMade: 'حُفظت النسخة في التنزيلات.',
+    backupRestore: 'الاستعادة من نسخة احتياطية',
+    backupBad: 'هذا ليس ملف نسخة احتياطية من هذا الموقع، أو أنه تالف. لم يتغير شيء.',
+    backupConfirm: 'تاريخ النسخة: {0}. فيها تسجيلات: {1}، وتمارين: {2}. هل تضيفها إلى ما هنا؟ لن يُحذف شيء مما هنا، ولن يُضاف شيء مرتين.',
+    backupConfirmYes: 'استعادة',
+    backupCancel: 'إلغاء',
+    backupRestored: 'تمت الاستعادة. أُضيفت تسجيلات: {0}، وتمارين: {1}. كانت موجودة هنا ولم تُضف مرة أخرى: {2}.',
+    backupFailed: 'لم تكتمل الاستعادة. حاول مرة أخرى: ما أُضيف بالفعل لن يُضاف مرتين.'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -2433,7 +2514,19 @@ var T = {
     reportExerciseDone: '计划 {1} 天，做了 {0} 天',
     reportExercisesNone: '计划里还没有练习。',
     reportRecords: '每天的记录',
-    reportRecordsNone: '没有每天的记录。'
+    reportRecordsNone: '没有每天的记录。',
+    backupTitle: '备份与恢复',
+    backupIntro: '你的记录、照片和康复计划只保存在这个浏览器里。下载一个备份文件，换手机或清除浏览器数据后也能找回来。文件里有你的照片和记录，请自己保管好，不要随便发给别人。',
+    backupMake: '下载备份',
+    backupEmpty: '还没有可以备份的内容。',
+    backupMade: '备份已保存到下载文件夹。',
+    backupRestore: '从备份恢复',
+    backupBad: '这不是本网站的备份文件，或者文件已损坏。现有内容没有任何改动。',
+    backupConfirm: '备份日期：{0}。里面有 {1} 条记录、{2} 个练习。要加到现在的内容里吗？现有的不会删除，也不会重复添加。',
+    backupConfirmYes: '恢复',
+    backupCancel: '取消',
+    backupRestored: '恢复完成：加入了 {0} 条记录、{1} 个练习。另有 {2} 项已经有了，没有重复添加。',
+    backupFailed: '恢复没有完成，请再试一次：已经加进来的不会重复添加。'
   }
 };
 
@@ -3402,6 +3495,7 @@ function renderLog() {
   if (log.status === 'ready') log.entries.forEach(function (entry) { list.appendChild(logEntryCard(entry)); });
   renderPainTrend();
   renderReportCard();
+  renderBackupCard();
 }
 
 var TREND_CLASSES = {painRest: 'trend-rest', painExercise: 'trend-exercise'};
@@ -3598,6 +3692,108 @@ $('reportMake').addEventListener('click', function () {
   }).then(function () {
     renderReportCard();
     if (report.open) window.scrollTo(0, 0);
+  });
+});
+
+// `pending` is a backup file read but not restored yet; `problem` names the
+// text of what went wrong.
+var backup = {pending: null, made: false, empty: false, restored: null, problem: null, busy: false};
+
+function renderBackupCard() {
+  ['backupTitle', 'backupIntro', 'backupMake', 'backupRestore', 'backupEmpty', 'backupMade', 'backupConfirmYes', 'backupCancel']
+    .forEach(function (id) { $(id).textContent = t(id); });
+  $('backupEmpty').hidden = !backup.empty;
+  $('backupMade').hidden = !backup.made;
+  $('backupAsk').hidden = !backup.pending;
+  if (backup.pending) {
+    $('backupAskText').textContent = t('backupConfirm')
+      .replace('{0}', formatLogDate(logDateString(new Date(backup.pending.createdAt))))
+      .replace('{1}', backup.pending.entries.length)
+      .replace('{2}', backup.pending.items.length);
+  }
+  $('backupConfirmYes').disabled = backup.busy;
+  $('backupRestored').hidden = !backup.restored;
+  if (backup.restored) {
+    $('backupRestored').textContent = t('backupRestored')
+      .replace('{0}', backup.restored.entries).replace('{1}', backup.restored.items).replace('{2}', backup.restored.skipped);
+  }
+  $('backupProblem').hidden = !backup.problem;
+  $('backupProblem').textContent = backup.problem ? t(backup.problem) : '';
+}
+
+function resetBackupMessages() {
+  backup.made = false;
+  backup.empty = false;
+  backup.restored = null;
+  backup.problem = null;
+}
+
+function readAllRecords() {
+  return Promise.all([logStore.all(), planStore.all(), planStore.allDone()]);
+}
+
+$('backupMake').addEventListener('click', function () {
+  resetBackupMessages();
+  backup.pending = null;
+  readAllRecords().then(function (results) {
+    if (results[0].length === 0 && results[1].length === 0) {
+      backup.empty = true;
+      return;
+    }
+    var text = JSON.stringify(makeBackup(results[0], results[1], results[2], new Date()));
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(new Blob([text], {type: 'application/json'}));
+    link.download = backupFileName(logDateString(new Date()));
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(function () { URL.revokeObjectURL(link.href); }, 1000);
+    backup.made = true;
+  }).catch(function () {
+    backup.problem = 'logLoadFailed';
+  }).then(renderBackupCard);
+});
+
+$('backupFile').addEventListener('change', function (e) {
+  var file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  resetBackupMessages();
+  file.text().then(function (text) {
+    backup.pending = readBackup(text);
+    if (!backup.pending) backup.problem = 'backupBad';
+  }).catch(function () {
+    backup.pending = null;
+    backup.problem = 'backupBad';
+  }).then(renderBackupCard);
+});
+
+$('backupCancel').addEventListener('click', function () {
+  backup.pending = null;
+  renderBackupCard();
+});
+
+// Exercises and ticks go in first, then records, each in one transaction.
+$('backupConfirmYes').addEventListener('click', function () {
+  backup.busy = true;
+  renderBackupCard();
+  readAllRecords().then(function (results) {
+    var merge = mergeBackup(backup.pending, {entries: results[0], items: results[1]});
+    return planStore.restore(merge.items, merge.done).then(function () {
+      return logStore.addAll(merge.entries);
+    }).then(function () {
+      backup.restored = {
+        entries: merge.entries.length,
+        items: merge.items.filter(function (pair) { return pair.existingId === null; }).length,
+        skipped: merge.skipped
+      };
+      backup.pending = null;
+    });
+  }).catch(function () {
+    backup.problem = 'backupFailed';
+  }).then(function () {
+    backup.busy = false;
+    return Promise.all([loadLog(), loadPlan()]);
   });
 });
 

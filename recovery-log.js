@@ -125,5 +125,13 @@ function logRequest(mode, makeRequest) {
 var logStore = {
   all: function () { return logRequest('readonly', function (store) { return store.getAll(); }); },
   add: function (entry) { return logRequest('readwrite', function (store) { return store.add(entry); }); },
+  // Saves several entries in one transaction: all of them, or none.
+  addAll: function (entries) {
+    return logRequest('readwrite', function (store) {
+      var request = null;
+      entries.forEach(function (entry) { request = store.add(entry); });
+      return request || store.count();
+    });
+  },
   remove: function (id) { return logRequest('readwrite', function (store) { return store.delete(id); }); }
 };

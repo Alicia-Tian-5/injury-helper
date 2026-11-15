@@ -198,6 +198,43 @@ var planStore = {
       return request;
     });
   },
+  // Restores exercises and ticks from mergeBackup in one transaction. A new
+  // exercise gets a new id here, so its ticks are moved to that id.
+  restore: function (pairs, marks) {
+    return openPlanDatabase().then(function (database) {
+      return new Promise(function (resolve, reject) {
+        var transaction = database.transaction(['items', 'done'], 'readwrite');
+        var items = transaction.objectStore('items');
+        var done = transaction.objectStore('done');
+        var newIds = {};
+        function addMarks() {
+          marks.forEach(function (mark) {
+            var id = newIds[JSON.stringify(mark.itemId)];
+            done.put({key: doneKey(id, mark.date), itemId: id, date: mark.date});
+          });
+        }
+        var waiting = pairs.length;
+        if (waiting === 0) addMarks();
+        pairs.forEach(function (pair) {
+          var backupId = JSON.stringify(pair.item.id);
+          if (pair.existingId !== null) {
+            newIds[backupId] = pair.existingId;
+            if (--waiting === 0) addMarks();
+            return;
+          }
+          var copy = Object.assign({}, pair.item);
+          delete copy.id;
+          items.add(copy).onsuccess = function (event) {
+            newIds[backupId] = event.target.result;
+            if (--waiting === 0) addMarks();
+          };
+        });
+        transaction.oncomplete = function () { database.close(); resolve(); };
+        transaction.onerror = function () { database.close(); reject(transaction.error); };
+        transaction.onabort = function () { database.close(); reject(transaction.error); };
+      });
+    });
+  },
   allDone: function () {
     return planRequest('done', 'readonly', function (store) { return store.getAll(); });
   },

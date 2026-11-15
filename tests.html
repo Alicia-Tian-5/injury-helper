@@ -18,6 +18,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="recovery-log.js"></script>
 <script src="rehab-plan.js"></script>
 <script src="report.js"></script>
+<script src="backup.js"></script>
 <script src="knowledge.js"></script>
 <script src="city-hospitals.js"></script>
 <script src="account.js"></script>
@@ -324,6 +325,58 @@ test('report: starts at the first exercise when that is earlier than any record,
   equal(report.from, '2026-10-30');
   equal(Object.keys(report.pain).length, 0);
   equal(recoveryReport([], [], [], '2026-11-14'), null);
+});
+// A small log and plan, as the stores give them back, for the backup tests.
+function backupSample() {
+  var item = planItem({name: 'Bridges'});
+  item.id = 4;
+  return {
+    entries: [
+      {id: 1, date: '2026-11-02', text: 'Swollen', painRest: 6, photo: 'data:image/jpeg;base64,x', createdAt: 1},  // saved before painExercise existed
+      {id: 2, date: '2026-11-05', text: 'Better', painRest: 3, painExercise: 4, photo: null, createdAt: 2}
+    ],
+    items: [item],
+    marks: doneMarks(4, ['2026-11-09', '2026-11-10'])
+  };
+}
+test('backup: a backup file reads back with every record, photo, exercise and tick', function () {
+  var sample = backupSample();
+  var text = JSON.stringify(makeBackup(sample.entries, sample.items, sample.marks, new Date(Date.UTC(2026, 10, 14))));
+  var backup = readBackup(text);
+  equal(backup.entries.length, 2);
+  equal(backup.entries[0].photo, 'data:image/jpeg;base64,x');
+  equal(backup.entries[0].painExercise, null);
+  equal(backup.items[0].name, 'Bridges');
+  equal(backup.done.map(function (mark) { return mark.date; }).join(), '2026-11-09,2026-11-10');
+  equal(backupFileName('2026-11-14'), 'injury-helper-backup-2026-11-14.json');
+});
+test('backup: another file, or a damaged backup, is refused as a whole', function () {
+  var sample = backupSample();
+  function damaged(change) {
+    var backup = makeBackup(sample.entries, sample.items, sample.marks, new Date(1));
+    change(backup);
+    return readBackup(JSON.stringify(backup));
+  }
+  equal(readBackup('not json'), null);
+  equal(readBackup('{"entries": []}'), null);
+  equal(readBackup('null'), null);
+  equal(damaged(function (backup) { backup.entries[1].painRest = 11; }), null);
+  equal(damaged(function (backup) { backup.entries[0].photo = 'https://example.com/a.jpg'; }), null);
+  equal(damaged(function (backup) { backup.items[0].days = []; }), null);
+  equal(damaged(function (backup) { backup.done[0].itemId = 99; }), null);  // a tick for an exercise not in the file
+  equal(damaged(function () {}) !== null, true);
+});
+test('backup: restoring adds only what is not here yet and keeps everything already here', function () {
+  var sample = backupSample();
+  var backup = readBackup(JSON.stringify(makeBackup(sample.entries, sample.items, sample.marks, new Date(1))));
+  var sameExercise = Object.assign({}, sample.items[0], {id: 30});
+  var current = {entries: [Object.assign({}, sample.entries[1], {id: 20})], items: [sameExercise]};
+  var merge = mergeBackup(backup, current);
+  equal(merge.entries.map(function (entry) { return entry.text; }).join(), 'Swollen');
+  equal(merge.items[0].existingId, 30);  // its ticks go to the exercise already here
+  equal(merge.skipped, 2);
+  var empty = mergeBackup(backup, {entries: [], items: []});
+  equal(empty.entries.length + ' ' + empty.items[0].existingId + ' ' + empty.skipped, '2 null 0');
 });
 test('chat: messages about suicide or self-harm show the hotlines, in both languages', function () {
   equal(isCrisisMessage('我现在不想活了'), true);
@@ -837,7 +890,37 @@ var rehabReplaceChecked = planStorageChecked.then(function () {
 }).catch(function (e) {
   results.push({name: 'rehab plan: stages can be stored in this browser', ok: false, msg: String(e && e.message || e)});
 });
-Promise.all([rulesChecked, testSpanishSwitch(), testAccountLock(), logStorageChecked, planStorageChecked, rehabReplaceChecked, offlineChecked]).then(showResults);
+// Restores a test exercise and its tick into this browser, twice, and then
+// removes them again. The second restore must add nothing.
+var restoreChecked = rehabReplaceChecked.then(function () {
+  var item = planItem({name: 'restored exercise', start: '2000-01-01'});
+  item.id = 'from-backup';
+  var backup = {entries: [{date: '2000-01-01', text: 'restored record', painRest: null, painExercise: null, photo: null, createdAt: 5}],
+    items: [item], done: [{itemId: 'from-backup', date: '2000-01-03'}]};
+  function restoreOnce() {
+    return Promise.all([logStore.all(), planStore.all()]).then(function (current) {
+      var merge = mergeBackup(backup, {entries: current[0], items: current[1]});
+      return planStore.restore(merge.items, merge.done).then(function () { return logStore.addAll(merge.entries); });
+    });
+  }
+  return restoreOnce().then(restoreOnce).then(function () {
+    return Promise.all([logStore.all(), planStore.all(), planStore.doneOn('2000-01-03')]);
+  }).then(function (results) {
+    var entries = results[0].filter(function (entry) { return entry.text === 'restored record'; });
+    var items = results[1].filter(function (candidate) { return candidate.name === 'restored exercise'; });
+    test('backup: a restore saves the records, exercises and ticks here, and restoring again adds nothing', function () {
+      equal(entries.length, 1);
+      equal(items.length, 1);
+      equal(results[2].indexOf(items[0] && items[0].id) >= 0, true);  // the tick moved to the new id
+    });
+    return Promise.all(entries.map(function (entry) { return logStore.remove(entry.id); }).concat(items.map(function (found) {
+      return planStore.setDone(found.id, '2000-01-03', false).then(function () { return planStore.remove(found.id); });
+    })));
+  });
+}).catch(function (e) {
+  results.push({name: 'backup: a restore can be saved in this browser', ok: false, msg: String(e && e.message || e)});
+});
+Promise.all([rulesChecked, testSpanishSwitch(), testAccountLock(), logStorageChecked, planStorageChecked, rehabReplaceChecked, restoreChecked, offlineChecked]).then(showResults);
 </script>
 </body>
 </html>
