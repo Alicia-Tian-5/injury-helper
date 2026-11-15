@@ -870,6 +870,15 @@ test('account: registering needs a valid email, 6+ characters and the same passw
   equal(fields({email: 'a@b.co', password: '123', confirm: ''}, 'signIn'), '');
   equal(fields({email: 'a@b.co', password: '', confirm: ''}, 'reset'), '');
 });
+test('account: a new password cannot be only spaces, but spaces inside are fine', function () {
+  function fields(form, mode) {
+    return accountProblems(form, mode).map(function (p) { return p.field + ':' + p.problem; }).join();
+  }
+  equal(fields({email: 'a@b.co', password: '      ', confirm: '      '}, 'signUp'), 'password:onlySpaces');
+  equal(fields({email: 'a@b.co', password: '   ', confirm: '   '}, 'signUp'), 'password:onlySpaces');
+  equal(fields({email: 'a@b.co', password: 'my knee 2026', confirm: 'my knee 2026'}, 'signUp'), '');
+  equal(fields({email: 'a@b.co', password: '      ', confirm: ''}, 'signIn'), '');  // an old password still signs in
+});
 test('account: a wrong password and an unknown email give the same message', function () {
   equal(accountErrorKey('auth/invalid-credential'), 'accountWrong');
   equal(accountErrorKey('auth/user-not-found'), 'accountWrong');

@@ -41,6 +41,8 @@ function accountProblems(form, mode) {
   if (mode === 'reset') return problems;
   if (form.password === '') problems.push({field: 'password', problem: 'missing'});
   else if (form.password.length > ACCOUNT_PASSWORD_MAX) problems.push({field: 'password', problem: 'tooLong'});
+  // Only when registering, so anyone who already has such a password can still sign in.
+  else if (mode === 'signUp' && form.password.trim() === '') problems.push({field: 'password', problem: 'onlySpaces'});
   else if (mode === 'signUp' && form.password.length < ACCOUNT_PASSWORD_MIN) problems.push({field: 'password', problem: 'tooShort'});
   if (mode === 'signUp' && form.password !== form.confirm) problems.push({field: 'confirm', problem: 'different'});
   return problems;
