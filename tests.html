@@ -273,6 +273,22 @@ test('rehab plan: an ankle sprain 4 days ago skips the finished stage and dates 
   equal(untimedRehabStages(ankle).map(function (stage) { return stage.when.en; }).join(), 'Back to sport');
   equal(rehabStageOf(planItem({})), null);
 });
+test('rehab plan: the injury date must be a real date, today or earlier', function () {
+  equal(isValidInjuryDate('2026-11-15', '2026-11-15'), true);
+  equal(isValidInjuryDate('2026-11-01', '2026-11-15'), true);
+  equal(isValidInjuryDate('2026-11-16', '2026-11-15'), false);  // tomorrow
+  equal(isValidInjuryDate('2027-01-01', '2026-12-31'), false);  // next year
+  equal(isValidInjuryDate('', '2026-11-15'), false);
+  equal(isValidInjuryDate('15/11/2026', '2026-11-15'), false);
+});
+test('plan: the reminder time falls back to 8 pm when empty or not a real time', function () {
+  equal(reminderTime('07:30'), '07:30');
+  equal(reminderTime('23:59'), '23:59');
+  equal(reminderTime(''), '20:00');
+  equal(reminderTime('24:00'), '20:00');
+  equal(reminderTime('7:30'), '20:00');
+  equal(reminderTime('12:60'), '20:00');
+});
 test('plan: the calendar file repeats each exercise on its days at the chosen time, until the end date', function () {
   var item = planItem({name: 'Heel raises, slow; 15', days: [2, 4], start: '2026-11-09', end: '2026-11-30'});
   item.id = 7;

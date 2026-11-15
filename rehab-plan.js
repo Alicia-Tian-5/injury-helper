@@ -132,6 +132,20 @@ function firstDueDay(item) {
   return null;
 }
 
+// Whether an injury date (YYYY-MM-DD) can start the rehab plan: a real
+// date, and not after today.
+function isValidInjuryDate(dateString, today) {
+  return DATE_PATTERN.test(dateString) && dateString <= today;
+}
+
+var DEFAULT_REMINDER_TIME = '20:00';
+
+// The reminder time from the time box (HH:MM, 24-hour), or 8 pm when it is
+// empty or not a real time.
+function reminderTime(value) {
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(value) ? value : DEFAULT_REMINDER_TIME;
+}
+
 // A calendar file with one repeating event per exercise, at `time` (HH:MM)
 // local time on the days it is due, with an alert when it starts.
 // `title` is the event title before the exercise name, in the page's language.

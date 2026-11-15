@@ -4170,7 +4170,7 @@ $('rehabPlanBtn').addEventListener('click', function () {
   var date = $('rehabPlanDate').value;
   var today = logDateString(new Date());
   rehabToPlan.added = null;
-  rehabToPlan.problem = !DATE_PATTERN.test(date) || date > today ? 'rehabPlanBadDate' : null;
+  rehabToPlan.problem = isValidInjuryDate(date, today) ? null : 'rehabPlanBadDate';
   var items = rehabToPlan.problem ? [] : rehabPlanItems(currentInjury, date, today, new Date());
   if (!rehabToPlan.problem && items.length === 0) rehabToPlan.problem = 'rehabPlanAllPast';
   if (rehabToPlan.problem) { renderRehabToPlan(); return; }
@@ -5167,7 +5167,7 @@ $('planList').addEventListener('click', function (e) {
 
 // Downloads a calendar file; phones and computers offer to add it to their calendar.
 $('calendarBtn').addEventListener('click', function () {
-  var time = /^\d{2}:\d{2}$/.test($('calendarTime').value) ? $('calendarTime').value : '20:00';
+  var time = reminderTime($('calendarTime').value);
   var active = plan.items.filter(function (item) { return !isPlanItemOver(item, plan.today); });
   var named = active.map(function (item) { return Object.assign({}, item, {name: planItemName(item)}); });
   var file = new Blob([planCalendar(named, time, t('calendarEventTitle'), new Date())], {type: 'text/calendar'});
