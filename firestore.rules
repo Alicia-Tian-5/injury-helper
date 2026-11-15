@@ -12,6 +12,49 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Group chat: one room per injury. Only signed-in people with a verified
+    // email can read or post, always under their own account; no one can
+    // change or delete a message from the website. Limits must match
+    // group-chat.js.
+    match /rooms/{room}/messages/{messageId} {
+      allow read: if isVerified() && isInjury(room);
+      allow create: if isVerified() && isInjury(room) && isValidMessage(request.resource.data);
+      allow update, delete: if false;
+    }
+
+    // Reports of harmful messages: anyone signed in can file one, and only
+    // the site owner reads them, in the Firebase console.
+    match /reports/{reportId} {
+      allow create: if isVerified() && isValidReport(request.resource.data);
+      allow read, update, delete: if false;
+    }
+
+    function isVerified() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isInjury(id) {
+      return id in ['ankle', 'patella', 'sprain', 'strain', 'dislocation', 'fracture', 'concussion', 'bruise', 'wound', 'cramp', 'overuse', 'heat'];
+    }
+
+    function isValidMessage(m) {
+      return m.keys().hasOnly(['uid', 'nickname', 'text', 'createdAt'])
+        && m.keys().hasAll(['uid', 'nickname', 'text', 'createdAt'])
+        && m.uid == request.auth.uid
+        && isText(m.nickname, 1, 20)
+        && isText(m.text, 1, 500)
+        && m.createdAt == request.time;
+    }
+
+    function isValidReport(r) {
+      return r.keys().hasOnly(['room', 'messageId', 'reporter', 'createdAt'])
+        && r.keys().hasAll(['room', 'messageId', 'reporter', 'createdAt'])
+        && isInjury(r.room)
+        && isText(r.messageId, 1, 100)
+        && r.reporter == request.auth.uid
+        && r.createdAt == request.time;
+    }
+
     function isText(value, min, max) {
       return value is string && value.size() >= min && value.size() <= max;
     }
@@ -19,7 +62,7 @@ service cloud.firestore {
     function isValidCase(c) {
       return c.keys().hasOnly(['injury', 'lang', 'nickname', 'story', 'treatment', 'recovery', 'lesson', 'createdAt'])
         && c.keys().hasAll(['injury', 'lang', 'nickname', 'story', 'treatment', 'recovery', 'lesson', 'createdAt'])
-        && c.injury in ['ankle', 'patella', 'sprain', 'strain', 'dislocation', 'fracture', 'concussion', 'bruise', 'wound', 'cramp', 'overuse', 'heat']
+        && isInjury(c.injury)
         && c.lang in ['zh', 'en']
         && isText(c.nickname, 0, 30)
         && isText(c.story, 10, 1000)

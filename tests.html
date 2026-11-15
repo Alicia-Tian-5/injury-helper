@@ -19,6 +19,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="rehab-plan.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
+<script src="group-chat.js"></script>
 <script src="knowledge.js"></script>
 <script src="city-hospitals.js"></script>
 <script src="account.js"></script>
@@ -377,6 +378,27 @@ test('backup: restoring adds only what is not here yet and keeps everything alre
   equal(merge.skipped, 2);
   var empty = mergeBackup(backup, {entries: [], items: []});
   equal(empty.entries.length + ' ' + empty.items[0].existingId + ' ' + empty.skipped, '2 null 0');
+});
+test('group chat: a nickname is needed, spaces are tidied, and it has a length limit', function () {
+  equal(cleanNickname('  Little   Deer  '), 'Little Deer');
+  equal(nicknameProblem(cleanNickname('    ')), 'missing');
+  equal(nicknameProblem('x'.repeat(NICKNAME_MAX)), null);
+  equal(nicknameProblem('x'.repeat(NICKNAME_MAX + 1)), 'tooLong');
+});
+test('group chat: an empty or too long message is not sent', function () {
+  equal(groupMessageProblem(''), 'missing');
+  equal(groupMessageProblem('Anyone else sprain an ankle?'), null);
+  equal(groupMessageProblem('x'.repeat(GROUP_TEXT_MAX)), null);
+  equal(groupMessageProblem('x'.repeat(GROUP_TEXT_MAX + 1)), 'tooLong');
+});
+test('group chat: messages show oldest first, one still sending last, and reported ones are hidden', function () {
+  var messages = [
+    {id: 'c', text: 'third', createdAt: 300},
+    {id: 'sending', text: 'mine, on its way', createdAt: null},
+    {id: 'a', text: 'first', createdAt: 100},
+    {id: 'b', text: 'reported', createdAt: 200}
+  ];
+  equal(visibleMessages(messages, ['b']).map(function (m) { return m.id; }).join(), 'a,c,sending');
 });
 test('chat: messages about suicide or self-harm show the hotlines, in both languages', function () {
   equal(isCrisisMessage('我现在不想活了'), true);
@@ -737,6 +759,12 @@ var rulesChecked = fetch('firestore.rules').then(function (r) { return r.text();
     Object.keys(CASE_FIELDS).forEach(function (field) {
       var limits = CASE_FIELDS[field];
       var expected = 'isText(c.' + field + ', ' + (limits.min || 0) + ', ' + limits.max + ')';
+      if (rules.indexOf(expected) === -1) throw new Error('rules should contain ' + expected);
+    });
+  });
+  test('rules: the group chat uses the same limits as the page, and only for verified accounts', function () {
+    ['isText(m.nickname, 1, ' + NICKNAME_MAX + ')', 'isText(m.text, 1, ' + GROUP_TEXT_MAX + ')', 'm.uid == request.auth.uid',
+      'allow read: if isVerified() && isInjury(room)', 'request.auth.token.email_verified == true'].forEach(function (expected) {
       if (rules.indexOf(expected) === -1) throw new Error('rules should contain ' + expected);
     });
   });

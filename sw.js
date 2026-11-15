@@ -16,6 +16,7 @@ const PAGE_FILES = [
   'rehab-plan.js',
   'report.js',
   'backup.js',
+  'group-chat.js',
   'account.js',
   'install.js',
   'knowledge.js',
@@ -23,6 +24,7 @@ const PAGE_FILES = [
   'firebase-app.js',
   'firebase-cases.js',
   'firebase-account.js',
+  'firebase-chat.js',
   'manifest.webmanifest',
   'icons/icon-192.png',
   'icons/apple-touch-icon.png'

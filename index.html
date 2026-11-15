@@ -311,6 +311,15 @@ h1 a{text-decoration:none}
 .chat-form textarea{flex:1;font:inherit;color:var(--text);background:var(--card);border:1.5px solid var(--line);border-radius:4px;padding:10px 12px;resize:vertical}
 .chat-form textarea:focus{outline:2px solid var(--acc);border-color:var(--acc)}
 .chat-form .primary{width:auto;padding:12px 18px;font-size:17px}
+.group-log{max-height:420px;overflow-y:auto;padding:4px 2px}
+.bubble.other{align-self:flex-start;background:var(--tint);color:var(--text);border:1px solid var(--line);border-end-start-radius:2px}
+.bubble-meta{font-size:13px;opacity:.8;margin-bottom:2px}
+.bubble .link-btn{font-size:13px;padding:4px 0 0;margin:0;display:block}
+.group-name{display:flex;gap:8px;align-items:flex-end}
+.group-name .field{flex:1;margin:0}
+.group-name .primary{width:auto}
+.group-you{margin:8px 0}
+.group-you .link-btn{margin:0}
 .chat-crisis{background:var(--red-soft);border:1.5px solid var(--red);border-radius:6px;padding:12px;color:var(--text);margin-top:10px}
 .chat-crisis a{color:var(--red);font-weight:700}
 .start{text-decoration:none}
@@ -534,6 +543,26 @@ h1 a{text-decoration:none}
       <div id="counselingList"></div>
     </div>
   </section>
+  <section class="card group-chat" id="groupCard">
+    <h2 id="groupTitle"></h2>
+    <p class="muted" id="groupIntro"></p>
+    <label class="field"><span id="groupRoomLabel"></span><select id="groupRoom"></select></label>
+    <form class="group-name" id="groupNameForm" novalidate>
+      <label class="field"><span id="groupNicknameLabel"></span><input id="groupNickname" maxlength="20" autocomplete="nickname"></label>
+      <button type="submit" class="primary" id="groupNicknameSave"></button>
+    </form>
+    <p class="error" id="groupNameError" role="alert" hidden></p>
+    <p class="group-you" id="groupYou" hidden><span id="groupYouText"></span> <button type="button" class="link-btn" id="groupNicknameChange"></button></p>
+    <div class="chat-crisis" id="groupCrisis" role="alert" hidden></div>
+    <div class="chat-log group-log" id="groupLog" aria-live="polite"></div>
+    <p class="muted" id="groupStatus" role="status" hidden></p>
+    <form class="chat-form" id="groupForm" novalidate>
+      <label class="visually-hidden" for="groupInput" id="groupInputLabel"></label>
+      <textarea id="groupInput" rows="2" maxlength="500"></textarea>
+      <button type="submit" class="primary" id="groupSend"></button>
+    </form>
+    <p class="error" id="groupError" role="alert" hidden></p>
+  </section>
   <section class="card chat">
     <h2 id="chatTitle"></h2>
     <p class="muted" id="chatIntro"></p>
@@ -720,6 +749,7 @@ h1 a{text-decoration:none}
 <script src="rehab-plan.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
+<script src="group-chat.js"></script>
 <script src="account.js"></script>
 <script src="install.js"></script>
 <script>
@@ -1022,7 +1052,29 @@ var T = {
     backupConfirmYes: 'Restore',
     backupCancel: 'Cancel',
     backupRestored: 'Restored. Records added: {0}. Exercises added: {1}. Already here, so not added again: {2}.',
-    backupFailed: 'Restoring did not finish. Try again: what was already added will not be added twice.'
+    backupFailed: 'Restoring did not finish. Try again: what was already added will not be added twice.',
+    groupTitle: 'Talk with people who had the same injury',
+    groupIntro: 'Pick the room for your injury. Others see only your nickname, never your email. Be kind, and keep your full name, address and phone number to yourself. This is for sharing experiences, not medical advice; in an emergency, call for help.',
+    groupRoomLabel: 'Room',
+    groupNicknameLabel: 'Your nickname',
+    groupNicknameSave: 'Start chatting',
+    groupNicknameChange: 'Change',
+    groupNicknameMissing: 'Choose a nickname first.',
+    groupNicknameTooLong: 'A nickname can be at most {0} characters.',
+    groupYouAre: 'You chat as {0}.',
+    groupMine: 'You',
+    groupInputLabel: 'Message',
+    groupPlaceholder: 'Write to the room…',
+    groupSend: 'Send',
+    groupLoading: 'Loading messages…',
+    groupEmpty: 'No messages in this room yet. Say hello first!',
+    groupFailed: 'Could not load the chat. Check your internet and try again.',
+    groupUnavailable: 'The chat cannot load right now. Check your internet and refresh the page.',
+    groupSendFailed: 'Could not send. Check your internet and try again.',
+    groupTooLong: 'A message can be at most {0} characters.',
+    groupReport: 'Report',
+    groupReportConfirm: 'Report this message as harmful? It will be hidden for you, and the site’s team will review it.',
+    groupReported: 'Reported. The message is hidden for you.'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -1323,7 +1375,29 @@ var T = {
     backupConfirmYes: 'Restaurar',
     backupCancel: 'Cancelar',
     backupRestored: 'Restaurado. Registros añadidos: {0}. Ejercicios añadidos: {1}. Ya estaban aquí y no se añadieron otra vez: {2}.',
-    backupFailed: 'La restauración no terminó. Inténtalo de nuevo: lo que ya se añadió no se añadirá dos veces.'
+    backupFailed: 'La restauración no terminó. Inténtalo de nuevo: lo que ya se añadió no se añadirá dos veces.',
+    groupTitle: 'Habla con personas que tuvieron la misma lesión',
+    groupIntro: 'Elige la sala de tu lesión. Los demás solo ven tu apodo, nunca tu correo. Sé amable y no compartas tu nombre completo, dirección ni teléfono. Es para compartir experiencias, no consejos médicos; en una emergencia, pide ayuda.',
+    groupRoomLabel: 'Sala',
+    groupNicknameLabel: 'Tu apodo',
+    groupNicknameSave: 'Empezar a chatear',
+    groupNicknameChange: 'Cambiar',
+    groupNicknameMissing: 'Elige primero un apodo.',
+    groupNicknameTooLong: 'Un apodo puede tener como máximo {0} caracteres.',
+    groupYouAre: 'Chateas como {0}.',
+    groupMine: 'Tú',
+    groupInputLabel: 'Mensaje',
+    groupPlaceholder: 'Escribe a la sala…',
+    groupSend: 'Enviar',
+    groupLoading: 'Cargando mensajes…',
+    groupEmpty: 'Todavía no hay mensajes en esta sala. ¡Saluda tú primero!',
+    groupFailed: 'No se pudo cargar el chat. Revisa tu conexión e inténtalo de nuevo.',
+    groupUnavailable: 'El chat no se puede cargar ahora. Revisa tu conexión y recarga la página.',
+    groupSendFailed: 'No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.',
+    groupTooLong: 'Un mensaje puede tener como máximo {0} caracteres.',
+    groupReport: 'Denunciar',
+    groupReportConfirm: '¿Denunciar este mensaje como dañino? Se ocultará para ti y el equipo del sitio lo revisará.',
+    groupReported: 'Denunciado. El mensaje está oculto para ti.'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -1624,7 +1698,29 @@ var T = {
     backupConfirmYes: 'Restaurer',
     backupCancel: 'Annuler',
     backupRestored: 'Restauré. Notes ajoutées : {0}. Exercices ajoutés : {1}. Déjà là, donc pas ajoutés de nouveau : {2}.',
-    backupFailed: 'La restauration n’a pas abouti. Réessaie : ce qui a déjà été ajouté ne le sera pas deux fois.'
+    backupFailed: 'La restauration n’a pas abouti. Réessaie : ce qui a déjà été ajouté ne le sera pas deux fois.',
+    groupTitle: 'Parler avec des personnes qui ont eu la même blessure',
+    groupIntro: 'Choisis le salon de ta blessure. Les autres ne voient que ton pseudo, jamais ton e-mail. Sois bienveillant, et garde pour toi ton nom complet, ton adresse et ton numéro de téléphone. C’est pour partager des expériences, pas pour des conseils médicaux ; en cas d’urgence, appelle les secours.',
+    groupRoomLabel: 'Salon',
+    groupNicknameLabel: 'Ton pseudo',
+    groupNicknameSave: 'Commencer à discuter',
+    groupNicknameChange: 'Changer',
+    groupNicknameMissing: 'Choisis d’abord un pseudo.',
+    groupNicknameTooLong: 'Un pseudo peut avoir au plus {0} caractères.',
+    groupYouAre: 'Tu discutes en tant que {0}.',
+    groupMine: 'Toi',
+    groupInputLabel: 'Message',
+    groupPlaceholder: 'Écris au salon…',
+    groupSend: 'Envoyer',
+    groupLoading: 'Chargement des messages…',
+    groupEmpty: 'Pas encore de message dans ce salon. Dis bonjour en premier !',
+    groupFailed: 'Impossible de charger la discussion. Vérifie ta connexion et réessaie.',
+    groupUnavailable: 'La discussion ne peut pas se charger pour l’instant. Vérifie ta connexion et recharge la page.',
+    groupSendFailed: 'Envoi impossible. Vérifie ta connexion et réessaie.',
+    groupTooLong: 'Un message peut avoir au plus {0} caractères.',
+    groupReport: 'Signaler',
+    groupReportConfirm: 'Signaler ce message comme nuisible ? Il sera masqué pour toi, et l’équipe du site l’examinera.',
+    groupReported: 'Signalé. Le message est masqué pour toi.'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -1925,7 +2021,29 @@ var T = {
     backupConfirmYes: 'Восстановить',
     backupCancel: 'Отмена',
     backupRestored: 'Восстановлено. Добавлено записей: {0}, упражнений: {1}. Уже были здесь и не добавлены снова: {2}.',
-    backupFailed: 'Восстановление не завершилось. Попробуй ещё раз: то, что уже добавлено, не добавится дважды.'
+    backupFailed: 'Восстановление не завершилось. Попробуй ещё раз: то, что уже добавлено, не добавится дважды.',
+    groupTitle: 'Поговорить с теми, у кого была такая же травма',
+    groupIntro: 'Выбери комнату своей травмы. Другие видят только твой ник, а не почту. Будь доброжелателен и не сообщай полное имя, адрес и номер телефона. Здесь делятся опытом, а не дают медицинские советы; в экстренной ситуации вызывай помощь.',
+    groupRoomLabel: 'Комната',
+    groupNicknameLabel: 'Твой ник',
+    groupNicknameSave: 'Начать общение',
+    groupNicknameChange: 'Изменить',
+    groupNicknameMissing: 'Сначала выбери ник.',
+    groupNicknameTooLong: 'Ник может быть не длиннее {0} символов.',
+    groupYouAre: 'Ты пишешь как {0}.',
+    groupMine: 'Ты',
+    groupInputLabel: 'Сообщение',
+    groupPlaceholder: 'Напиши в комнату…',
+    groupSend: 'Отправить',
+    groupLoading: 'Загрузка сообщений…',
+    groupEmpty: 'В этой комнате пока нет сообщений. Поздоровайся первым!',
+    groupFailed: 'Не удалось загрузить чат. Проверь интернет и попробуй ещё раз.',
+    groupUnavailable: 'Чат сейчас не загружается. Проверь интернет и обнови страницу.',
+    groupSendFailed: 'Не удалось отправить. Проверь интернет и попробуй ещё раз.',
+    groupTooLong: 'Сообщение может быть не длиннее {0} символов.',
+    groupReport: 'Пожаловаться',
+    groupReportConfirm: 'Пожаловаться на это сообщение как на вредное? Оно будет скрыто для тебя, а администрация сайта его проверит.',
+    groupReported: 'Жалоба отправлена. Сообщение скрыто для тебя.'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -2227,7 +2345,29 @@ var T = {
     backupConfirmYes: 'استعادة',
     backupCancel: 'إلغاء',
     backupRestored: 'تمت الاستعادة. أُضيفت تسجيلات: {0}، وتمارين: {1}. كانت موجودة هنا ولم تُضف مرة أخرى: {2}.',
-    backupFailed: 'لم تكتمل الاستعادة. حاول مرة أخرى: ما أُضيف بالفعل لن يُضاف مرتين.'
+    backupFailed: 'لم تكتمل الاستعادة. حاول مرة أخرى: ما أُضيف بالفعل لن يُضاف مرتين.',
+    groupTitle: 'تحدّث مع أشخاص أصيبوا بالإصابة نفسها',
+    groupIntro: 'اختر غرفة إصابتك. يرى الآخرون لقبك فقط، ولا يرون بريدك الإلكتروني أبدًا. كن لطيفًا، ولا تشارك اسمك الكامل أو عنوانك أو رقم هاتفك. هذا لتبادل التجارب، لا للنصائح الطبية؛ في حالة الطوارئ اطلب المساعدة.',
+    groupRoomLabel: 'الغرفة',
+    groupNicknameLabel: 'لقبك',
+    groupNicknameSave: 'ابدأ الدردشة',
+    groupNicknameChange: 'تغيير',
+    groupNicknameMissing: 'اختر لقبًا أولًا.',
+    groupNicknameTooLong: 'يمكن أن يكون اللقب {0} حرفًا على الأكثر.',
+    groupYouAre: 'تدردش باسم {0}.',
+    groupMine: 'أنت',
+    groupInputLabel: 'الرسالة',
+    groupPlaceholder: 'اكتب إلى الغرفة…',
+    groupSend: 'إرسال',
+    groupLoading: 'جارٍ تحميل الرسائل…',
+    groupEmpty: 'لا توجد رسائل في هذه الغرفة بعد. كن أول من يُلقي التحية!',
+    groupFailed: 'تعذّر تحميل الدردشة. تحقق من الإنترنت وحاول مرة أخرى.',
+    groupUnavailable: 'لا يمكن تحميل الدردشة الآن. تحقق من الإنترنت وأعد تحميل الصفحة.',
+    groupSendFailed: 'تعذّر الإرسال. تحقق من الإنترنت وحاول مرة أخرى.',
+    groupTooLong: 'يمكن أن تكون الرسالة {0} حرفًا على الأكثر.',
+    groupReport: 'إبلاغ',
+    groupReportConfirm: 'هل تبلّغ عن هذه الرسالة بأنها مؤذية؟ ستُخفى عنك، وستراجعها إدارة الموقع.',
+    groupReported: 'تم الإبلاغ. الرسالة مخفية عنك.'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -2526,7 +2666,29 @@ var T = {
     backupConfirmYes: '恢复',
     backupCancel: '取消',
     backupRestored: '恢复完成：加入了 {0} 条记录、{1} 个练习。另有 {2} 项已经有了，没有重复添加。',
-    backupFailed: '恢复没有完成，请再试一次：已经加进来的不会重复添加。'
+    backupFailed: '恢复没有完成，请再试一次：已经加进来的不会重复添加。',
+    groupTitle: '和同样受伤的人聊聊',
+    groupIntro: '选择你的伤病所在的聊天室。别人只看得到你的昵称，看不到你的邮箱。请友善待人，不要透露你的全名、住址和电话。这里是分享经历的地方，不是医疗建议；遇到紧急情况请马上求助。',
+    groupRoomLabel: '聊天室',
+    groupNicknameLabel: '你的昵称',
+    groupNicknameSave: '开始聊天',
+    groupNicknameChange: '修改',
+    groupNicknameMissing: '请先起一个昵称。',
+    groupNicknameTooLong: '昵称最多 {0} 个字。',
+    groupYouAre: '你的昵称是 {0}。',
+    groupMine: '我',
+    groupInputLabel: '消息',
+    groupPlaceholder: '在聊天室里说点什么…',
+    groupSend: '发送',
+    groupLoading: '正在加载消息…',
+    groupEmpty: '这个聊天室还没有消息，你来打个招呼吧！',
+    groupFailed: '聊天加载失败，请检查网络后再试。',
+    groupUnavailable: '聊天现在无法加载，请检查网络后刷新页面。',
+    groupSendFailed: '没有发出去，请检查网络后再试。',
+    groupTooLong: '一条消息最多 {0} 个字。',
+    groupReport: '举报',
+    groupReportConfirm: '举报这条消息？它会对你隐藏，网站管理员会查看。',
+    groupReported: '已举报，这条消息已对你隐藏。'
   }
 };
 
@@ -2739,6 +2901,7 @@ function showView() {
   scrollToCurrentTab();
   // The chart is sized to its box, which has no width while hidden.
   if (view === 'log' && !locked) renderPainTrend();
+  syncGroupListener();
 }
 
 // On phones not every section fits in the menu: bring the current one into
@@ -3044,6 +3207,213 @@ $('chatInput').addEventListener('keydown', function (e) {
   }
 });
 
+// ---- Group chat with people who had the same injury ----
+// window.groupChatStore comes from firebase-chat.js, a module that loads
+// after this script. The nickname, the room and the reported messages are
+// remembered on this device only.
+var GROUP_NICKNAME_KEY = 'injury-helper-group-nickname';
+var GROUP_ROOM_KEY = 'injury-helper-group-room';
+var GROUP_HIDDEN_KEY = 'injury-helper-group-hidden';
+
+function readSetting(key, fallback) {
+  try { var value = localStorage.getItem(key); return value === null ? fallback : JSON.parse(value); } catch (e) { return fallback; }
+}
+
+function writeSetting(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* storage blocked: not remembered next time */ }
+}
+
+// `status` is about loading the room: idle, loading, ready or error.
+// `listening` is the room being listened to, with `stop` to end it.
+var group = {
+  store: null, room: readSetting(GROUP_ROOM_KEY, INJURIES[0].id), nickname: readSetting(GROUP_NICKNAME_KEY, ''),
+  editingName: false, nameProblem: null, status: 'idle', messages: [], hidden: readSetting(GROUP_HIDDEN_KEY, []),
+  listening: null, stop: null, sending: false, error: null, crisis: false, reported: false
+};
+if (!INJURIES.some(function (injury) { return injury.id === group.room; })) group.room = INJURIES[0].id;
+if (!Array.isArray(group.hidden)) group.hidden = [];
+
+// Listens to the chosen room only while the chat is on screen and someone
+// is signed in, and stops otherwise.
+function syncGroupListener() {
+  var wanted = group.store && group.store !== 'failed' && currentView() === 'comfort' &&
+    currentAccountState() === 'signedIn' && account.user ? group.room : null;
+  if (wanted === group.listening) return;
+  if (group.stop) group.stop();
+  group.stop = null;
+  group.listening = wanted;
+  group.messages = [];
+  group.status = wanted ? 'loading' : 'idle';
+  if (wanted) {
+    group.stop = group.store.listen(wanted, GROUP_MESSAGES_SHOWN, function (messages) {
+      if (group.listening !== wanted) return;
+      var atBottom = isGroupLogAtBottom();
+      group.messages = messages;
+      group.status = 'ready';
+      renderGroupChat();
+      if (atBottom) scrollGroupLogDown();
+    }, function () {
+      if (group.listening !== wanted) return;
+      group.status = 'error';
+      renderGroupChat();
+    });
+  }
+  renderGroupChat();
+}
+
+// New messages scroll into view only when the reader is already at the
+// bottom, so reading older ones is not interrupted.
+function isGroupLogAtBottom() {
+  var box = $('groupLog');
+  return box.scrollHeight - box.scrollTop - box.clientHeight < 40;
+}
+
+function scrollGroupLogDown() {
+  var box = $('groupLog');
+  box.scrollTop = box.scrollHeight;
+}
+
+function groupTime(millis) {
+  return new Date(millis).toLocaleString(lang === 'zh' ? 'zh-CN' : lang, {month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'});
+}
+
+function groupMessageBubble(message) {
+  var mine = account.user && message.uid === account.user.uid;
+  var bubble = document.createElement('div');
+  bubble.className = 'bubble ' + (mine ? 'me' : 'other');
+  var meta = document.createElement('div');
+  meta.className = 'bubble-meta';
+  meta.textContent = (mine ? t('groupMine') : message.nickname) + (message.createdAt ? ' · ' + groupTime(message.createdAt) : '');
+  bubble.appendChild(meta);
+  var text = document.createElement('div');
+  text.textContent = message.text;
+  bubble.appendChild(text);
+  if (!mine) {
+    var report = document.createElement('button');
+    report.type = 'button';
+    report.className = 'link-btn';
+    report.textContent = t('groupReport');
+    report.addEventListener('click', function () { reportGroupMessage(message); });
+    bubble.appendChild(report);
+  }
+  return bubble;
+}
+
+function renderGroupChat() {
+  ['groupTitle', 'groupIntro', 'groupRoomLabel', 'groupNicknameLabel', 'groupNicknameSave', 'groupNicknameChange', 'groupInputLabel', 'groupSend', 'chatCrisis']
+    .forEach(function (id) { $(id === 'chatCrisis' ? 'groupCrisis' : id).textContent = t(id); });
+  injuryOptions($('groupRoom'), '', group.room);
+  $('groupRoom').options[0].remove();
+  $('groupRoom').value = group.room;
+
+  var naming = group.editingName || !group.nickname;
+  $('groupNameForm').hidden = !naming;
+  if (naming && document.activeElement !== $('groupNickname')) $('groupNickname').value = group.nickname;
+  $('groupNameError').hidden = !group.nameProblem;
+  $('groupNameError').textContent = group.nameProblem === 'tooLong' ? t('groupNicknameTooLong').replace('{0}', NICKNAME_MAX) : t('groupNicknameMissing');
+  $('groupYou').hidden = naming;
+  $('groupYouText').textContent = t('groupYouAre').replace('{0}', group.nickname);
+  $('groupCrisis').hidden = !group.crisis;
+
+  var shown = visibleMessages(group.messages, group.hidden);
+  var list = $('groupLog');
+  list.innerHTML = '';
+  shown.forEach(function (message) { list.appendChild(groupMessageBubble(message)); });
+  list.hidden = shown.length === 0;
+
+  var statusKey = null;
+  if (group.store === 'failed') statusKey = 'groupUnavailable';
+  else if (group.status === 'error') statusKey = 'groupFailed';
+  else if (!group.store || group.status === 'loading') statusKey = 'groupLoading';
+  else if (group.reported) statusKey = 'groupReported';
+  else if (shown.length === 0) statusKey = 'groupEmpty';
+  $('groupStatus').hidden = !statusKey;
+  $('groupStatus').textContent = statusKey ? t(statusKey) : '';
+
+  $('groupForm').hidden = naming || group.status !== 'ready';
+  $('groupSend').disabled = group.sending;
+  $('groupInput').placeholder = t('groupPlaceholder');
+  $('groupError').hidden = !group.error;
+  $('groupError').textContent = group.error === 'tooLong' ? t('groupTooLong').replace('{0}', GROUP_TEXT_MAX) : group.error ? t(group.error) : '';
+}
+
+function reportGroupMessage(message) {
+  if (!confirm(t('groupReportConfirm'))) return;
+  group.hidden = group.hidden.concat([message.id]);
+  writeSetting(GROUP_HIDDEN_KEY, group.hidden);
+  group.reported = true;
+  renderGroupChat();
+  // Hidden here either way; a report that fails to reach the server is not retried.
+  group.store.report(group.listening, message.id, account.user.uid).catch(function () {});
+}
+
+$('groupRoom').addEventListener('change', function () {
+  group.room = $('groupRoom').value;
+  writeSetting(GROUP_ROOM_KEY, group.room);
+  group.reported = false;
+  group.error = null;
+  syncGroupListener();
+});
+
+$('groupNameForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var name = cleanNickname($('groupNickname').value);
+  group.nameProblem = nicknameProblem(name);
+  if (!group.nameProblem) {
+    group.nickname = name;
+    group.editingName = false;
+    writeSetting(GROUP_NICKNAME_KEY, name);
+  }
+  renderGroupChat();
+  if (!group.nameProblem) $('groupInput').focus();
+});
+
+$('groupNicknameChange').addEventListener('click', function () {
+  group.editingName = true;
+  renderGroupChat();
+  $('groupNickname').focus();
+});
+
+$('groupForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  if (group.sending) return;
+  var text = $('groupInput').value.trim();
+  group.error = groupMessageProblem(text);
+  group.reported = false;
+  if (group.error === 'missing') group.error = null;
+  if (text.length === 0 || group.error) { renderGroupChat(); return; }
+  if (isCrisisMessage(text)) group.crisis = true;
+  group.sending = true;
+  renderGroupChat();
+  group.store.send(group.listening, {uid: account.user.uid, nickname: group.nickname, text: text}).then(function () {
+    $('groupInput').value = '';
+  }).catch(function () {
+    group.error = 'groupSendFailed';
+  }).then(function () {
+    group.sending = false;
+    renderGroupChat();
+    scrollGroupLogDown();
+  });
+});
+
+$('groupInput').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+    e.preventDefault();
+    $('groupForm').requestSubmit();
+  }
+});
+
+// Called by firebase-chat.js once it has loaded.
+window.onGroupChatReady = function () {
+  group.store = window.groupChatStore;
+  syncGroupListener();
+};
+// Called if firebase-chat.js or the Firebase library cannot be loaded.
+window.onGroupChatFailed = function () {
+  group.store = 'failed';
+  renderGroupChat();
+};
+
 async function askModelAboutPhoto(injury, canvas) {
   var outputLanguage = await photoOutputLanguage();
   var session = await LanguageModel.create({
@@ -3239,6 +3609,7 @@ function renderAll() {
   renderOffline();
   renderPlan();
   renderLog();
+  renderGroupChat();
   renderCategories();
   renderPhoto();
   renderQuestions();
@@ -4588,5 +4959,6 @@ showView();
 </script>
 <script type="module" src="firebase-cases.js" onerror="onCaseStoreFailed()"></script>
 <script type="module" src="firebase-account.js" onerror="onAccountFailed()"></script>
+<script type="module" src="firebase-chat.js" onerror="onGroupChatFailed()"></script>
 </body>
 </html>
