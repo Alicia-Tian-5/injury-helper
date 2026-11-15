@@ -29,6 +29,46 @@ service cloud.firestore {
       allow read, update, delete: if false;
     }
 
+    // Nicknames, so friends see each other's name. Each person writes only
+    // their own; limits must match group-chat.js.
+    match /profiles/{uid} {
+      allow read: if isVerified();
+      allow create, update: if isVerified() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['nickname'])
+        && request.resource.data.keys().hasAll(['nickname'])
+        && isText(request.resource.data.nickname, 1, 20);
+      allow delete: if false;
+    }
+
+    // A friend request is seen only by the two people in it; either can
+    // remove it (to accept, decline or take it back). Only someone with a
+    // nickname can be asked.
+    match /friendRequests/{requestId} {
+      allow read, delete: if isVerified()
+        && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+      allow create: if isVerified() && isValidRequest(requestId, request.resource.data);
+      allow update: if false;
+    }
+
+    // A friendship is made by the person who accepts a request, and either
+    // friend can end it. Its id is both account ids, smaller first. Sending a
+    // private message updates who wrote last and when, nothing else.
+    match /friendships/{friendshipId} {
+      allow read, delete: if isVerified() && request.auth.uid in resource.data.members;
+      allow create: if isVerified() && isValidFriendship(friendshipId, request.resource.data);
+      allow update: if isVerified() && request.auth.uid in resource.data.members
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastSender', 'lastMessageAt'])
+        && request.resource.data.lastSender == request.auth.uid
+        && request.resource.data.lastMessageAt == request.time;
+
+      // Private messages: only the two friends, and only while they are friends.
+      match /messages/{messageId} {
+        allow read: if isFriend(friendshipId);
+        allow create: if isFriend(friendshipId) && isValidPrivateMessage(request.resource.data);
+        allow update, delete: if false;
+      }
+    }
+
     function isVerified() {
       return request.auth != null && request.auth.token.email_verified == true;
     }
@@ -42,6 +82,46 @@ service cloud.firestore {
         && m.keys().hasAll(['uid', 'nickname', 'text', 'createdAt'])
         && m.uid == request.auth.uid
         && isText(m.nickname, 1, 20)
+        && isText(m.text, 1, 500)
+        && m.createdAt == request.time;
+    }
+
+    function isValidRequest(requestId, r) {
+      return r.keys().hasOnly(['from', 'to', 'createdAt'])
+        && r.keys().hasAll(['from', 'to', 'createdAt'])
+        && r.from == request.auth.uid
+        && r.to is string
+        && r.to != r.from
+        && requestId == r.from + '_' + r.to
+        && r.createdAt == request.time
+        && exists(/databases/$(database)/documents/profiles/$(r.to));
+    }
+
+    // Allowed only when the other person asked this one to be friends.
+    function isValidFriendship(friendshipId, f) {
+      return f.keys().hasOnly(['members', 'createdAt'])
+        && f.keys().hasAll(['members', 'createdAt'])
+        && f.members is list
+        && f.members.size() == 2
+        && f.members[0] < f.members[1]
+        && friendshipId == f.members[0] + '_' + f.members[1]
+        && f.createdAt == request.time
+        && ((f.members[0] == request.auth.uid
+            && exists(/databases/$(database)/documents/friendRequests/$(f.members[1] + '_' + f.members[0])))
+          || (f.members[1] == request.auth.uid
+            && exists(/databases/$(database)/documents/friendRequests/$(f.members[0] + '_' + f.members[1]))));
+    }
+
+    function isFriend(friendshipId) {
+      return isVerified()
+        && exists(/databases/$(database)/documents/friendships/$(friendshipId))
+        && request.auth.uid in get(/databases/$(database)/documents/friendships/$(friendshipId)).data.members;
+    }
+
+    function isValidPrivateMessage(m) {
+      return m.keys().hasOnly(['uid', 'text', 'createdAt'])
+        && m.keys().hasAll(['uid', 'text', 'createdAt'])
+        && m.uid == request.auth.uid
         && isText(m.text, 1, 500)
         && m.createdAt == request.time;
     }

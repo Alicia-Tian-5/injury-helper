@@ -20,6 +20,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
+<script src="friends.js"></script>
 <script src="knowledge.js"></script>
 <script src="city-hospitals.js"></script>
 <script src="account.js"></script>
@@ -400,6 +401,28 @@ test('group chat: messages show oldest first, one still sending last, and report
   ];
   equal(visibleMessages(messages, ['b']).map(function (m) { return m.id; }).join(), 'a,c,sending');
 });
+test('friends: both people find the same friendship, and each sees the other as the friend', function () {
+  equal(friendshipId('bob', 'amy'), 'amy_bob');
+  equal(friendshipId('amy', 'bob'), 'amy_bob');
+  equal(friendRequestId('bob', 'amy'), 'bob_amy');  // a request has a direction
+  var friendship = {id: 'amy_bob', members: ['amy', 'bob']};
+  equal(friendOf(friendship, 'amy'), 'bob');
+  equal(friendOf(friendship, 'bob'), 'amy');
+});
+test('friends: the button under a group message offers to add only someone new', function () {
+  var friendships = [{id: 'amy_bob', members: ['amy', 'bob']}];
+  var outgoing = [{from: 'amy', to: 'cat'}];
+  var incoming = [{from: 'dan', to: 'amy'}];
+  function state(uid) { return friendButtonState(uid, 'amy', friendships, outgoing, incoming); }
+  equal([state('amy'), state('bob'), state('cat'), state('dan'), state('eve')].join(), 'self,friend,sent,incoming,add');
+});
+test('friends: a red dot shows only for the friend\'s new messages, until the chat is opened', function () {
+  var friendship = {id: 'amy_bob', members: ['amy', 'bob'], lastSender: 'bob', lastMessageAt: 500};
+  equal(hasUnread(friendship, 'amy', {}), true);
+  equal(hasUnread(friendship, 'amy', {amy_bob: 500}), false);  // read up to that message
+  equal(hasUnread(friendship, 'bob', {}), false);  // your own message
+  equal(hasUnread({id: 'amy_bob', members: ['amy', 'bob'], lastSender: null, lastMessageAt: null}, 'amy', {}), false);
+});
 test('chat: messages about suicide or self-harm show the hotlines, in both languages', function () {
   equal(isCrisisMessage('我现在不想活了'), true);
   equal(isCrisisMessage('I want to die'), true);
@@ -762,9 +785,17 @@ var rulesChecked = fetch('firestore.rules').then(function (r) { return r.text();
       if (rules.indexOf(expected) === -1) throw new Error('rules should contain ' + expected);
     });
   });
+  test('rules: private messages are only for the two friends, and a friendship needs a request from the other person', function () {
+    ['allow read: if isFriend(friendshipId)', 'request.auth.uid in get(/databases/$(database)/documents/friendships/$(friendshipId)).data.members',
+      'friendshipId == f.members[0] + \'_\' + f.members[1]', 'friendRequests/$(f.members[1] + \'_\' + f.members[0])',
+      'requestId == r.from + \'_\' + r.to'].forEach(function (expected) {
+      if (rules.indexOf(expected) === -1) throw new Error('rules should contain ' + expected);
+    });
+  });
   test('rules: the group chat uses the same limits as the page, and only for verified accounts', function () {
     ['isText(m.nickname, 1, ' + NICKNAME_MAX + ')', 'isText(m.text, 1, ' + GROUP_TEXT_MAX + ')', 'm.uid == request.auth.uid',
-      'allow read: if isVerified() && isInjury(room)', 'request.auth.token.email_verified == true'].forEach(function (expected) {
+      'allow read: if isVerified() && isInjury(room)', 'request.auth.token.email_verified == true',
+      'isText(request.resource.data.nickname, 1, ' + NICKNAME_MAX + ')', 'isText(m.text, 1, ' + GROUP_TEXT_MAX + ')'].forEach(function (expected) {
       if (rules.indexOf(expected) === -1) throw new Error('rules should contain ' + expected);
     });
   });

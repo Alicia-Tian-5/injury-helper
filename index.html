@@ -320,6 +320,20 @@ h1 a{text-decoration:none}
 .group-name .primary{width:auto}
 .group-you{margin:8px 0}
 .group-you .link-btn{margin:0}
+.bubble .bubble-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.bubble .bubble-note{font-size:13px;opacity:.8;padding-top:4px}
+.friend-requests{background:var(--acc-soft);border-radius:4px;padding:12px;margin:12px 0}
+.friend-requests h3{margin:0 0 8px}
+.friend-request{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:6px 0}
+.friend-request .plan-buttons .primary{flex:none}
+.friend-list{list-style:none;padding:0;margin:8px 0 0}
+.friend-list button{display:flex;align-items:center;gap:8px;width:100%;min-height:48px;padding:10px 12px;background:var(--card);color:var(--text);border:1.5px solid var(--line);border-radius:4px;font:inherit;text-align:start;cursor:pointer;margin-bottom:8px}
+.friend-list button:hover{border-color:var(--acc)}
+.unread-dot{width:10px;height:10px;border-radius:50%;background:var(--red);margin-inline-start:auto;flex:none}
+.private-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.private-head h3{margin:0}
+.private-head .link-btn{margin:0;padding:8px 0}
+.private-remove{color:var(--red);margin:12px 0 0;padding:8px 0}
 .chat-crisis{background:var(--red-soft);border:1.5px solid var(--red);border-radius:6px;padding:12px;color:var(--text);margin-top:10px}
 .chat-crisis a{color:var(--red);font-weight:700}
 .start{text-decoration:none}
@@ -563,6 +577,35 @@ h1 a{text-decoration:none}
     </form>
     <p class="error" id="groupError" role="alert" hidden></p>
   </section>
+  <section class="card friends" id="friendsCard">
+    <h2 id="friendsTitle"></h2>
+    <div id="friendsHome">
+      <p class="muted" id="friendsIntro"></p>
+      <div class="friend-requests" id="friendRequests" hidden>
+        <h3 id="friendsRequestsTitle"></h3>
+        <div id="friendRequestList"></div>
+      </div>
+      <p class="muted" id="friendsStatus" role="status" hidden></p>
+      <ul class="friend-list" id="friendList"></ul>
+    </div>
+    <div class="private-chat" id="privateChat" hidden>
+      <div class="private-head">
+        <button type="button" class="link-btn" id="privateBack"></button>
+        <h3 id="privateTitle"></h3>
+      </div>
+      <div class="chat-crisis" id="privateCrisis" role="alert" hidden></div>
+      <div class="chat-log group-log" id="privateLog" aria-live="polite"></div>
+      <p class="muted" id="privateStatus" role="status" hidden></p>
+      <form class="chat-form" id="privateForm" novalidate>
+        <label class="visually-hidden" for="privateInput" id="privateInputLabel"></label>
+        <textarea id="privateInput" rows="2" maxlength="500"></textarea>
+        <button type="submit" class="primary" id="privateSend"></button>
+      </form>
+      <p class="error" id="privateError" role="alert" hidden></p>
+      <button type="button" class="link-btn private-remove" id="privateRemove"></button>
+    </div>
+    <p class="error" id="friendsError" role="alert" hidden></p>
+  </section>
   <section class="card chat">
     <h2 id="chatTitle"></h2>
     <p class="muted" id="chatIntro"></p>
@@ -750,6 +793,7 @@ h1 a{text-decoration:none}
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
+<script src="friends.js"></script>
 <script src="account.js"></script>
 <script src="install.js"></script>
 <script>
@@ -1074,7 +1118,31 @@ var T = {
     groupTooLong: 'A message can be at most {0} characters.',
     groupReport: 'Report',
     groupReportConfirm: 'Report this message as harmful? It will be hidden for you, and the site’s team will review it.',
-    groupReported: 'Reported. The message is hidden for you.'
+    groupReported: 'Reported. The message is hidden for you.',
+    groupAddFriend: 'Add friend',
+    groupFriendSent: 'Friend request sent',
+    groupFriendAlready: 'Friends',
+    groupFriendIncoming: 'Wants to be your friend',
+    groupFriendFailed: 'Could not send the request. The person may not be able to receive requests yet; try again later.',
+    friendsTitle: 'My friends',
+    friendsIntro: 'To add a friend, tap “Add friend” under their message in a room above. Once they accept, you can chat privately: only the two of you can read it.',
+    friendsRequestsTitle: 'Friend requests',
+    friendsRequestText: '{0} wants to be your friend',
+    friendsAccept: 'Accept',
+    friendsDecline: 'Decline',
+    friendsEmpty: 'No friends yet.',
+    friendsLoading: 'Loading friends…',
+    friendsFailed: 'Could not load your friends. Check your internet and try again.',
+    friendsUnread: 'New messages',
+    friendsNoName: '(no nickname)',
+    friendsActionFailed: 'That did not go through. Check your internet and try again.',
+    privateTitle: 'Chat with {0}',
+    privateBack: 'Back to my friends',
+    privateRemove: 'Remove friend',
+    privateRemoveConfirm: 'Remove {0}? You will no longer be friends, and they cannot message you anymore.',
+    privateEmpty: 'No messages yet. Say hello!',
+    privateEnded: 'You are no longer friends.',
+    privatePlaceholder: 'Message {0}…'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -1397,7 +1465,31 @@ var T = {
     groupTooLong: 'Un mensaje puede tener como máximo {0} caracteres.',
     groupReport: 'Denunciar',
     groupReportConfirm: '¿Denunciar este mensaje como dañino? Se ocultará para ti y el equipo del sitio lo revisará.',
-    groupReported: 'Denunciado. El mensaje está oculto para ti.'
+    groupReported: 'Denunciado. El mensaje está oculto para ti.',
+    groupAddFriend: 'Añadir amigo',
+    groupFriendSent: 'Solicitud enviada',
+    groupFriendAlready: 'Amigos',
+    groupFriendIncoming: 'Quiere ser tu amigo',
+    groupFriendFailed: 'No se pudo enviar la solicitud. Puede que esa persona aún no pueda recibir solicitudes; inténtalo más tarde.',
+    friendsTitle: 'Mis amigos',
+    friendsIntro: 'Para añadir un amigo, toca «Añadir amigo» bajo su mensaje en una sala de arriba. Cuando acepte, podréis chatear en privado: solo vosotros dos podréis leerlo.',
+    friendsRequestsTitle: 'Solicitudes de amistad',
+    friendsRequestText: '{0} quiere ser tu amigo',
+    friendsAccept: 'Aceptar',
+    friendsDecline: 'Rechazar',
+    friendsEmpty: 'Todavía no tienes amigos.',
+    friendsLoading: 'Cargando amigos…',
+    friendsFailed: 'No se pudieron cargar tus amigos. Revisa tu conexión e inténtalo de nuevo.',
+    friendsUnread: 'Mensajes nuevos',
+    friendsNoName: '(sin apodo)',
+    friendsActionFailed: 'No se completó. Revisa tu conexión e inténtalo de nuevo.',
+    privateTitle: 'Chat con {0}',
+    privateBack: 'Volver a mis amigos',
+    privateRemove: 'Eliminar amigo',
+    privateRemoveConfirm: '¿Eliminar a {0}? Dejaréis de ser amigos y ya no podrá escribirte.',
+    privateEmpty: 'Todavía no hay mensajes. ¡Saluda!',
+    privateEnded: 'Ya no sois amigos.',
+    privatePlaceholder: 'Escribe a {0}…'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -1720,7 +1812,31 @@ var T = {
     groupTooLong: 'Un message peut avoir au plus {0} caractères.',
     groupReport: 'Signaler',
     groupReportConfirm: 'Signaler ce message comme nuisible ? Il sera masqué pour toi, et l’équipe du site l’examinera.',
-    groupReported: 'Signalé. Le message est masqué pour toi.'
+    groupReported: 'Signalé. Le message est masqué pour toi.',
+    groupAddFriend: 'Ajouter en ami',
+    groupFriendSent: 'Demande envoyée',
+    groupFriendAlready: 'Amis',
+    groupFriendIncoming: 'Veut être ton ami',
+    groupFriendFailed: 'Impossible d’envoyer la demande. Cette personne ne peut peut-être pas encore en recevoir ; réessaie plus tard.',
+    friendsTitle: 'Mes amis',
+    friendsIntro: 'Pour ajouter un ami, touche « Ajouter en ami » sous son message dans un salon ci-dessus. Une fois la demande acceptée, vous pourrez discuter en privé : vous seuls pourrez le lire.',
+    friendsRequestsTitle: 'Demandes d’ami',
+    friendsRequestText: '{0} veut être ton ami',
+    friendsAccept: 'Accepter',
+    friendsDecline: 'Refuser',
+    friendsEmpty: 'Pas encore d’amis.',
+    friendsLoading: 'Chargement des amis…',
+    friendsFailed: 'Impossible de charger tes amis. Vérifie ta connexion et réessaie.',
+    friendsUnread: 'Nouveaux messages',
+    friendsNoName: '(sans pseudo)',
+    friendsActionFailed: 'Cela n’a pas abouti. Vérifie ta connexion et réessaie.',
+    privateTitle: 'Discussion avec {0}',
+    privateBack: 'Retour à mes amis',
+    privateRemove: 'Retirer cet ami',
+    privateRemoveConfirm: 'Retirer {0} ? Vous ne serez plus amis, et cette personne ne pourra plus t’écrire.',
+    privateEmpty: 'Pas encore de message. Dis bonjour !',
+    privateEnded: 'Vous n’êtes plus amis.',
+    privatePlaceholder: 'Écris à {0}…'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -2043,7 +2159,31 @@ var T = {
     groupTooLong: 'Сообщение может быть не длиннее {0} символов.',
     groupReport: 'Пожаловаться',
     groupReportConfirm: 'Пожаловаться на это сообщение как на вредное? Оно будет скрыто для тебя, а администрация сайта его проверит.',
-    groupReported: 'Жалоба отправлена. Сообщение скрыто для тебя.'
+    groupReported: 'Жалоба отправлена. Сообщение скрыто для тебя.',
+    groupAddFriend: 'Добавить в друзья',
+    groupFriendSent: 'Заявка отправлена',
+    groupFriendAlready: 'В друзьях',
+    groupFriendIncoming: 'Хочет дружить',
+    groupFriendFailed: 'Не удалось отправить заявку. Возможно, этот человек пока не может их получать; попробуй позже.',
+    friendsTitle: 'Мои друзья',
+    friendsIntro: 'Чтобы добавить друга, нажми «Добавить в друзья» под его сообщением в комнате выше. Когда он примет заявку, вы сможете переписываться лично: читать будете только вы двое.',
+    friendsRequestsTitle: 'Заявки в друзья',
+    friendsRequestText: '{0} хочет добавить тебя в друзья',
+    friendsAccept: 'Принять',
+    friendsDecline: 'Отклонить',
+    friendsEmpty: 'Друзей пока нет.',
+    friendsLoading: 'Загрузка друзей…',
+    friendsFailed: 'Не удалось загрузить друзей. Проверь интернет и попробуй ещё раз.',
+    friendsUnread: 'Новые сообщения',
+    friendsNoName: '(без ника)',
+    friendsActionFailed: 'Не получилось. Проверь интернет и попробуй ещё раз.',
+    privateTitle: 'Переписка: {0}',
+    privateBack: 'Назад к друзьям',
+    privateRemove: 'Удалить из друзей',
+    privateRemoveConfirm: 'Удалить {0} из друзей? Вы больше не будете друзьями, и этот человек не сможет тебе писать.',
+    privateEmpty: 'Сообщений пока нет. Поздоровайся!',
+    privateEnded: 'Вы больше не друзья.',
+    privatePlaceholder: 'Сообщение для {0}…'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -2367,7 +2507,31 @@ var T = {
     groupTooLong: 'يمكن أن تكون الرسالة {0} حرفًا على الأكثر.',
     groupReport: 'إبلاغ',
     groupReportConfirm: 'هل تبلّغ عن هذه الرسالة بأنها مؤذية؟ ستُخفى عنك، وستراجعها إدارة الموقع.',
-    groupReported: 'تم الإبلاغ. الرسالة مخفية عنك.'
+    groupReported: 'تم الإبلاغ. الرسالة مخفية عنك.',
+    groupAddFriend: 'إضافة صديق',
+    groupFriendSent: 'أُرسل طلب الصداقة',
+    groupFriendAlready: 'صديق',
+    groupFriendIncoming: 'يريد أن يكون صديقك',
+    groupFriendFailed: 'تعذّر إرسال الطلب. ربما لا يستطيع هذا الشخص استقبال الطلبات بعد؛ حاول لاحقًا.',
+    friendsTitle: 'أصدقائي',
+    friendsIntro: 'لإضافة صديق، اضغط «إضافة صديق» تحت رسالته في إحدى الغرف أعلاه. بعد أن يقبل، يمكنكما الدردشة على انفراد: لا يقرأها غيركما.',
+    friendsRequestsTitle: 'طلبات الصداقة',
+    friendsRequestText: '{0} يريد أن يكون صديقك',
+    friendsAccept: 'قبول',
+    friendsDecline: 'رفض',
+    friendsEmpty: 'لا يوجد أصدقاء بعد.',
+    friendsLoading: 'جارٍ تحميل الأصدقاء…',
+    friendsFailed: 'تعذّر تحميل أصدقائك. تحقق من الإنترنت وحاول مرة أخرى.',
+    friendsUnread: 'رسائل جديدة',
+    friendsNoName: '(بلا لقب)',
+    friendsActionFailed: 'لم تكتمل العملية. تحقق من الإنترنت وحاول مرة أخرى.',
+    privateTitle: 'دردشة مع {0}',
+    privateBack: 'العودة إلى أصدقائي',
+    privateRemove: 'إزالة الصديق',
+    privateRemoveConfirm: 'هل تزيل {0}؟ لن تبقيا صديقين، ولن يستطيع مراسلتك بعد الآن.',
+    privateEmpty: 'لا توجد رسائل بعد. ألقِ التحية!',
+    privateEnded: 'لم تعودا صديقين.',
+    privatePlaceholder: 'اكتب إلى {0}…'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -2688,7 +2852,31 @@ var T = {
     groupTooLong: '一条消息最多 {0} 个字。',
     groupReport: '举报',
     groupReportConfirm: '举报这条消息？它会对你隐藏，网站管理员会查看。',
-    groupReported: '已举报，这条消息已对你隐藏。'
+    groupReported: '已举报，这条消息已对你隐藏。',
+    groupAddFriend: '加好友',
+    groupFriendSent: '已发送好友申请',
+    groupFriendAlready: '已是好友',
+    groupFriendIncoming: '对方想加你为好友',
+    groupFriendFailed: '申请没有发出去。对方可能暂时还不能接收申请，请稍后再试。',
+    friendsTitle: '我的好友',
+    friendsIntro: '想加好友，就在上面的聊天室里点对方消息下面的"加好友"。对方接受以后，你们就可以私聊，只有你们两个人看得到。',
+    friendsRequestsTitle: '好友申请',
+    friendsRequestText: '{0} 想加你为好友',
+    friendsAccept: '接受',
+    friendsDecline: '拒绝',
+    friendsEmpty: '还没有好友。',
+    friendsLoading: '正在加载好友…',
+    friendsFailed: '好友加载失败，请检查网络后再试。',
+    friendsUnread: '有新消息',
+    friendsNoName: '（没有昵称）',
+    friendsActionFailed: '操作没有完成，请检查网络后再试。',
+    privateTitle: '和 {0} 私聊',
+    privateBack: '返回我的好友',
+    privateRemove: '删除好友',
+    privateRemoveConfirm: '删除 {0}？你们将不再是好友，对方也不能再给你发消息。',
+    privateEmpty: '还没有消息，打个招呼吧！',
+    privateEnded: '你们已不是好友。',
+    privatePlaceholder: '给 {0} 发消息…'
   }
 };
 
@@ -3238,6 +3426,7 @@ if (!Array.isArray(group.hidden)) group.hidden = [];
 function syncGroupListener() {
   var wanted = group.store && group.store !== 'failed' && currentView() === 'comfort' &&
     currentAccountState() === 'signedIn' && account.user ? group.room : null;
+  syncFriends(wanted ? account.user.uid : null);
   if (wanted === group.listening) return;
   if (group.stop) group.stop();
   group.stop = null;
@@ -3247,11 +3436,11 @@ function syncGroupListener() {
   if (wanted) {
     group.stop = group.store.listen(wanted, GROUP_MESSAGES_SHOWN, function (messages) {
       if (group.listening !== wanted) return;
-      var atBottom = isGroupLogAtBottom();
+      var atBottom = isAtBottom($('groupLog'));
       group.messages = messages;
       group.status = 'ready';
       renderGroupChat();
-      if (atBottom) scrollGroupLogDown();
+      if (atBottom) scrollToBottom($('groupLog'));
     }, function () {
       if (group.listening !== wanted) return;
       group.status = 'error';
@@ -3263,13 +3452,11 @@ function syncGroupListener() {
 
 // New messages scroll into view only when the reader is already at the
 // bottom, so reading older ones is not interrupted.
-function isGroupLogAtBottom() {
-  var box = $('groupLog');
+function isAtBottom(box) {
   return box.scrollHeight - box.scrollTop - box.clientHeight < 40;
 }
 
-function scrollGroupLogDown() {
-  var box = $('groupLog');
+function scrollToBottom(box) {
   box.scrollTop = box.scrollHeight;
 }
 
@@ -3289,14 +3476,38 @@ function groupMessageBubble(message) {
   text.textContent = message.text;
   bubble.appendChild(text);
   if (!mine) {
+    var actions = document.createElement('div');
+    actions.className = 'bubble-actions';
     var report = document.createElement('button');
     report.type = 'button';
     report.className = 'link-btn';
     report.textContent = t('groupReport');
     report.addEventListener('click', function () { reportGroupMessage(message); });
-    bubble.appendChild(report);
+    actions.appendChild(report);
+    actions.appendChild(friendButton(message.uid));
+    bubble.appendChild(actions);
   }
   return bubble;
+}
+
+// "Add friend" under someone's message, or a note when that is not needed.
+function friendButton(uid) {
+  var state = friendButtonState(uid, account.user.uid, friends.list, friends.outgoing, friends.incoming);
+  if (state !== 'add') {
+    var note = document.createElement('span');
+    note.className = 'bubble-note';
+    note.textContent = t({friend: 'groupFriendAlready', sent: 'groupFriendSent', incoming: 'groupFriendIncoming'}[state]);
+    return note;
+  }
+  var button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'link-btn';
+  button.textContent = t('groupAddFriend');
+  button.disabled = friends.busy || friends.status !== 'ready';
+  button.addEventListener('click', function () {
+    friendAction(function () { return group.store.sendRequest(account.user.uid, uid); }, 'groupFriendFailed');
+  });
+  return button;
 }
 
 function renderGroupChat() {
@@ -3363,6 +3574,7 @@ $('groupNameForm').addEventListener('submit', function (e) {
     group.nickname = name;
     group.editingName = false;
     writeSetting(GROUP_NICKNAME_KEY, name);
+    shareNickname();
   }
   renderGroupChat();
   if (!group.nameProblem) $('groupInput').focus();
@@ -3392,7 +3604,7 @@ $('groupForm').addEventListener('submit', function (e) {
   }).then(function () {
     group.sending = false;
     renderGroupChat();
-    scrollGroupLogDown();
+    scrollToBottom($('groupLog'));
   });
 });
 
@@ -3400,6 +3612,324 @@ $('groupInput').addEventListener('keydown', function (e) {
   if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
     e.preventDefault();
     $('groupForm').requestSubmit();
+  }
+});
+
+// ---- Friends and private chats ----
+var FRIENDS_LAST_READ_KEY = 'injury-helper-friends-last-read';
+var PRIVATE_MESSAGES_SHOWN = 100;
+
+// `uid` is the account whose friends are being listened to. `names` holds
+// nicknames by account id, loaded as needed. `open` is the friendship whose
+// private chat is shown; `ended` says it ended while open.
+var friends = {
+  uid: null, stop: null, status: 'idle', incoming: [], outgoing: [], list: [], names: {}, busy: false, error: null,
+  open: null, stopChat: null, chatStatus: 'idle', messages: [], sending: false, chatError: null, crisis: false, ended: false,
+  lastRead: readSetting(FRIENDS_LAST_READ_KEY, {})
+};
+if (!friends.lastRead || typeof friends.lastRead !== 'object') friends.lastRead = {};
+
+// The nickname goes to the server, so friends see it on any device. On a new
+// device, the one saved there before is used.
+function shareNickname() {
+  if (!friends.uid) return;
+  if (group.nickname) {
+    group.store.saveNickname(friends.uid, group.nickname).catch(function () { /* shared again next visit */ });
+    return;
+  }
+  group.store.loadNickname(friends.uid).then(function (nickname) {
+    if (!nickname || group.nickname) return;
+    group.nickname = nickname;
+    writeSetting(GROUP_NICKNAME_KEY, nickname);
+    renderGroupChat();
+  }).catch(function () { /* the person can still pick one */ });
+}
+
+function stopFriends() {
+  if (friends.stop) friends.stop();
+  friends.stop = null;
+  closePrivateChat();
+}
+
+function syncFriends(uid) {
+  if (uid === friends.uid) return;
+  stopFriends();
+  friends.uid = uid;
+  friends.incoming = [];
+  friends.outgoing = [];
+  friends.list = [];
+  friends.error = null;
+  friends.status = uid ? 'loading' : 'idle';
+  if (uid) {
+    shareNickname();
+    var loaded = {requests: false, friendships: false};
+    var failed = function () {
+      if (friends.uid !== uid) return;
+      friends.status = 'error';
+      renderFriends();
+    };
+    var ready = function (part) {
+      loaded[part] = true;
+      if (loaded.requests && loaded.friendships) friends.status = 'ready';
+      loadNicknames();
+      renderFriends();
+      renderGroupChat();
+    };
+    var stopRequests = group.store.listenRequests(uid, function (requests) {
+      if (friends.uid !== uid) return;
+      friends.incoming = requests.incoming;
+      friends.outgoing = requests.outgoing;
+      ready('requests');
+    }, failed);
+    var stopFriendships = group.store.listenFriendships(uid, function (list) {
+      if (friends.uid !== uid) return;
+      friends.list = list;
+      if (friends.open && !list.some(function (friendship) { return friendship.id === friends.open; })) {
+        closePrivateChat();
+        friends.ended = true;
+      }
+      ready('friendships');
+    }, failed);
+    friends.stop = function () { stopRequests(); stopFriendships(); };
+  }
+  renderFriends();
+}
+
+// Looks up the nicknames of friends and of people who sent a request.
+function loadNicknames() {
+  var uids = friends.list.map(function (friendship) { return friendOf(friendship, friends.uid); })
+    .concat(friends.incoming.map(function (request) { return request.from; }));
+  uids.forEach(function (uid) {
+    if (uid in friends.names) return;
+    friends.names[uid] = null;
+    group.store.loadNickname(uid).then(function (nickname) {
+      friends.names[uid] = nickname;
+      renderFriends();
+    }).catch(function () { delete friends.names[uid]; });
+  });
+}
+
+function friendName(uid) {
+  return friends.names[uid] || t('friendsNoName');
+}
+
+// Runs one change to friends with the buttons disabled; `failedKey` is the
+// message shown when it does not go through.
+function friendAction(call, failedKey) {
+  friends.busy = true;
+  friends.error = null;
+  renderFriends();
+  renderGroupChat();
+  return call().catch(function () {
+    friends.error = failedKey;
+  }).then(function () {
+    friends.busy = false;
+    renderFriends();
+    renderGroupChat();
+  });
+}
+
+function friendRequestRow(request) {
+  var row = document.createElement('div');
+  row.className = 'friend-request';
+  var text = document.createElement('span');
+  text.textContent = t('friendsRequestText').replace('{0}', friendName(request.from));
+  row.appendChild(text);
+  var buttons = document.createElement('div');
+  buttons.className = 'plan-buttons';
+  [['friendsAccept', 'primary'], ['friendsDecline', 'secondary']].forEach(function (pair) {
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.className = pair[1];
+    button.textContent = t(pair[0]);
+    button.disabled = friends.busy;
+    button.addEventListener('click', function () {
+      if (pair[0] === 'friendsAccept') {
+        var alsoAsked = friends.outgoing.some(function (mine) { return mine.to === request.from; });
+        friendAction(function () {
+          return group.store.acceptRequest(request.from, friends.uid, friendshipId(request.from, friends.uid), alsoAsked);
+        }, 'friendsActionFailed');
+      } else {
+        friendAction(function () { return group.store.declineRequest(request.from, friends.uid); }, 'friendsActionFailed');
+      }
+    });
+    buttons.appendChild(button);
+  });
+  row.appendChild(buttons);
+  return row;
+}
+
+function friendListItem(friendship) {
+  var item = document.createElement('li');
+  var button = document.createElement('button');
+  button.type = 'button';
+  var name = document.createElement('span');
+  name.textContent = friendName(friendOf(friendship, friends.uid));
+  button.appendChild(name);
+  if (hasUnread(friendship, friends.uid, friends.lastRead)) {
+    var dot = document.createElement('span');
+    dot.className = 'unread-dot';
+    dot.title = t('friendsUnread');
+    dot.setAttribute('aria-label', t('friendsUnread'));
+    button.appendChild(dot);
+  }
+  button.addEventListener('click', function () { openPrivateChat(friendship.id); });
+  item.appendChild(button);
+  return item;
+}
+
+function openFriendship() {
+  return friends.list.filter(function (friendship) { return friendship.id === friends.open; })[0];
+}
+
+function renderFriends() {
+  ['friendsTitle', 'friendsIntro', 'friendsRequestsTitle', 'privateBack', 'privateRemove', 'groupInputLabel', 'groupSend', 'chatCrisis']
+    .forEach(function (id) {
+      var target = {groupInputLabel: 'privateInputLabel', groupSend: 'privateSend', chatCrisis: 'privateCrisis'}[id] || id;
+      $(target).textContent = t(id);
+    });
+  var friendship = openFriendship();
+  $('friendsHome').hidden = Boolean(friendship);
+  $('privateChat').hidden = !friendship;
+
+  var requests = $('friendRequestList');
+  requests.innerHTML = '';
+  friends.incoming.forEach(function (request) { requests.appendChild(friendRequestRow(request)); });
+  $('friendRequests').hidden = friends.incoming.length === 0;
+
+  var list = $('friendList');
+  list.innerHTML = '';
+  friends.list.forEach(function (one) { list.appendChild(friendListItem(one)); });
+
+  var statusKey = null;
+  if (group.store === 'failed') statusKey = 'groupUnavailable';
+  else if (friends.status === 'error') statusKey = 'friendsFailed';
+  else if (friends.status !== 'ready') statusKey = 'friendsLoading';
+  else if (friends.ended) statusKey = 'privateEnded';
+  else if (friends.list.length === 0) statusKey = 'friendsEmpty';
+  $('friendsStatus').hidden = !statusKey;
+  $('friendsStatus').textContent = statusKey ? t(statusKey) : '';
+  $('friendsError').hidden = !friends.error;
+  $('friendsError').textContent = friends.error ? t(friends.error) : '';
+  if (friendship) renderPrivateChat(friendship);
+}
+
+function renderPrivateChat(friendship) {
+  var name = friendName(friendOf(friendship, friends.uid));
+  $('privateTitle').textContent = t('privateTitle').replace('{0}', name);
+  $('privateInput').placeholder = t('privatePlaceholder').replace('{0}', name);
+  $('privateCrisis').hidden = !friends.crisis;
+  var shown = visibleMessages(friends.messages, []);
+  var list = $('privateLog');
+  list.innerHTML = '';
+  shown.forEach(function (message) {
+    var mine = message.uid === friends.uid;
+    var bubble = document.createElement('div');
+    bubble.className = 'bubble ' + (mine ? 'me' : 'other');
+    var meta = document.createElement('div');
+    meta.className = 'bubble-meta';
+    meta.textContent = (mine ? t('groupMine') : name) + (message.createdAt ? ' · ' + groupTime(message.createdAt) : '');
+    bubble.appendChild(meta);
+    var text = document.createElement('div');
+    text.textContent = message.text;
+    bubble.appendChild(text);
+    list.appendChild(bubble);
+  });
+  list.hidden = shown.length === 0;
+  var statusKey = {loading: 'groupLoading', error: 'groupFailed'}[friends.chatStatus] || (shown.length === 0 ? 'privateEmpty' : null);
+  $('privateStatus').hidden = !statusKey;
+  $('privateStatus').textContent = statusKey ? t(statusKey) : '';
+  $('privateForm').hidden = friends.chatStatus !== 'ready';
+  $('privateSend').disabled = friends.sending;
+  $('privateRemove').disabled = friends.busy;
+  $('privateError').hidden = !friends.chatError;
+  $('privateError').textContent = friends.chatError === 'tooLong' ? t('groupTooLong').replace('{0}', GROUP_TEXT_MAX) : friends.chatError ? t(friends.chatError) : '';
+}
+
+// Remembers the newest message seen in the open chat, so its dot goes away.
+function markPrivateRead() {
+  var newest = friends.messages.reduce(function (latest, message) { return Math.max(latest, message.createdAt || 0); }, 0);
+  var friendship = openFriendship();
+  if (friendship && friendship.lastMessageAt) newest = Math.max(newest, friendship.lastMessageAt);
+  if (newest <= (friends.lastRead[friends.open] || 0)) return;
+  friends.lastRead[friends.open] = newest;
+  writeSetting(FRIENDS_LAST_READ_KEY, friends.lastRead);
+}
+
+function openPrivateChat(id) {
+  closePrivateChat();
+  friends.open = id;
+  friends.ended = false;
+  friends.chatStatus = 'loading';
+  friends.stopChat = group.store.listenPrivate(id, PRIVATE_MESSAGES_SHOWN, function (messages) {
+    if (friends.open !== id) return;
+    var atBottom = isAtBottom($('privateLog'));
+    friends.messages = messages;
+    friends.chatStatus = 'ready';
+    markPrivateRead();
+    renderFriends();
+    if (atBottom) scrollToBottom($('privateLog'));
+  }, function () {
+    if (friends.open !== id) return;
+    friends.chatStatus = 'error';
+    renderFriends();
+  });
+  renderFriends();
+  $('friendsCard').scrollIntoView({block: 'start'});
+}
+
+function closePrivateChat() {
+  if (friends.stopChat) friends.stopChat();
+  friends.stopChat = null;
+  friends.open = null;
+  friends.messages = [];
+  friends.chatStatus = 'idle';
+  friends.chatError = null;
+  friends.crisis = false;
+}
+
+$('privateBack').addEventListener('click', function () {
+  closePrivateChat();
+  renderFriends();
+});
+
+$('privateRemove').addEventListener('click', function () {
+  var friendship = openFriendship();
+  if (!friendship) return;
+  if (!confirm(t('privateRemoveConfirm').replace('{0}', friendName(friendOf(friendship, friends.uid))))) return;
+  var id = friendship.id;
+  friendAction(function () {
+    return group.store.removeFriend(id).then(function () {
+      if (friends.open === id) closePrivateChat();
+    });
+  }, 'friendsActionFailed');
+});
+
+$('privateForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  if (friends.sending || !friends.open) return;
+  var text = $('privateInput').value.trim();
+  friends.chatError = groupMessageProblem(text);
+  if (friends.chatError === 'missing') friends.chatError = null;
+  if (text.length === 0 || friends.chatError) { renderFriends(); return; }
+  if (isCrisisMessage(text)) friends.crisis = true;
+  friends.sending = true;
+  renderFriends();
+  group.store.sendPrivate(friends.open, friends.uid, text).then(function () {
+    $('privateInput').value = '';
+  }).catch(function () {
+    friends.chatError = 'groupSendFailed';
+  }).then(function () {
+    friends.sending = false;
+    renderFriends();
+    scrollToBottom($('privateLog'));
+  });
+});
+
+$('privateInput').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+    e.preventDefault();
+    $('privateForm').requestSubmit();
   }
 });
 
@@ -3610,6 +4140,7 @@ function renderAll() {
   renderPlan();
   renderLog();
   renderGroupChat();
+  renderFriends();
   renderCategories();
   renderPhoto();
   renderQuestions();
