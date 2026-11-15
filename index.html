@@ -236,6 +236,28 @@ h1 a{color:var(--acc)}
 .trend-rest{color:var(--acc);stroke:var(--acc);fill:var(--acc)}
 .trend-exercise{color:var(--orange);stroke:var(--orange);fill:var(--orange)}
 .trend-legend li span{color:var(--text)}
+/* While the report is open it is the only thing in the log, and the only thing printed. */
+#view-log.reporting > section:not(#report){display:none}
+.report-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.report-actions button{width:auto}
+#reportSheet h2{margin:0}
+#reportSheet h3{margin:20px 0 8px;padding-top:12px;border-top:1px solid var(--line)}
+.report-range{font-weight:600;margin:4px 0 2px}
+#reportSheet .trend{border-bottom:0;margin-bottom:0;padding-bottom:0}
+.report-exercises{margin:0;padding-inline-start:22px}
+.report-exercises small{color:var(--muted);font-size:15px}
+.report-record{padding:10px 0}
+.report-record+.report-record{border-top:1px solid var(--line)}
+.report-record p{margin:4px 0 0;white-space:pre-wrap}
+.report-record img{display:block;max-width:100%;max-height:320px;object-fit:contain;border-radius:4px;margin-top:8px}
+@media print{
+  :root{--bg:#fff;--card:#fff;--text:#111;--muted:#444;--line:#ccc;--acc:#1f4e79;--orange:#d9480f}
+  body:has(#view-log.reporting:not([hidden])) > :not(main),
+  body:has(#view-log.reporting:not([hidden])) main > :not(#view-log),
+  .report-actions{display:none !important}
+  #report{border:0;box-shadow:none;padding:0;margin:0}
+  .report-record{break-inside:avoid}
+}
 .place a{background:var(--acc);color:var(--on-acc);text-decoration:none;font-weight:600;border-radius:4px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center}
 /* Cover photos are free under the Unsplash License; COVER_SLIDES in the
    script lists each one with its photographer. */
@@ -548,6 +570,20 @@ h1 a{text-decoration:none}
 </div>
 
 <div class="view" id="view-log" hidden>
+  <section class="card" id="reportCard">
+    <h2 id="reportTitle"></h2>
+    <p class="muted" id="reportIntro"></p>
+    <div class="calendar-row">
+      <label class="field"><span id="reportLangLabel"></span><select id="reportLang"></select></label>
+      <button type="button" class="primary" id="reportMake"></button>
+    </div>
+    <p class="muted" id="reportEmpty" role="status" hidden></p>
+    <p class="error" id="reportFailed" role="alert" hidden></p>
+  </section>
+  <section class="card report" id="report" hidden>
+    <div class="report-actions"><button type="button" class="primary" id="reportPrint"></button><button type="button" class="secondary" id="reportClose"></button></div>
+    <article id="reportSheet"></article>
+  </section>
   <section class="card plan" id="planCard">
     <h2 id="planTitle"></h2>
     <p class="muted" id="planIntro"></p>
@@ -662,6 +698,7 @@ h1 a{text-decoration:none}
 <script src="knowledge.js"></script>
 <script src="city-hospitals.js"></script>
 <script src="rehab-plan.js"></script>
+<script src="report.js"></script>
 <script src="account.js"></script>
 <script src="install.js"></script>
 <script>
@@ -934,7 +971,25 @@ var T = {
     painExerciseLabel: 'Pain during rehab exercises',
     painRestShown: 'Pain at rest {0}/10',
     painExerciseShown: 'During rehab {0}/10',
-    logProblemPain: 'Choose a pain score from 0 to 10.'
+    logProblemPain: 'Choose a pain score from 0 to 10.',
+    reportTitle: 'Report for your doctor',
+    reportIntro: 'Your pain, rehab exercises and records on one page, to show or print at your check-up. Choose the language your doctor reads.',
+    reportLangLabel: 'Report language',
+    reportMake: 'Make the report',
+    reportEmpty: 'There is nothing to report yet. Add a record or an exercise first.',
+    reportFailed: 'Could not read your records. Your browser may be blocking storage (for example in private browsing).',
+    reportPrint: 'Print / save as PDF',
+    reportClose: 'Back to the log',
+    reportHeading: 'Recovery report',
+    reportRange: '{0} – {1}',
+    reportNote: 'Written by the patient in {0}. Pain is scored from 0 (none) to 10 (worst imaginable).',
+    reportPain: 'Pain',
+    reportPainNone: 'No pain scores recorded.',
+    reportExercises: 'Rehab exercises',
+    reportExerciseDone: 'done on {0} of {1} planned days',
+    reportExercisesNone: 'No exercises in the plan.',
+    reportRecords: 'Daily records',
+    reportRecordsNone: 'No daily records.'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -1205,7 +1260,25 @@ var T = {
     painExerciseLabel: 'Dolor durante los ejercicios de rehabilitación',
     painRestShown: 'Dolor en reposo {0}/10',
     painExerciseShown: 'En rehabilitación {0}/10',
-    logProblemPain: 'Elige un nivel de dolor del 0 al 10.'
+    logProblemPain: 'Elige un nivel de dolor del 0 al 10.',
+    reportTitle: 'Informe para tu médico',
+    reportIntro: 'Tu dolor, tus ejercicios de rehabilitación y tus registros en una sola página, para mostrar o imprimir en tu consulta. Elige el idioma que lee tu médico.',
+    reportLangLabel: 'Idioma del informe',
+    reportMake: 'Crear el informe',
+    reportEmpty: 'Todavía no hay nada que incluir. Añade primero un registro o un ejercicio.',
+    reportFailed: 'No se pudieron leer tus registros. Puede que el navegador bloquee el almacenamiento (por ejemplo, en navegación privada).',
+    reportPrint: 'Imprimir / guardar como PDF',
+    reportClose: 'Volver al diario',
+    reportHeading: 'Informe de recuperación',
+    reportRange: '{0} – {1}',
+    reportNote: 'Escrito por el paciente en {0}. El dolor se puntúa de 0 (nada) a 10 (el peor imaginable).',
+    reportPain: 'Dolor',
+    reportPainNone: 'No se registraron puntuaciones de dolor.',
+    reportExercises: 'Ejercicios de rehabilitación',
+    reportExerciseDone: 'hecho {0} de {1} días previstos',
+    reportExercisesNone: 'No hay ejercicios en el plan.',
+    reportRecords: 'Registros diarios',
+    reportRecordsNone: 'No hay registros diarios.'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -1476,7 +1549,25 @@ var T = {
     painExerciseLabel: 'Douleur pendant les exercices de rééducation',
     painRestShown: 'Au repos {0}/10',
     painExerciseShown: 'En rééducation {0}/10',
-    logProblemPain: 'Choisis un score de douleur de 0 à 10.'
+    logProblemPain: 'Choisis un score de douleur de 0 à 10.',
+    reportTitle: 'Rapport pour ton médecin',
+    reportIntro: 'Ta douleur, tes exercices de rééducation et tes notes sur une seule page, à montrer ou imprimer à ta consultation. Choisis la langue que lit ton médecin.',
+    reportLangLabel: 'Langue du rapport',
+    reportMake: 'Créer le rapport',
+    reportEmpty: 'Il n’y a encore rien à inclure. Ajoute d’abord une note ou un exercice.',
+    reportFailed: 'Impossible de lire tes notes. Le navigateur bloque peut-être le stockage (par exemple en navigation privée).',
+    reportPrint: 'Imprimer / enregistrer en PDF',
+    reportClose: 'Retour au journal',
+    reportHeading: 'Bilan de récupération',
+    reportRange: '{0} – {1}',
+    reportNote: 'Rédigé par le patient dans {0}. La douleur est notée de 0 (aucune) à 10 (la pire imaginable).',
+    reportPain: 'Douleur',
+    reportPainNone: 'Aucun score de douleur enregistré.',
+    reportExercises: 'Exercices de rééducation',
+    reportExerciseDone: 'fait {0} jours sur {1} prévus',
+    reportExercisesNone: 'Aucun exercice dans le programme.',
+    reportRecords: 'Notes quotidiennes',
+    reportRecordsNone: 'Aucune note quotidienne.'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -1747,7 +1838,25 @@ var T = {
     painExerciseLabel: 'Боль во время упражнений',
     painRestShown: 'В покое {0}/10',
     painExerciseShown: 'При упражнениях {0}/10',
-    logProblemPain: 'Выбери уровень боли от 0 до 10.'
+    logProblemPain: 'Выбери уровень боли от 0 до 10.',
+    reportTitle: 'Отчёт для врача',
+    reportIntro: 'Боль, упражнения реабилитации и записи на одной странице, чтобы показать или распечатать на приёме. Выбери язык, который читает твой врач.',
+    reportLangLabel: 'Язык отчёта',
+    reportMake: 'Создать отчёт',
+    reportEmpty: 'Пока нечего включить в отчёт. Сначала добавь запись или упражнение.',
+    reportFailed: 'Не удалось прочитать записи. Возможно, браузер блокирует хранилище (например, в режиме инкогнито).',
+    reportPrint: 'Печать / сохранить в PDF',
+    reportClose: 'Назад к дневнику',
+    reportHeading: 'Отчёт о восстановлении',
+    reportRange: '{0} – {1}',
+    reportNote: 'Заполнено пациентом в приложении «{0}». Боль оценивается от 0 (нет боли) до 10 (самая сильная, какую можно представить).',
+    reportPain: 'Боль',
+    reportPainNone: 'Оценки боли не записаны.',
+    reportExercises: 'Упражнения реабилитации',
+    reportExerciseDone: 'выполнено дней: {0} из {1} запланированных',
+    reportExercisesNone: 'В плане нет упражнений.',
+    reportRecords: 'Записи по дням',
+    reportRecordsNone: 'Записей по дням нет.'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -2019,7 +2128,25 @@ var T = {
     painExerciseLabel: 'الألم أثناء التمارين',
     painRestShown: 'أثناء الراحة {0}/10',
     painExerciseShown: 'أثناء التمارين {0}/10',
-    logProblemPain: 'اختر مستوى ألم من 0 إلى 10.'
+    logProblemPain: 'اختر مستوى ألم من 0 إلى 10.',
+    reportTitle: 'تقرير لطبيبك',
+    reportIntro: 'ألمك وتمارين التأهيل وتسجيلاتك في صفحة واحدة، لتعرضها على الطبيب أو تطبعها في موعد المراجعة. اختر اللغة التي يقرؤها طبيبك.',
+    reportLangLabel: 'لغة التقرير',
+    reportMake: 'أنشئ التقرير',
+    reportEmpty: 'لا يوجد ما يُضاف إلى التقرير بعد. أضف تسجيلًا أو تمرينًا أولًا.',
+    reportFailed: 'تعذّرت قراءة تسجيلاتك. ربما يمنع المتصفح التخزين (مثلًا في وضع التصفح الخاص).',
+    reportPrint: 'اطبع / احفظ بصيغة PDF',
+    reportClose: 'العودة إلى السجل',
+    reportHeading: 'تقرير التعافي',
+    reportRange: '{0} – {1}',
+    reportNote: 'كتبه المريض في «{0}». يُقيَّم الألم من 0 (لا ألم) إلى 10 (أشد ألم يمكن تخيّله).',
+    reportPain: 'الألم',
+    reportPainNone: 'لم تُسجَّل درجات للألم.',
+    reportExercises: 'تمارين التأهيل',
+    reportExerciseDone: 'الأيام المنجزة: {0} من {1}',
+    reportExercisesNone: 'لا توجد تمارين في الخطة.',
+    reportRecords: 'التسجيلات اليومية',
+    reportRecordsNone: 'لا توجد تسجيلات يومية.'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -2288,7 +2415,25 @@ var T = {
     painExerciseLabel: '做康复动作时的疼痛',
     painRestShown: '平时疼痛 {0}/10',
     painExerciseShown: '康复时疼痛 {0}/10',
-    logProblemPain: '请选 0 到 10 的疼痛分数。'
+    logProblemPain: '请选 0 到 10 的疼痛分数。',
+    reportTitle: '给医生的报告',
+    reportIntro: '把疼痛、康复练习和每天的记录整理成一页，复诊时给医生看或打印出来。可以选医生看得懂的语言。',
+    reportLangLabel: '报告语言',
+    reportMake: '生成报告',
+    reportEmpty: '还没有可以整理的内容。先写一条记录或加一个练习吧。',
+    reportFailed: '读不到你的记录。浏览器可能禁止了存储（比如无痕模式）。',
+    reportPrint: '打印 / 存成 PDF',
+    reportClose: '返回康复记录',
+    reportHeading: '康复报告',
+    reportRange: '{0} – {1}',
+    reportNote: '由患者本人在「{0}」中记录。疼痛分数从 0（不痛）到 10（能想象到的最痛）。',
+    reportPain: '疼痛',
+    reportPainNone: '没有记录疼痛分数。',
+    reportExercises: '康复练习',
+    reportExerciseDone: '计划 {1} 天，做了 {0} 天',
+    reportExercisesNone: '计划里还没有练习。',
+    reportRecords: '每天的记录',
+    reportRecordsNone: '没有每天的记录。'
   }
 };
 
@@ -3200,15 +3345,18 @@ function formatLogDate(dateString) {
   return date.toLocaleDateString(lang === 'zh' ? 'zh-CN' : lang, {year: 'numeric', month: 'short', day: 'numeric', weekday: 'short'});
 }
 
+// " · At rest 3/10 · During exercises 5/10", or '' when no pain was scored.
+function entryPainText(entry) {
+  return LOG_PAIN_FIELDS.filter(function (field) { return entry[field] != null; })
+    .map(function (field) { return ' · ' + t(field + 'Shown').replace('{0}', entry[field]); }).join('');
+}
+
 function logEntryCard(entry) {
   var article = document.createElement('article');
   article.className = 'case log-entry';
   article.innerHTML = '<div class="case-meta"><strong></strong></div><p></p>';
   article.querySelector('strong').textContent = formatLogDate(entry.date);
-  LOG_PAIN_FIELDS.forEach(function (field) {
-    if (entry[field] == null) return;
-    article.querySelector('.case-meta').appendChild(document.createTextNode(' · ' + t(field + 'Shown').replace('{0}', entry[field])));
-  });
+  article.querySelector('.case-meta').appendChild(document.createTextNode(entryPainText(entry)));
   article.querySelector('p').textContent = entry.text;
   if (entry.photo) {
     var img = document.createElement('img');
@@ -3253,6 +3401,7 @@ function renderLog() {
   list.innerHTML = '';
   if (log.status === 'ready') log.entries.forEach(function (entry) { list.appendChild(logEntryCard(entry)); });
   renderPainTrend();
+  renderReportCard();
 }
 
 var TREND_CLASSES = {painRest: 'trend-rest', painExercise: 'trend-exercise'};
@@ -3323,19 +3472,142 @@ function renderPainTrend() {
   legend.innerHTML = '';
   if (points.length < 2) return;
   chart.appendChild(painTrendChart(points, Math.max(260, chart.clientWidth || 600)));
+  fillPainLegend(legend, painSummary(points));
+}
+
+// "Pain at rest 6 → 2" for each kind of pain that was scored.
+function fillPainLegend(legend, summary) {
   LOG_PAIN_FIELDS.forEach(function (field) {
-    var scores = points.filter(function (point) { return point[field] !== null; }).map(function (point) { return point[field]; });
-    if (scores.length === 0) return;
+    var scores = summary[field];
+    if (!scores) return;
     var item = document.createElement('li');
     item.className = TREND_CLASSES[field];
     var text = document.createElement('span');
-    var change = scores.length === 1 ? trendScore(scores[0])
-      : t('trendChange').replace('{0}', trendScore(scores[0])).replace('{1}', trendScore(scores[scores.length - 1]));
+    var change = scores.days === 1 ? trendScore(scores.first)
+      : t('trendChange').replace('{0}', trendScore(scores.first)).replace('{1}', trendScore(scores.last));
     text.textContent = t(TREND_NAMES[field]) + ' ' + change;
     item.appendChild(text);
     legend.appendChild(item);
   });
 }
+
+// ---- Report for the doctor ----
+
+// `language` is null until the visitor picks one, so the report follows the page.
+var report = {open: false, language: null, empty: false, failed: false};
+
+function renderReportCard() {
+  ['reportTitle', 'reportIntro', 'reportLangLabel', 'reportMake', 'reportEmpty', 'reportFailed', 'reportPrint', 'reportClose']
+    .forEach(function (id) { $(id).textContent = t(id); });
+  var select = $('reportLang');
+  if (select.options.length === 0) {
+    // The same languages as the Language menu, each named in its own writing.
+    document.querySelectorAll('#langList [data-lang]').forEach(function (button) {
+      var option = new Option(button.textContent, button.dataset.lang);
+      option.lang = button.lang;
+      select.appendChild(option);
+    });
+  }
+  select.value = report.language || lang;
+  $('reportEmpty').hidden = !report.empty;
+  $('reportFailed').hidden = !report.failed;
+  $('report').hidden = !report.open;
+  $('view-log').classList.toggle('reporting', report.open);
+}
+
+// Runs `draw` with the texts of another language, so the report can be in
+// the doctor's language while the page stays in the visitor's.
+function inLanguage(code, draw) {
+  var pageLang = lang;
+  lang = code;
+  try { draw(); } finally { lang = pageLang; }
+}
+
+function drawReport(sheet, data) {
+  function add(parent, tag, text, className) {
+    var element = document.createElement(tag);
+    if (text) element.textContent = text;
+    if (className) element.className = className;
+    parent.appendChild(element);
+    return element;
+  }
+  add(sheet, 'h2', t('reportHeading')).id = 'reportHeading';
+  add(sheet, 'p', t('reportRange').replace('{0}', formatLogDate(data.from)).replace('{1}', formatLogDate(data.to)), 'report-range');
+  add(sheet, 'p', t('reportNote').replace('{0}', t('title')), 'muted');
+
+  add(sheet, 'h3', t('reportPain'));
+  if (Object.keys(data.pain).length === 0) {
+    add(sheet, 'p', t('reportPainNone'), 'muted');
+  } else {
+    var trend = add(sheet, 'div', '', 'trend');
+    if (data.painPoints.length >= 2) {
+      var chart = painTrendChart(data.painPoints, Math.max(260, Math.min(640, window.innerWidth - 64)));
+      chart.setAttribute('aria-labelledby', 'reportHeading');
+      trend.appendChild(chart);
+    }
+    fillPainLegend(add(trend, 'ul', '', 'trend-legend'), data.pain);
+  }
+
+  add(sheet, 'h3', t('reportExercises'));
+  if (data.exercises.length === 0) add(sheet, 'p', t('reportExercisesNone'), 'muted');
+  else {
+    var list = add(sheet, 'ul', '', 'report-exercises');
+    data.exercises.forEach(function (count) {
+      var item = add(list, 'li', planItemName(count.item) + (count.item.amount ? ' (' + count.item.amount + ')' : '') + ': ');
+      add(item, 'strong', t('reportExerciseDone').replace('{0}', count.done).replace('{1}', count.due));
+      add(item, 'small', ' · ' + planDatesText(count.item));
+    });
+  }
+
+  add(sheet, 'h3', t('reportRecords'));
+  if (data.records.length === 0) add(sheet, 'p', t('reportRecordsNone'), 'muted');
+  data.records.forEach(function (entry) {
+    var record = add(sheet, 'div', '', 'report-record');
+    add(record, 'strong', formatLogDate(entry.date));
+    record.appendChild(document.createTextNode(entryPainText(entry)));
+    add(record, 'p', entry.text);
+    if (entry.photo) {
+      var img = add(record, 'img');
+      img.src = entry.photo;
+      img.alt = t('logPhotoAlt');
+    }
+  });
+}
+
+$('reportLang').addEventListener('change', function () { report.language = $('reportLang').value; });
+
+$('reportMake').addEventListener('click', function () {
+  report.empty = false;
+  report.failed = false;
+  var today = logDateString(new Date());
+  Promise.all([logStore.all(), planStore.all(), planStore.allDone()]).then(function (results) {
+    var data = recoveryReport(results[0], results[1], results[2], today);
+    if (!data) {
+      report.empty = true;
+      return;
+    }
+    var code = report.language || lang;
+    var sheet = $('reportSheet');
+    sheet.innerHTML = '';
+    sheet.lang = code === 'zh' ? 'zh-CN' : code;
+    sheet.dir = code === 'ar' ? 'rtl' : 'ltr';
+    inLanguage(code, function () { drawReport(sheet, data); });
+    report.open = true;
+  }).catch(function () {
+    report.failed = true;
+  }).then(function () {
+    renderReportCard();
+    if (report.open) window.scrollTo(0, 0);
+  });
+});
+
+$('reportPrint').addEventListener('click', function () { window.print(); });
+
+$('reportClose').addEventListener('click', function () {
+  report.open = false;
+  renderReportCard();
+  $('reportCard').scrollIntoView();
+});
 
 function loadLog() {
   return logStore.all().then(function (entries) {

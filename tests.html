@@ -17,6 +17,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="chat.js"></script>
 <script src="recovery-log.js"></script>
 <script src="rehab-plan.js"></script>
+<script src="report.js"></script>
 <script src="knowledge.js"></script>
 <script src="city-hospitals.js"></script>
 <script src="account.js"></script>
@@ -282,6 +283,47 @@ test('plan: the calendar file repeats each exercise on its days at the chosen ti
   equal(lines.filter(function (line) { return line === 'BEGIN:VEVENT'; }).length, 1);
   var everyDay = planCalendar([planItem({})], '08:00', 'Rehab', new Date(0));
   equal(everyDay.indexOf('BYDAY=SU,MO,TU,WE,TH,FR,SA\r\n') > 0, true);  // no end date, no UNTIL
+});
+// Ticked days in the plan's store, as planStore.setDone saves them.
+function doneMarks(itemId, dates) {
+  return dates.map(function (date) { return {key: doneKey(itemId, date), itemId: itemId, date: date}; });
+}
+test('report: counts each exercise as ticked days out of planned days, up to today', function () {
+  var everyDay = planItem({name: 'Quad sets', start: '2026-11-10', end: ''});
+  everyDay.id = 1;
+  var tuesThurs = planItem({name: 'Bridges', days: [2, 4], start: '2026-11-01', end: '2026-11-12'});
+  tuesThurs.id = 2;
+  var later = planItem({name: 'Jogging', start: '2026-11-20', end: ''});
+  later.id = 3;
+  // A tick on a Monday, when Bridges is not planned, does not count.
+  var marks = doneMarks(1, ['2026-11-10', '2026-11-11', '2026-11-13']).concat(doneMarks(2, ['2026-11-03', '2026-11-09', '2026-11-12']));
+  var counts = exerciseCounts([everyDay, tuesThurs, later], marks, '2026-11-14');
+  equal(counts.length, 2);  // Jogging has not started yet
+  equal(counts[0].done + ' / ' + counts[0].due, '3 / 5');  // Nov 10 to 14
+  equal(counts[1].done + ' / ' + counts[1].due, '2 / 4');  // Nov 3, 5, 10, 12
+});
+test('report: covers every record from the first one to today, oldest first, with the pain change', function () {
+  var entries = [
+    {date: '2026-11-12', text: 'Better', painRest: 2, painExercise: 4, photo: 'data:image/png;base64,x', createdAt: 3},
+    {date: '2026-11-02', text: 'Swollen', painRest: 6, painExercise: null, photo: null, createdAt: 1},
+    {date: '2026-11-05', text: 'A bit less', painRest: null, painExercise: 7, photo: null, createdAt: 2}
+  ];
+  var report = recoveryReport(entries, [], [], '2026-11-14');
+  equal(report.from, '2026-11-02');
+  equal(report.to, '2026-11-14');
+  equal(report.records.map(function (entry) { return entry.text; }).join(', '), 'Swollen, A bit less, Better');
+  equal(report.records[2].photo, 'data:image/png;base64,x');
+  equal(report.pain.painRest.first + ' → ' + report.pain.painRest.last, '6 → 2');
+  equal(report.pain.painExercise.first + ' → ' + report.pain.painExercise.last, '7 → 4');
+});
+test('report: starts at the first exercise when that is earlier than any record, and is empty with nothing at all', function () {
+  var exercise = planItem({start: '2026-10-30', end: ''});
+  exercise.id = 1;
+  var entries = [{date: '2026-11-02', text: 'Fine', painRest: null, painExercise: null, photo: null, createdAt: 1}];
+  var report = recoveryReport(entries, [exercise], [], '2026-11-14');
+  equal(report.from, '2026-10-30');
+  equal(Object.keys(report.pain).length, 0);
+  equal(recoveryReport([], [], [], '2026-11-14'), null);
 });
 test('chat: messages about suicide or self-harm show the hotlines, in both languages', function () {
   equal(isCrisisMessage('我现在不想活了'), true);

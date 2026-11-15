@@ -198,6 +198,9 @@ var planStore = {
       return request;
     });
   },
+  allDone: function () {
+    return planRequest('done', 'readonly', function (store) { return store.getAll(); });
+  },
   doneOn: function (dateString) {
     return planRequest('done', 'readonly', function (store) { return store.getAll(); }).then(function (marks) {
       return marks.filter(function (mark) { return mark.date === dateString; }).map(function (mark) { return mark.itemId; });
