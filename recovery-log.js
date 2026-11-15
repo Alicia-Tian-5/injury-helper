@@ -33,10 +33,13 @@ function logEntryFromForm(input, now) {
 }
 
 // Problems with an entry, as {field, problem} like caseProblems in share.js.
-// An empty list means it can be saved.
-function logEntryProblems(entry) {
+// An empty list means it can be saved. With `today` (YYYY-MM-DD), a date
+// after it is a problem too; restoring a backup leaves it out, since the
+// backup may come from a phone in another time zone.
+function logEntryProblems(entry, today) {
   var problems = [];
   if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.date)) problems.push({field: 'date', problem: 'missing'});
+  else if (today && entry.date > today) problems.push({field: 'date', problem: 'future'});
   if (entry.text.length === 0) problems.push({field: 'text', problem: 'missing'});
   else if (entry.text.length > LOG_TEXT_MAX) problems.push({field: 'text', problem: 'tooLong'});
   LOG_PAIN_FIELDS.forEach(function (field) {

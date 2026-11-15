@@ -477,6 +477,13 @@ test('log: a record needs a date and some words', function () {
   equal(logEntryProblems(logEntryFromForm({date: '', text: 'ok'}, now))[0].field, 'date');
   equal(logEntryProblems(logEntryFromForm({date: '2026-11-09', text: 'a'.repeat(LOG_TEXT_MAX + 1)}, now))[0].problem, 'tooLong');
 });
+test('log: a record cannot be dated after today', function () {
+  var now = new Date(2026, 10, 9, 20, 0);
+  equal(logEntryProblems(logEntryFromForm({date: '2026-11-09', text: 'ok'}, now), '2026-11-09').length, 0);
+  equal(logEntryProblems(logEntryFromForm({date: '2026-11-08', text: 'ok'}, now), '2026-11-09').length, 0);
+  equal(logEntryProblems(logEntryFromForm({date: '2026-11-10', text: 'ok'}, now), '2026-11-09')[0].problem, 'future');
+  equal(logEntryProblems(logEntryFromForm({date: '2027-01-01', text: 'ok'}, now), '2026-12-31')[0].field, 'date');
+});
 test('log: both pain scores are optional and must be 0 to 10', function () {
   var now = new Date(2026, 10, 9, 20, 0);
   var entry = logEntryFromForm({date: '2026-11-09', text: 'ok', painRest: '2', painExercise: ''}, now);

@@ -1067,6 +1067,7 @@ var T = {
     logDelete: 'Delete',
     logDeleteConfirm: 'Delete this record? This cannot be undone.',
     logProblemDate: 'Choose a date.',
+    logProblemFuture: 'Choose today or an earlier day.',
     logProblemText: 'Write a few words about today.',
     logProblemTooLong: 'Keep it under {0} characters.',
     navLearn: 'Sports health',
@@ -1418,6 +1419,7 @@ var T = {
     logDelete: 'Eliminar',
     logDeleteConfirm: '¿Eliminar este registro? No se puede deshacer.',
     logProblemDate: 'Elige una fecha.',
+    logProblemFuture: 'Elige hoy o un día anterior.',
     logProblemText: 'Escribe unas palabras sobre hoy.',
     logProblemTooLong: 'Como máximo {0} caracteres.',
     navLearn: 'Salud deportiva',
@@ -1769,6 +1771,7 @@ var T = {
     logDelete: 'Supprimer',
     logDeleteConfirm: 'Supprimer cette note ? C’est définitif.',
     logProblemDate: 'Choisis une date.',
+    logProblemFuture: 'Choisis aujourd’hui ou un jour passé.',
     logProblemText: 'Écris quelques mots sur aujourd’hui.',
     logProblemTooLong: '{0} caractères au maximum.',
     navLearn: 'Santé sportive',
@@ -2120,6 +2123,7 @@ var T = {
     logDelete: 'Удалить',
     logDeleteConfirm: 'Удалить эту запись? Это нельзя отменить.',
     logProblemDate: 'Выбери дату.',
+    logProblemFuture: 'Выбери сегодня или более ранний день.',
     logProblemText: 'Напиши пару слов о сегодняшнем дне.',
     logProblemTooLong: 'Максимум символов: {0}.',
     navLearn: 'Спорт и здоровье',
@@ -2472,6 +2476,7 @@ var T = {
     logDelete: 'حذف',
     logDeleteConfirm: 'هل تحذف هذا التسجيل؟ لا يمكن التراجع عن ذلك.',
     logProblemDate: 'اختر تاريخًا.',
+    logProblemFuture: 'اختر اليوم أو يومًا سابقًا.',
     logProblemText: 'اكتب بضع كلمات عن يومك.',
     logProblemTooLong: 'الحد الأقصى للأحرف: {0}.',
     navLearn: 'الرياضة والصحة',
@@ -2821,6 +2826,7 @@ var T = {
     logDelete: '删除',
     logDeleteConfirm: '确定删除这条记录吗？删除后无法恢复。',
     logProblemDate: '请选择日期。',
+    logProblemFuture: '日期不能晚于今天。',
     logProblemText: '写几句今天的情况吧。',
     logProblemTooLong: '最多 {0} 个字。',
     navLearn: '运动健康知识',
@@ -4422,7 +4428,7 @@ var account = {status: 'loading', user: null, mode: 'signIn', busy: false, probl
 var log = {status: 'loading', entries: [], photo: null, photoBad: false, saving: false, saved: false, saveFailed: false, problems: []};
 
 function logProblemText(p) {
-  if (p.field === 'date') return t('logProblemDate');
+  if (p.field === 'date') return t(p.problem === 'future' ? 'logProblemFuture' : 'logProblemDate');
   if (LOG_PAIN_FIELDS.indexOf(p.field) >= 0) return t('logProblemPain');
   if (p.problem === 'tooLong') return t('logProblemTooLong').replace('{0}', LOG_TEXT_MAX);
   return t('logProblemText');
@@ -4845,7 +4851,7 @@ $('logForm').addEventListener('submit', function (e) {
     input[field] = chosen ? chosen.value : '';
   });
   var entry = logEntryFromForm(input, new Date());
-  log.problems = logEntryProblems(entry);
+  log.problems = logEntryProblems(entry, logDateString(new Date()));
   log.saveFailed = false;
   log.saved = false;
   if (log.problems.length > 0) { renderLog(); return; }
