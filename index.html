@@ -333,7 +333,12 @@ h1 a{text-decoration:none}
 .private-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .private-head h3{margin:0}
 .private-head .link-btn{margin:0;padding:8px 0}
-.private-remove{color:var(--red);margin:12px 0 0;padding:8px 0}
+.private-end{display:flex;flex-wrap:wrap;gap:20px;margin-top:12px}
+.private-remove{color:var(--red);margin:0;padding:8px 0}
+.blocked{margin-top:12px}
+.blocked summary{cursor:pointer;color:var(--muted);padding:10px 0;min-height:44px}
+.blocked-row{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding:6px 0}
+.blocked-row .link-btn{margin:0}
 .chat-crisis{background:var(--red-soft);border:1.5px solid var(--red);border-radius:6px;padding:12px;color:var(--text);margin-top:10px}
 .chat-crisis a{color:var(--red);font-weight:700}
 .start{text-decoration:none}
@@ -587,6 +592,10 @@ h1 a{text-decoration:none}
       </div>
       <p class="muted" id="friendsStatus" role="status" hidden></p>
       <ul class="friend-list" id="friendList"></ul>
+      <details class="blocked" id="blockedBox" hidden>
+        <summary id="blockedTitle"></summary>
+        <div id="blockedList"></div>
+      </details>
     </div>
     <div class="private-chat" id="privateChat" hidden>
       <div class="private-head">
@@ -602,7 +611,10 @@ h1 a{text-decoration:none}
         <button type="submit" class="primary" id="privateSend"></button>
       </form>
       <p class="error" id="privateError" role="alert" hidden></p>
-      <button type="button" class="link-btn private-remove" id="privateRemove"></button>
+      <div class="private-end">
+        <button type="button" class="link-btn private-remove" id="privateRemove"></button>
+        <button type="button" class="link-btn private-remove" id="privateBlock"></button>
+      </div>
     </div>
     <p class="error" id="friendsError" role="alert" hidden></p>
   </section>
@@ -1142,7 +1154,11 @@ var T = {
     privateRemoveConfirm: 'Remove {0}? You will no longer be friends, and they cannot message you anymore.',
     privateEmpty: 'No messages yet. Say hello!',
     privateEnded: 'You are no longer friends.',
-    privatePlaceholder: 'Message {0}…'
+    privatePlaceholder: 'Message {0}…',
+    friendsBlock: 'Block',
+    friendsBlockConfirm: 'Block {0}? They can no longer ask to be your friend, your friendship ends, and you will not see their messages in the rooms. They are not told.',
+    friendsBlockedTitle: 'Blocked people ({0})',
+    friendsUnblock: 'Unblock'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -1489,7 +1505,11 @@ var T = {
     privateRemoveConfirm: '¿Eliminar a {0}? Dejaréis de ser amigos y ya no podrá escribirte.',
     privateEmpty: 'Todavía no hay mensajes. ¡Saluda!',
     privateEnded: 'Ya no sois amigos.',
-    privatePlaceholder: 'Escribe a {0}…'
+    privatePlaceholder: 'Escribe a {0}…',
+    friendsBlock: 'Bloquear',
+    friendsBlockConfirm: '¿Bloquear a {0}? Ya no podrá pedirte amistad, vuestra amistad termina y no verás sus mensajes en las salas. No se le avisa.',
+    friendsBlockedTitle: 'Personas bloqueadas ({0})',
+    friendsUnblock: 'Desbloquear'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -1836,7 +1856,11 @@ var T = {
     privateRemoveConfirm: 'Retirer {0} ? Vous ne serez plus amis, et cette personne ne pourra plus t’écrire.',
     privateEmpty: 'Pas encore de message. Dis bonjour !',
     privateEnded: 'Vous n’êtes plus amis.',
-    privatePlaceholder: 'Écris à {0}…'
+    privatePlaceholder: 'Écris à {0}…',
+    friendsBlock: 'Bloquer',
+    friendsBlockConfirm: 'Bloquer {0} ? Cette personne ne pourra plus te demander en ami, votre amitié prend fin, et tu ne verras plus ses messages dans les salons. Elle n’est pas prévenue.',
+    friendsBlockedTitle: 'Personnes bloquées ({0})',
+    friendsUnblock: 'Débloquer'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -2183,7 +2207,11 @@ var T = {
     privateRemoveConfirm: 'Удалить {0} из друзей? Вы больше не будете друзьями, и этот человек не сможет тебе писать.',
     privateEmpty: 'Сообщений пока нет. Поздоровайся!',
     privateEnded: 'Вы больше не друзья.',
-    privatePlaceholder: 'Сообщение для {0}…'
+    privatePlaceholder: 'Сообщение для {0}…',
+    friendsBlock: 'Заблокировать',
+    friendsBlockConfirm: 'Заблокировать {0}? Этот человек больше не сможет добавить тебя в друзья, ваша дружба закончится, и ты не будешь видеть его сообщения в комнатах. Ему не сообщат.',
+    friendsBlockedTitle: 'Заблокированные ({0})',
+    friendsUnblock: 'Разблокировать'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -2531,7 +2559,11 @@ var T = {
     privateRemoveConfirm: 'هل تزيل {0}؟ لن تبقيا صديقين، ولن يستطيع مراسلتك بعد الآن.',
     privateEmpty: 'لا توجد رسائل بعد. ألقِ التحية!',
     privateEnded: 'لم تعودا صديقين.',
-    privatePlaceholder: 'اكتب إلى {0}…'
+    privatePlaceholder: 'اكتب إلى {0}…',
+    friendsBlock: 'حظر',
+    friendsBlockConfirm: 'هل تحظر {0}؟ لن يستطيع طلب صداقتك بعد الآن، وستنتهي صداقتكما، ولن ترى رسائله في الغرف. لن يُبلَّغ بذلك.',
+    friendsBlockedTitle: 'المحظورون ({0})',
+    friendsUnblock: 'إلغاء الحظر'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -2876,7 +2908,11 @@ var T = {
     privateRemoveConfirm: '删除 {0}？你们将不再是好友，对方也不能再给你发消息。',
     privateEmpty: '还没有消息，打个招呼吧！',
     privateEnded: '你们已不是好友。',
-    privatePlaceholder: '给 {0} 发消息…'
+    privatePlaceholder: '给 {0} 发消息…',
+    friendsBlock: '拉黑',
+    friendsBlockConfirm: '拉黑 {0}？对方将不能再加你为好友，你们的好友关系会被删除，你也不会再在聊天室里看到对方的消息。对方不会收到通知。',
+    friendsBlockedTitle: '已拉黑的人（{0}）',
+    friendsUnblock: '取消拉黑'
   }
 };
 
@@ -3485,6 +3521,13 @@ function groupMessageBubble(message) {
     report.addEventListener('click', function () { reportGroupMessage(message); });
     actions.appendChild(report);
     actions.appendChild(friendButton(message.uid));
+    var blockButton = document.createElement('button');
+    blockButton.type = 'button';
+    blockButton.className = 'link-btn';
+    blockButton.textContent = t('friendsBlock');
+    blockButton.disabled = friends.busy || friends.status !== 'ready';
+    blockButton.addEventListener('click', function () { blockPerson(message.uid, message.nickname); });
+    actions.appendChild(blockButton);
     bubble.appendChild(actions);
   }
   return bubble;
@@ -3526,7 +3569,7 @@ function renderGroupChat() {
   $('groupYouText').textContent = t('groupYouAre').replace('{0}', group.nickname);
   $('groupCrisis').hidden = !group.crisis;
 
-  var shown = visibleMessages(group.messages, group.hidden);
+  var shown = visibleMessages(withoutBlocked(group.messages, friends.blocked), group.hidden);
   var list = $('groupLog');
   list.innerHTML = '';
   shown.forEach(function (message) { list.appendChild(groupMessageBubble(message)); });
@@ -3623,7 +3666,7 @@ var PRIVATE_MESSAGES_SHOWN = 100;
 // nicknames by account id, loaded as needed. `open` is the friendship whose
 // private chat is shown; `ended` says it ended while open.
 var friends = {
-  uid: null, stop: null, status: 'idle', incoming: [], outgoing: [], list: [], names: {}, busy: false, error: null,
+  uid: null, stop: null, status: 'idle', incoming: [], outgoing: [], list: [], blocked: [], names: {}, busy: false, error: null,
   open: null, stopChat: null, chatStatus: 'idle', messages: [], sending: false, chatError: null, crisis: false, ended: false,
   lastRead: readSetting(FRIENDS_LAST_READ_KEY, {})
 };
@@ -3658,11 +3701,12 @@ function syncFriends(uid) {
   friends.incoming = [];
   friends.outgoing = [];
   friends.list = [];
+  friends.blocked = [];
   friends.error = null;
   friends.status = uid ? 'loading' : 'idle';
   if (uid) {
     shareNickname();
-    var loaded = {requests: false, friendships: false};
+    var loaded = {requests: false, friendships: false, blocks: false};
     var failed = function () {
       if (friends.uid !== uid) return;
       friends.status = 'error';
@@ -3670,7 +3714,7 @@ function syncFriends(uid) {
     };
     var ready = function (part) {
       loaded[part] = true;
-      if (loaded.requests && loaded.friendships) friends.status = 'ready';
+      if (loaded.requests && loaded.friendships && loaded.blocks) friends.status = 'ready';
       loadNicknames();
       renderFriends();
       renderGroupChat();
@@ -3690,7 +3734,12 @@ function syncFriends(uid) {
       }
       ready('friendships');
     }, failed);
-    friends.stop = function () { stopRequests(); stopFriendships(); };
+    var stopBlocks = group.store.listenBlocks(uid, function (blocked) {
+      if (friends.uid !== uid) return;
+      friends.blocked = blocked;
+      ready('blocks');
+    }, failed);
+    friends.stop = function () { stopRequests(); stopFriendships(); stopBlocks(); };
   }
   renderFriends();
 }
@@ -3698,7 +3747,8 @@ function syncFriends(uid) {
 // Looks up the nicknames of friends and of people who sent a request.
 function loadNicknames() {
   var uids = friends.list.map(function (friendship) { return friendOf(friendship, friends.uid); })
-    .concat(friends.incoming.map(function (request) { return request.from; }));
+    .concat(friends.incoming.map(function (request) { return request.from; }))
+    .concat(friends.blocked);
   uids.forEach(function (uid) {
     if (uid in friends.names) return;
     friends.names[uid] = null;
@@ -3737,14 +3787,16 @@ function friendRequestRow(request) {
   row.appendChild(text);
   var buttons = document.createElement('div');
   buttons.className = 'plan-buttons';
-  [['friendsAccept', 'primary'], ['friendsDecline', 'secondary']].forEach(function (pair) {
+  [['friendsAccept', 'primary'], ['friendsDecline', 'secondary'], ['friendsBlock', 'secondary']].forEach(function (pair) {
     var button = document.createElement('button');
     button.type = 'button';
     button.className = pair[1];
     button.textContent = t(pair[0]);
     button.disabled = friends.busy;
     button.addEventListener('click', function () {
-      if (pair[0] === 'friendsAccept') {
+      if (pair[0] === 'friendsBlock') {
+        blockPerson(request.from);
+      } else if (pair[0] === 'friendsAccept') {
         var alsoAsked = friends.outgoing.some(function (mine) { return mine.to === request.from; });
         friendAction(function () {
           return group.store.acceptRequest(request.from, friends.uid, friendshipId(request.from, friends.uid), alsoAsked);
@@ -3783,9 +3835,9 @@ function openFriendship() {
 }
 
 function renderFriends() {
-  ['friendsTitle', 'friendsIntro', 'friendsRequestsTitle', 'privateBack', 'privateRemove', 'groupInputLabel', 'groupSend', 'chatCrisis']
+  ['friendsTitle', 'friendsIntro', 'friendsRequestsTitle', 'privateBack', 'privateRemove', 'groupInputLabel', 'groupSend', 'chatCrisis', 'friendsBlock']
     .forEach(function (id) {
-      var target = {groupInputLabel: 'privateInputLabel', groupSend: 'privateSend', chatCrisis: 'privateCrisis'}[id] || id;
+      var target = {groupInputLabel: 'privateInputLabel', groupSend: 'privateSend', chatCrisis: 'privateCrisis', friendsBlock: 'privateBlock'}[id] || id;
       $(target).textContent = t(id);
     });
   var friendship = openFriendship();
@@ -3794,8 +3846,31 @@ function renderFriends() {
 
   var requests = $('friendRequestList');
   requests.innerHTML = '';
-  friends.incoming.forEach(function (request) { requests.appendChild(friendRequestRow(request)); });
-  $('friendRequests').hidden = friends.incoming.length === 0;
+  var incoming = friends.incoming.filter(function (request) { return friends.blocked.indexOf(request.from) < 0; });
+  incoming.forEach(function (request) { requests.appendChild(friendRequestRow(request)); });
+  $('friendRequests').hidden = incoming.length === 0;
+
+  var blockedList = $('blockedList');
+  blockedList.innerHTML = '';
+  friends.blocked.forEach(function (uid) {
+    var row = document.createElement('div');
+    row.className = 'blocked-row';
+    var name = document.createElement('span');
+    name.textContent = friendName(uid);
+    row.appendChild(name);
+    var unblock = document.createElement('button');
+    unblock.type = 'button';
+    unblock.className = 'link-btn';
+    unblock.textContent = t('friendsUnblock');
+    unblock.disabled = friends.busy;
+    unblock.addEventListener('click', function () {
+      friendAction(function () { return group.store.unblockUser(friends.uid, uid); }, 'friendsActionFailed');
+    });
+    row.appendChild(unblock);
+    blockedList.appendChild(row);
+  });
+  $('blockedTitle').textContent = t('friendsBlockedTitle').replace('{0}', friends.blocked.length);
+  $('blockedBox').hidden = friends.blocked.length === 0;
 
   var list = $('friendList');
   list.innerHTML = '';
@@ -3842,6 +3917,7 @@ function renderPrivateChat(friendship) {
   $('privateForm').hidden = friends.chatStatus !== 'ready';
   $('privateSend').disabled = friends.sending;
   $('privateRemove').disabled = friends.busy;
+  $('privateBlock').disabled = friends.busy;
   $('privateError').hidden = !friends.chatError;
   $('privateError').textContent = friends.chatError === 'tooLong' ? t('groupTooLong').replace('{0}', GROUP_TEXT_MAX) : friends.chatError ? t(friends.chatError) : '';
 }
@@ -3903,6 +3979,25 @@ $('privateRemove').addEventListener('click', function () {
       if (friends.open === id) closePrivateChat();
     });
   }, 'friendsActionFailed');
+});
+
+// Blocks someone after asking (`nickname` when known from a group message), ending the friendship and any requests
+// between the two at the same time.
+function blockPerson(uid, nickname) {
+  if (!confirm(t('friendsBlockConfirm').replace('{0}', nickname || friendName(uid)))) return;
+  var friendship = friends.list.filter(function (one) { return friendOf(one, friends.uid) === uid; })[0];
+  var existing = {
+    friendshipId: friendship ? friendship.id : null,
+    incoming: friends.incoming.some(function (request) { return request.from === uid; }),
+    outgoing: friends.outgoing.some(function (request) { return request.to === uid; })
+  };
+  if (friendship && friends.open === friendship.id) closePrivateChat();
+  friendAction(function () { return group.store.blockUser(friends.uid, uid, existing); }, 'friendsActionFailed');
+}
+
+$('privateBlock').addEventListener('click', function () {
+  var friendship = openFriendship();
+  if (friendship) blockPerson(friendOf(friendship, friends.uid));
 });
 
 $('privateForm').addEventListener('submit', function (e) {

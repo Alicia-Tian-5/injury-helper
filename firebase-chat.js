@@ -1,4 +1,4 @@
-// Group chat rooms, nicknames, friends and private chats in Firebase
+// Group chat rooms, nicknames, friends, private chats and blocking in Firebase
 // Firestore, handed to the page through window.groupChatStore. Only signed-in
 // people with a verified email can read or post (firestore.rules); Firestore
 // sends the sign-in from firebase-account.js.
@@ -110,6 +110,34 @@ async function removeFriend(friendshipId) {
   await deleteDoc(friendship(friendshipId));
 }
 
+// ---- Blocking ----
+
+function block(blockerUid, blockedUid) {
+  return doc(database, 'blocks', blockerUid + '_' + blockedUid);
+}
+
+function listenBlocks(uid, onChange, onError) {
+  return onSnapshot(query(collection(database, 'blocks'), where('blocker', '==', uid)), (snapshot) => {
+    onChange(snapshot.docs.map((snap) => snap.data().blocked));
+  }, onError);
+}
+
+// Blocks someone and, all at once, ends the friendship and removes the
+// requests between the two. `existing` says which of those exist, since
+// removing one that does not exist is refused.
+async function blockUser(myUid, otherUid, existing) {
+  const batch = writeBatch(database);
+  batch.set(block(myUid, otherUid), {blocker: myUid, blocked: otherUid, createdAt: serverTimestamp()});
+  if (existing.friendshipId) batch.delete(friendship(existing.friendshipId));
+  if (existing.incoming) batch.delete(request(otherUid, myUid));
+  if (existing.outgoing) batch.delete(request(myUid, otherUid));
+  await batch.commit();
+}
+
+async function unblockUser(myUid, otherUid) {
+  await deleteDoc(block(myUid, otherUid));
+}
+
 function listenPrivate(friendshipId, count, onMessages, onError) {
   return listenNewest(privateMessages(friendshipId), count, onMessages, onError);
 }
@@ -129,6 +157,6 @@ async function report(room, messageId, reporter) {
 
 window.groupChatStore = {
   listen, send, report, saveNickname, loadNickname, listenRequests, sendRequest, declineRequest, acceptRequest,
-  listenFriendships, removeFriend, listenPrivate, sendPrivate
+  listenFriendships, removeFriend, listenPrivate, sendPrivate, listenBlocks, blockUser, unblockUser
 };
 window.onGroupChatReady();

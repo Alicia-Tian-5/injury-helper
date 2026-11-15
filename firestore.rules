@@ -42,7 +42,7 @@ service cloud.firestore {
 
     // A friend request is seen only by the two people in it; either can
     // remove it (to accept, decline or take it back). Only someone with a
-    // nickname can be asked.
+    // nickname can be asked, and not by someone they blocked.
     match /friendRequests/{requestId} {
       allow read, delete: if isVerified()
         && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
@@ -67,6 +67,14 @@ service cloud.firestore {
         allow create: if isFriend(friendshipId) && isValidPrivateMessage(request.resource.data);
         allow update, delete: if false;
       }
+    }
+
+    // Blocking: only the person who blocked sees or removes it. A blocked
+    // person cannot ask the blocker to be friends again.
+    match /blocks/{blockId} {
+      allow read, delete: if isVerified() && resource.data.blocker == request.auth.uid;
+      allow create: if isVerified() && isValidBlock(blockId, request.resource.data);
+      allow update: if false;
     }
 
     function isVerified() {
@@ -94,7 +102,18 @@ service cloud.firestore {
         && r.to != r.from
         && requestId == r.from + '_' + r.to
         && r.createdAt == request.time
-        && exists(/databases/$(database)/documents/profiles/$(r.to));
+        && exists(/databases/$(database)/documents/profiles/$(r.to))
+        && !exists(/databases/$(database)/documents/blocks/$(r.to + '_' + r.from));
+    }
+
+    function isValidBlock(blockId, b) {
+      return b.keys().hasOnly(['blocker', 'blocked', 'createdAt'])
+        && b.keys().hasAll(['blocker', 'blocked', 'createdAt'])
+        && b.blocker == request.auth.uid
+        && b.blocked is string
+        && b.blocked != b.blocker
+        && blockId == b.blocker + '_' + b.blocked
+        && b.createdAt == request.time;
     }
 
     // Allowed only when the other person asked this one to be friends.
@@ -106,6 +125,8 @@ service cloud.firestore {
         && f.members[0] < f.members[1]
         && friendshipId == f.members[0] + '_' + f.members[1]
         && f.createdAt == request.time
+        && !exists(/databases/$(database)/documents/blocks/$(f.members[0] + '_' + f.members[1]))
+        && !exists(/databases/$(database)/documents/blocks/$(f.members[1] + '_' + f.members[0]))
         && ((f.members[0] == request.auth.uid
             && exists(/databases/$(database)/documents/friendRequests/$(f.members[1] + '_' + f.members[0])))
           || (f.members[1] == request.auth.uid

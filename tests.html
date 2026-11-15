@@ -423,6 +423,11 @@ test('friends: a red dot shows only for the friend\'s new messages, until the ch
   equal(hasUnread(friendship, 'bob', {}), false);  // your own message
   equal(hasUnread({id: 'amy_bob', members: ['amy', 'bob'], lastSender: null, lastMessageAt: null}, 'amy', {}), false);
 });
+test('friends: messages from blocked people are left out of the room', function () {
+  var messages = [{id: '1', uid: 'bob', text: 'hi'}, {id: '2', uid: 'cat', text: 'hello'}, {id: '3', uid: 'bob', text: 'again'}];
+  equal(withoutBlocked(messages, ['bob']).map(function (m) { return m.id; }).join(), '2');
+  equal(withoutBlocked(messages, []).length, 3);
+});
 test('chat: messages about suicide or self-harm show the hotlines, in both languages', function () {
   equal(isCrisisMessage('我现在不想活了'), true);
   equal(isCrisisMessage('I want to die'), true);
@@ -785,10 +790,12 @@ var rulesChecked = fetch('firestore.rules').then(function (r) { return r.text();
       if (rules.indexOf(expected) === -1) throw new Error('rules should contain ' + expected);
     });
   });
-  test('rules: private messages are only for the two friends, and a friendship needs a request from the other person', function () {
+  test('rules: private messages are only for the two friends, a friendship needs a request from the other person, and blocking stops requests', function () {
     ['allow read: if isFriend(friendshipId)', 'request.auth.uid in get(/databases/$(database)/documents/friendships/$(friendshipId)).data.members',
       'friendshipId == f.members[0] + \'_\' + f.members[1]', 'friendRequests/$(f.members[1] + \'_\' + f.members[0])',
-      'requestId == r.from + \'_\' + r.to'].forEach(function (expected) {
+      'requestId == r.from + \'_\' + r.to', '!exists(/databases/$(database)/documents/blocks/$(r.to + \'_\' + r.from))',
+      '!exists(/databases/$(database)/documents/blocks/$(f.members[1] + \'_\' + f.members[0]))',
+      'allow read, delete: if isVerified() && resource.data.blocker == request.auth.uid'].forEach(function (expected) {
       if (rules.indexOf(expected) === -1) throw new Error('rules should contain ' + expected);
     });
   });

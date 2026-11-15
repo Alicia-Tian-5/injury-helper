@@ -1,5 +1,6 @@
 // Friends and private chats in 心理安慰: a request sent from a group chat
 // message, accepted by the other person, then a chat only the two can read.
+// Either can block the other, which also ends the friendship.
 // Stored in Firebase Firestore (firebase-chat.js); firestore.rules checks
 // who may do what. Needs group-chat.js.
 
@@ -34,4 +35,9 @@ function friendButtonState(uid, myUid, friendships, outgoing, incoming) {
 function hasUnread(friendship, myUid, lastRead) {
   return Boolean(friendship.lastSender) && friendship.lastSender !== myUid &&
     friendship.lastMessageAt !== null && friendship.lastMessageAt > (lastRead[friendship.id] || 0);
+}
+
+// Messages without those from people this person blocked.
+function withoutBlocked(messages, blockedUids) {
+  return messages.filter(function (message) { return blockedUids.indexOf(message.uid) < 0; });
 }
