@@ -18,8 +18,19 @@ service cloud.firestore {
     // group-chat.js.
     match /rooms/{room}/messages/{messageId} {
       allow read: if isVerified() && isInjury(room);
-      allow create: if isVerified() && isInjury(room) && isValidMessage(request.resource.data);
+      allow create: if isVerified() && isInjury(room) && isValidMessage(request.resource.data) && isNotTooFast();
       allow update, delete: if false;
+    }
+
+    // When each person last posted in any room, saved together with each
+    // message, so one person can post at most once every 5 seconds. The gap
+    // must match GROUP_POST_GAP_SECONDS in group-chat.js.
+    match /postTimes/{uid} {
+      allow read: if isVerified() && request.auth.uid == uid;
+      allow create, update: if isVerified() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['lastPostAt'])
+        && request.resource.data.lastPostAt == request.time;
+      allow delete: if false;
     }
 
     // Reports of harmful messages: anyone signed in can file one, and only
@@ -83,6 +94,14 @@ service cloud.firestore {
 
     function isInjury(id) {
       return id in ['ankle', 'patella', 'sprain', 'strain', 'dislocation', 'fracture', 'concussion', 'bruise', 'wound', 'cramp', 'overuse', 'heat'];
+    }
+
+    // The message comes with this person's new post time, and their last
+    // post was at least 5 seconds ago.
+    function isNotTooFast() {
+      return getAfter(/databases/$(database)/documents/postTimes/$(request.auth.uid)).data.lastPostAt == request.time
+        && (!exists(/databases/$(database)/documents/postTimes/$(request.auth.uid))
+          || request.time >= get(/databases/$(database)/documents/postTimes/$(request.auth.uid)).data.lastPostAt + duration.value(5, 's'));
     }
 
     function isValidMessage(m) {

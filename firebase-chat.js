@@ -38,8 +38,13 @@ function listen(room, count, onMessages, onError) {
   return listenNewest(messages(room), count, onMessages, onError);
 }
 
+// The message and the sender's post time go together; firestore.rules uses
+// the post time to refuse posts that come too fast.
 async function send(room, message) {
-  await addDoc(messages(room), {...message, createdAt: serverTimestamp()});
+  const batch = writeBatch(database);
+  batch.set(doc(messages(room)), {...message, createdAt: serverTimestamp()});
+  batch.set(doc(database, 'postTimes', message.uid), {lastPostAt: serverTimestamp()});
+  await batch.commit();
 }
 
 // ---- Nicknames, so friends can be shown by name on any device ----

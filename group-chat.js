@@ -5,6 +5,9 @@
 var GROUP_TEXT_MAX = 500;
 var NICKNAME_MAX = 20;
 var GROUP_MESSAGES_SHOWN = 100;
+// One person can post in the rooms at most once in this many seconds;
+// firestore.rules checks the same gap.
+var GROUP_POST_GAP_SECONDS = 5;
 
 // Spaces at the ends are dropped and runs of spaces inside become one, so a
 // nickname cannot look empty or push the message aside.
@@ -35,4 +38,11 @@ function visibleMessages(messages, hiddenIds) {
       if (b.createdAt === null) return -1;
       return a.createdAt - b.createdAt;
     });
+}
+
+// Whole seconds left before this person can post again, 0 when they can now.
+// `lastSentAt` is when their last message went out, or null.
+function secondsUntilNextPost(lastSentAt, now) {
+  if (lastSentAt === null) return 0;
+  return Math.max(0, Math.ceil((lastSentAt + GROUP_POST_GAP_SECONDS * 1000 - now) / 1000));
 }

@@ -444,6 +444,14 @@ test('friends: messages from blocked people are left out of the room', function 
   equal(withoutBlocked(messages, ['bob']).map(function (m) { return m.id; }).join(), '2');
   equal(withoutBlocked(messages, []).length, 3);
 });
+test('group chat: after a message, the next one waits 5 seconds, counted down in whole seconds', function () {
+  equal(secondsUntilNextPost(null, 1000), 0);  // nothing sent yet
+  equal(secondsUntilNextPost(10000, 10000), 5);
+  equal(secondsUntilNextPost(10000, 10001), 5);
+  equal(secondsUntilNextPost(10000, 14200), 1);
+  equal(secondsUntilNextPost(10000, 15000), 0);
+  equal(secondsUntilNextPost(10000, 60000), 0);
+});
 test('chat: messages about suicide or self-harm show the hotlines, in both languages', function () {
   equal(isCrisisMessage('我现在不想活了'), true);
   equal(isCrisisMessage('I want to die'), true);
@@ -825,6 +833,7 @@ var rulesChecked = fetch('firestore.rules').then(function (r) { return r.text();
   test('rules: the group chat uses the same limits as the page, and only for verified accounts', function () {
     ['isText(m.nickname, 1, ' + NICKNAME_MAX + ')', 'isText(m.text, 1, ' + GROUP_TEXT_MAX + ')', 'm.uid == request.auth.uid',
       'allow read: if isVerified() && isInjury(room)', 'request.auth.token.email_verified == true',
+      'isValidMessage(request.resource.data) && isNotTooFast()', 'duration.value(' + GROUP_POST_GAP_SECONDS + ', \'s\')',
       'isText(request.resource.data.nickname, 1, ' + NICKNAME_MAX + ')', 'isText(m.text, 1, ' + GROUP_TEXT_MAX + ')'].forEach(function (expected) {
       if (rules.indexOf(expected) === -1) throw new Error('rules should contain ' + expected);
     });
