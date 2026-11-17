@@ -69,6 +69,8 @@ function accountErrorKey(code) {
 // "alicia@gmail.com" → "a***@gmail.com", to say whose device this is
 // without showing the whole address to whoever holds it.
 function maskEmail(email) {
+  // An owner saved without an email must not stop the page from drawing.
+  if (typeof email !== 'string') return '***';
   var at = email.indexOf('@');
   if (at < 1) return '***';
   return email.charAt(0) + '***' + email.slice(at);

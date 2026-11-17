@@ -895,6 +895,7 @@ test('account: a wrong password and an unknown email give the same message', fun
 });
 test('account: the device owner\'s email is partly hidden', function () {
   equal(maskEmail('alicia@gmail.com'), 'a***@gmail.com');
+  equal(maskEmail(undefined), '***');  // an owner saved without an email once left the sign-in buttons blank
 });
 
 // ---- Home screen and offline (install.js, sw.js) ----
