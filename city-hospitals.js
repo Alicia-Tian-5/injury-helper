@@ -117,6 +117,276 @@ var CITY_HOSPITALS = [
     ]
   },
   {
+    id: 'chongqing',
+    country: 'cn',
+    name: {en: 'Chongqing', zh: '重庆'},
+    aliases: ['chongqing', 'chungking', '重庆', '重庆市'],
+    hospitals: [
+      {
+        name: {en: 'Second Affiliated Hospital of Chongqing Medical University', zh: '重庆医科大学附属第二医院'},
+        department: {en: 'Sports Medicine', es: 'Medicina deportiva', fr: 'Médecine du sport', ru: 'Спортивная медицина', ar: 'الطب الرياضي', zh: '运动医学科'},
+        knownFor: {en: 'Knee and shoulder ligament injuries, meniscus, arthroscopic surgery', es: 'Lesiones de ligamentos de rodilla y hombro, menisco, cirugía artroscópica', fr: 'Blessures des ligaments du genou et de l’épaule, ménisque, chirurgie arthroscopique', ru: 'Травмы связок колена и плеча, мениск, артроскопические операции', ar: 'إصابات أربطة الركبة والكتف، والغضروف الهلالي، وجراحة بالمنظار', zh: '膝、肩关节韧带损伤，半月板，关节镜手术'}
+      },
+      {
+        name: {en: 'Southwest Hospital (First Affiliated Hospital of the Army Medical University)', zh: '西南医院（陆军军医大学第一附属医院）'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Fractures, joint and sports injuries', es: 'Fracturas, lesiones articulares y deportivas', fr: 'Fractures, blessures articulaires et sportives', ru: 'Переломы, травмы суставов и спортивные травмы', ar: 'الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '骨折、关节和运动损伤'}
+      }
+    ]
+  },
+  {
+    id: 'suzhou',
+    country: 'cn',
+    name: {en: 'Suzhou', zh: '苏州'},
+    aliases: ['suzhou', '苏州', '苏州市'],
+    hospitals: [
+      {
+        name: {en: 'First Affiliated Hospital of Soochow University', zh: '苏州大学附属第一医院'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Knee, ankle and shoulder sports injuries, arthroscopic surgery', es: 'Lesiones deportivas de rodilla, tobillo y hombro, cirugía artroscópica', fr: 'Blessures sportives du genou, de la cheville et de l’épaule, chirurgie arthroscopique', ru: 'Спортивные травмы колена, голеностопа и плеча, артроскопические операции', ar: 'إصابات الركبة والكاحل والكتف الرياضية، وجراحة بالمنظار', zh: '膝、踝、肩关节运动损伤，关节镜手术'}
+      },
+      {
+        name: {en: 'Second Affiliated Hospital of Soochow University', zh: '苏州大学附属第二医院'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Knee and shoulder ligament injuries, meniscus, arthroscopic surgery', es: 'Lesiones de ligamentos de rodilla y hombro, menisco, cirugía artroscópica', fr: 'Blessures des ligaments du genou et de l’épaule, ménisque, chirurgie arthroscopique', ru: 'Травмы связок колена и плеча, мениск, артроскопические операции', ar: 'إصابات أربطة الركبة والكتف، والغضروف الهلالي، وجراحة بالمنظار', zh: '膝、肩关节韧带损伤，半月板，关节镜手术'}
+      }
+    ]
+  },
+  {
+    id: 'hangzhou',
+    country: 'cn',
+    name: {en: 'Hangzhou', zh: '杭州'},
+    aliases: ['hangzhou', '杭州', '杭州市'],
+    hospitals: [
+      {
+        name: {en: 'Second Affiliated Hospital, Zhejiang University School of Medicine', zh: '浙江大学医学院附属第二医院（浙大二院）'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Knee, ankle and shoulder sports injuries, arthroscopic surgery', es: 'Lesiones deportivas de rodilla, tobillo y hombro, cirugía artroscópica', fr: 'Blessures sportives du genou, de la cheville et de l’épaule, chirurgie arthroscopique', ru: 'Спортивные травмы колена, голеностопа и плеча, артроскопические операции', ar: 'إصابات الركبة والكاحل والكتف الرياضية، وجراحة بالمنظار', zh: '膝、踝、肩关节运动损伤，关节镜手术'}
+      },
+      {
+        name: {en: 'Sir Run Run Shaw Hospital, Zhejiang University School of Medicine', zh: '浙江大学医学院附属邵逸夫医院'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Sports injuries, including a clinic for runners', es: 'Lesiones deportivas, con una consulta para corredores', fr: 'Blessures sportives, dont une consultation pour les coureurs', ru: 'Спортивные травмы, есть приём для бегунов', ar: 'الإصابات الرياضية، مع عيادة للعدّائين', zh: '运动损伤，设有马拉松门诊'}
+      }
+    ]
+  },
+  {
+    id: 'wuhan',
+    country: 'cn',
+    name: {en: 'Wuhan', zh: '武汉'},
+    aliases: ['wuhan', '武汉', '武汉市'],
+    hospitals: [
+      {
+        name: {en: 'Union Hospital, Tongji Medical College, Huazhong University of Science and Technology', zh: '华中科技大学同济医学院附属协和医院（武汉协和医院）'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Fractures, joint and sports injuries', es: 'Fracturas, lesiones articulares y deportivas', fr: 'Fractures, blessures articulaires et sportives', ru: 'Переломы, травмы суставов и спортивные травмы', ar: 'الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '骨折、关节和运动损伤'}
+      },
+      {
+        name: {en: 'Zhongnan Hospital of Wuhan University', zh: '武汉大学中南医院'},
+        department: {en: 'Orthopedics and Sports Medicine', es: 'Ortopedia y medicina deportiva', fr: 'Orthopédie et médecine du sport', ru: 'Травматология-ортопедия и спортивная медицина', ar: 'جراحة العظام والطب الرياضي', zh: '骨科、运动医学科'},
+        knownFor: {en: 'Knee and shoulder ligament injuries, meniscus, arthroscopic surgery', es: 'Lesiones de ligamentos de rodilla y hombro, menisco, cirugía artroscópica', fr: 'Blessures des ligaments du genou et de l’épaule, ménisque, chirurgie arthroscopique', ru: 'Травмы связок колена и плеча, мениск, артроскопические операции', ar: 'إصابات أربطة الركبة والكتف، والغضروف الهلالي، وجراحة بالمنظار', zh: '膝、肩关节韧带损伤，半月板，关节镜手术'}
+      }
+    ]
+  },
+  {
+    id: 'nanjing',
+    country: 'cn',
+    name: {en: 'Nanjing', zh: '南京'},
+    aliases: ['nanjing', 'nanking', '南京', '南京市'],
+    hospitals: [
+      {
+        name: {en: 'Nanjing Drum Tower Hospital', zh: '南京鼓楼医院'},
+        department: {en: 'Sports Medicine and Adult Joint Reconstruction', es: 'Medicina deportiva y reconstrucción articular en adultos', fr: 'Médecine du sport et reconstruction articulaire de l’adulte', ru: 'Спортивная медицина и реконструкция суставов у взрослых', ar: 'الطب الرياضي وإعادة بناء المفاصل لدى البالغين', zh: '运动医学与成人重建外科'},
+        knownFor: {en: 'Knee and shoulder ligament injuries, meniscus, arthroscopic surgery', es: 'Lesiones de ligamentos de rodilla y hombro, menisco, cirugía artroscópica', fr: 'Blessures des ligaments du genou et de l’épaule, ménisque, chirurgie arthroscopique', ru: 'Травмы связок колена и плеча, мениск, артроскопические операции', ar: 'إصابات أربطة الركبة والكتف، والغضروف الهلالي، وجراحة بالمنظار', zh: '膝、肩关节韧带损伤，半月板，关节镜手术'}
+      },
+      {
+        name: {en: 'Jiangsu Province Hospital (First Affiliated Hospital of Nanjing Medical University)', zh: '江苏省人民医院（南京医科大学第一附属医院）'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Fractures, joint and sports injuries', es: 'Fracturas, lesiones articulares y deportivas', fr: 'Fractures, blessures articulaires et sportives', ru: 'Переломы, травмы суставов и спортивные травмы', ar: 'الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '骨折、关节和运动损伤'}
+      }
+    ]
+  },
+  {
+    id: 'ningbo',
+    country: 'cn',
+    name: {en: 'Ningbo', zh: '宁波'},
+    aliases: ['ningbo', '宁波', '宁波市'],
+    hospitals: [
+      {
+        name: {en: 'Ningbo No. 6 Hospital', zh: '宁波市第六医院'},
+        department: {en: 'Sports Medicine', es: 'Medicina deportiva', fr: 'Médecine du sport', ru: 'Спортивная медицина', ar: 'الطب الرياضي', zh: '运动医学科'},
+        knownFor: {en: 'A hospital focused on bones and joints: fractures, joint and sports injuries', es: 'Hospital centrado en huesos y articulaciones: fracturas, lesiones articulares y deportivas', fr: 'Un hôpital spécialisé dans les os et les articulations : fractures, blessures articulaires et sportives', ru: 'Больница, специализирующаяся на костях и суставах: переломы, травмы суставов и спортивные травмы', ar: 'مستشفى متخصص في العظام والمفاصل: الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '以骨科为主的医院：骨折、关节和运动损伤'}
+      },
+      {
+        name: {en: 'First Affiliated Hospital of Ningbo University', zh: '宁波大学附属第一医院'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Fractures, joint and sports injuries', es: 'Fracturas, lesiones articulares y deportivas', fr: 'Fractures, blessures articulaires et sportives', ru: 'Переломы, травмы суставов и спортивные травмы', ar: 'الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '骨折、关节和运动损伤'}
+      }
+    ]
+  },
+  {
+    id: 'tianjin',
+    country: 'cn',
+    name: {en: 'Tianjin', zh: '天津'},
+    aliases: ['tianjin', 'tientsin', '天津', '天津市'],
+    hospitals: [
+      {
+        name: {en: 'Tianjin Hospital', zh: '天津市天津医院'},
+        department: {en: 'Sports Medicine', es: 'Medicina deportiva', fr: 'Médecine du sport', ru: 'Спортивная медицина', ar: 'الطب الرياضي', zh: '运动医学科'},
+        knownFor: {en: 'A hospital focused on bones and joints: fractures, joint and sports injuries', es: 'Hospital centrado en huesos y articulaciones: fracturas, lesiones articulares y deportivas', fr: 'Un hôpital spécialisé dans les os et les articulations : fractures, blessures articulaires et sportives', ru: 'Больница, специализирующаяся на костях и суставах: переломы, травмы суставов и спортивные травмы', ar: 'مستشفى متخصص في العظام والمفاصل: الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '以骨科为主的医院：骨折、关节和运动损伤'}
+      },
+      {
+        name: {en: 'Tianjin Medical University General Hospital', zh: '天津医科大学总医院'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Fractures, joint and sports injuries', es: 'Fracturas, lesiones articulares y deportivas', fr: 'Fractures, blessures articulaires et sportives', ru: 'Переломы, травмы суставов и спортивные травмы', ar: 'الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '骨折、关节和运动损伤'}
+      }
+    ]
+  },
+  {
+    id: 'qingdao',
+    country: 'cn',
+    name: {en: 'Qingdao', zh: '青岛'},
+    aliases: ['qingdao', 'tsingtao', '青岛', '青岛市'],
+    hospitals: [
+      {
+        name: {en: 'Affiliated Hospital of Qingdao University', zh: '青岛大学附属医院'},
+        department: {en: 'Orthopedics and Sports Medicine', es: 'Ortopedia y medicina deportiva', fr: 'Orthopédie et médecine du sport', ru: 'Травматология-ортопедия и спортивная медицина', ar: 'جراحة العظام والطب الرياضي', zh: '骨科、运动医学科'},
+        knownFor: {en: 'Knee and shoulder ligament injuries, meniscus, arthroscopic surgery', es: 'Lesiones de ligamentos de rodilla y hombro, menisco, cirugía artroscópica', fr: 'Blessures des ligaments du genou et de l’épaule, ménisque, chirurgie arthroscopique', ru: 'Травмы связок колена и плеча, мениск, артроскопические операции', ar: 'إصابات أربطة الركبة والكتف، والغضروف الهلالي، وجراحة بالمنظار', zh: '膝、肩关节韧带损伤，半月板，关节镜手术'}
+      },
+      {
+        name: {en: 'Qingdao Municipal Hospital', zh: '青岛市市立医院'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Fractures, joint and sports injuries', es: 'Fracturas, lesiones articulares y deportivas', fr: 'Fractures, blessures articulaires et sportives', ru: 'Переломы, травмы суставов и спортивные травмы', ar: 'الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '骨折、关节和运动损伤'}
+      }
+    ]
+  },
+  {
+    id: 'wuxi',
+    country: 'cn',
+    name: {en: 'Wuxi', zh: '无锡'},
+    aliases: ['wuxi', '无锡', '无锡市'],
+    hospitals: [
+      {
+        name: {en: 'Wuxi No. 9 People\'s Hospital', zh: '无锡市第九人民医院'},
+        department: {en: 'Orthopedics and Sports Medicine', es: 'Ortopedia y medicina deportiva', fr: 'Orthopédie et médecine du sport', ru: 'Травматология-ортопедия и спортивная медицина', ar: 'جراحة العظام والطب الرياضي', zh: '骨科、运动医学科'},
+        knownFor: {en: 'A hospital focused on bones and joints: fractures, joint and sports injuries', es: 'Hospital centrado en huesos y articulaciones: fracturas, lesiones articulares y deportivas', fr: 'Un hôpital spécialisé dans les os et les articulations : fractures, blessures articulaires et sportives', ru: 'Больница, специализирующаяся на костях и суставах: переломы, травмы суставов и спортивные травмы', ar: 'مستشفى متخصص في العظام والمفاصل: الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '以骨科为主的医院：骨折、关节和运动损伤'}
+      },
+      {
+        name: {en: 'Wuxi People\'s Hospital', zh: '无锡市人民医院'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Fractures, joint and sports injuries', es: 'Fracturas, lesiones articulares y deportivas', fr: 'Fractures, blessures articulaires et sportives', ru: 'Переломы, травмы суставов и спортивные травмы', ar: 'الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '骨折、关节和运动损伤'}
+      }
+    ]
+  },
+  {
+    id: 'changsha',
+    country: 'cn',
+    name: {en: 'Changsha', zh: '长沙'},
+    aliases: ['changsha', '长沙', '长沙市'],
+    hospitals: [
+      {
+        name: {en: 'Xiangya Hospital, Central South University', zh: '中南大学湘雅医院'},
+        department: {en: 'Sports Medicine', es: 'Medicina deportiva', fr: 'Médecine du sport', ru: 'Спортивная медицина', ar: 'الطب الرياضي', zh: '运动医学科'},
+        knownFor: {en: 'Knee and shoulder ligament injuries, meniscus, arthroscopic surgery', es: 'Lesiones de ligamentos de rodilla y hombro, menisco, cirugía artroscópica', fr: 'Blessures des ligaments du genou et de l’épaule, ménisque, chirurgie arthroscopique', ru: 'Травмы связок колена и плеча, мениск, артроскопические операции', ar: 'إصابات أربطة الركبة والكتف، والغضروف الهلالي، وجراحة بالمنظار', zh: '膝、肩关节韧带损伤，半月板，关节镜手术'}
+      },
+      {
+        name: {en: 'Second Xiangya Hospital, Central South University', zh: '中南大学湘雅二医院'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Fractures, joint and sports injuries', es: 'Fracturas, lesiones articulares y deportivas', fr: 'Fractures, blessures articulaires et sportives', ru: 'Переломы, травмы суставов и спортивные травмы', ar: 'الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '骨折、关节和运动损伤'}
+      }
+    ]
+  },
+  {
+    id: 'zhengzhou',
+    country: 'cn',
+    name: {en: 'Zhengzhou', zh: '郑州'},
+    aliases: ['zhengzhou', '郑州', '郑州市'],
+    hospitals: [
+      {
+        name: {en: 'First Affiliated Hospital of Zhengzhou University', zh: '郑州大学第一附属医院'},
+        department: {en: 'Orthopedics and Sports Medicine', es: 'Ortopedia y medicina deportiva', fr: 'Orthopédie et médecine du sport', ru: 'Травматология-ортопедия и спортивная медицина', ar: 'جراحة العظام والطب الرياضي', zh: '骨科、运动医学科'},
+        knownFor: {en: 'Knee and shoulder ligament injuries, meniscus, arthroscopic surgery', es: 'Lesiones de ligamentos de rodilla y hombro, menisco, cirugía artroscópica', fr: 'Blessures des ligaments du genou et de l’épaule, ménisque, chirurgie arthroscopique', ru: 'Травмы связок колена и плеча, мениск, артроскопические операции', ar: 'إصابات أربطة الركبة والكتف، والغضروف الهلالي، وجراحة بالمنظار', zh: '膝、肩关节韧带损伤，半月板，关节镜手术'}
+      },
+      {
+        name: {en: 'Henan Provincial People\'s Hospital', zh: '河南省人民医院'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Fractures, joint and sports injuries', es: 'Fracturas, lesiones articulares y deportivas', fr: 'Fractures, blessures articulaires et sportives', ru: 'Переломы, травмы суставов и спортивные травмы', ar: 'الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '骨折、关节和运动损伤'}
+      }
+    ]
+  },
+  {
+    id: 'fuzhou',
+    country: 'cn',
+    name: {en: 'Fuzhou', zh: '福州'},
+    aliases: ['fuzhou', 'foochow', '福州', '福州市'],
+    hospitals: [
+      {
+        name: {en: 'Fujian Medical University Union Hospital', zh: '福建医科大学附属协和医院'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Fractures, joint and sports injuries', es: 'Fracturas, lesiones articulares y deportivas', fr: 'Fractures, blessures articulaires et sportives', ru: 'Переломы, травмы суставов и спортивные травмы', ar: 'الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '骨折、关节和运动损伤'}
+      },
+      {
+        name: {en: 'First Affiliated Hospital of Fujian Medical University', zh: '福建医科大学附属第一医院'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Fractures, joint and sports injuries', es: 'Fracturas, lesiones articulares y deportivas', fr: 'Fractures, blessures articulaires et sportives', ru: 'Переломы, травмы суставов и спортивные травмы', ar: 'الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '骨折、关节和运动损伤'}
+      }
+    ]
+  },
+  {
+    id: 'jinan',
+    country: 'cn',
+    name: {en: 'Jinan', zh: '济南'},
+    aliases: ['jinan', 'tsinan', '济南', '济南市'],
+    hospitals: [
+      {
+        name: {en: 'Qilu Hospital of Shandong University', zh: '山东大学齐鲁医院'},
+        department: {en: 'Orthopedics and Sports Medicine', es: 'Ortopedia y medicina deportiva', fr: 'Orthopédie et médecine du sport', ru: 'Травматология-ортопедия и спортивная медицина', ar: 'جراحة العظام والطب الرياضي', zh: '骨科、运动医学科'},
+        knownFor: {en: 'Knee and shoulder ligament injuries, meniscus, arthroscopic surgery', es: 'Lesiones de ligamentos de rodilla y hombro, menisco, cirugía artroscópica', fr: 'Blessures des ligaments du genou et de l’épaule, ménisque, chirurgie arthroscopique', ru: 'Травмы связок колена и плеча, мениск, артроскопические операции', ar: 'إصابات أربطة الركبة والكتف، والغضروف الهلالي، وجراحة بالمنظار', zh: '膝、肩关节韧带损伤，半月板，关节镜手术'}
+      },
+      {
+        name: {en: 'Shandong Provincial Hospital', zh: '山东省立医院'},
+        department: {en: 'Joint and Sports Medicine', es: 'Articulaciones y medicina deportiva', fr: 'Articulations et médecine du sport', ru: 'Суставы и спортивная медицина', ar: 'المفاصل والطب الرياضي', zh: '关节与运动医学科'},
+        knownFor: {en: 'Knee, ankle and shoulder sports injuries, arthroscopic surgery', es: 'Lesiones deportivas de rodilla, tobillo y hombro, cirugía artroscópica', fr: 'Blessures sportives du genou, de la cheville et de l’épaule, chirurgie arthroscopique', ru: 'Спортивные травмы колена, голеностопа и плеча, артроскопические операции', ar: 'إصابات الركبة والكاحل والكتف الرياضية، وجراحة بالمنظار', zh: '膝、踝、肩关节运动损伤，关节镜手术'}
+      }
+    ]
+  },
+  {
+    id: 'hefei',
+    country: 'cn',
+    name: {en: 'Hefei', zh: '合肥'},
+    aliases: ['hefei', '合肥', '合肥市'],
+    hospitals: [
+      {
+        name: {en: 'Anhui Provincial Hospital (First Affiliated Hospital of USTC)', zh: '安徽省立医院（中国科学技术大学附属第一医院）'},
+        department: {en: 'Orthopedics and Sports Medicine', es: 'Ortopedia y medicina deportiva', fr: 'Orthopédie et médecine du sport', ru: 'Травматология-ортопедия и спортивная медицина', ar: 'جراحة العظام والطب الرياضي', zh: '骨科、运动医学科'},
+        knownFor: {en: 'Knee and shoulder ligament injuries, meniscus, arthroscopic surgery', es: 'Lesiones de ligamentos de rodilla y hombro, menisco, cirugía artroscópica', fr: 'Blessures des ligaments du genou et de l’épaule, ménisque, chirurgie arthroscopique', ru: 'Травмы связок колена и плеча, мениск, артроскопические операции', ar: 'إصابات أربطة الركبة والكتف، والغضروف الهلالي، وجراحة بالمنظار', zh: '膝、肩关节韧带损伤，半月板，关节镜手术'}
+      },
+      {
+        name: {en: 'First Affiliated Hospital of Anhui Medical University', zh: '安徽医科大学第一附属医院'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Fractures, joint and sports injuries', es: 'Fracturas, lesiones articulares y deportivas', fr: 'Fractures, blessures articulaires et sportives', ru: 'Переломы, травмы суставов и спортивные травмы', ar: 'الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '骨折、关节和运动损伤'}
+      }
+    ]
+  },
+  {
+    id: 'foshan',
+    country: 'cn',
+    name: {en: 'Foshan', zh: '佛山'},
+    aliases: ['foshan', '佛山', '佛山市'],
+    hospitals: [
+      {
+        name: {en: 'Foshan Hospital of Traditional Chinese Medicine', zh: '佛山市中医院'},
+        department: {en: 'Sports Medicine Center', es: 'Centro de Medicina Deportiva', fr: 'Centre de médecine du sport', ru: 'Центр спортивной медицины', ar: 'مركز الطب الرياضي', zh: '运动医学中心'},
+        knownFor: {en: 'Sports injuries, especially knee ligaments; Chinese and Western medicine', es: 'Lesiones deportivas, sobre todo ligamentos de rodilla; medicina china y occidental', fr: 'Blessures sportives, surtout des ligaments du genou ; médecine chinoise et occidentale', ru: 'Спортивные травмы, особенно связки колена; китайская и западная медицина', ar: 'الإصابات الرياضية، خصوصًا أربطة الركبة؛ الطب الصيني والغربي', zh: '运动损伤，特别是膝关节韧带；中西医结合'}
+      },
+      {
+        name: {en: 'First People\'s Hospital of Foshan', zh: '佛山市第一人民医院'},
+        department: {en: 'Orthopedics', es: 'Ortopedia', fr: 'Orthopédie', ru: 'Травматология-ортопедия', ar: 'جراحة العظام', zh: '骨科'},
+        knownFor: {en: 'Fractures, joint and sports injuries', es: 'Fracturas, lesiones articulares y deportivas', fr: 'Fractures, blessures articulaires et sportives', ru: 'Переломы, травмы суставов и спортивные травмы', ar: 'الكسور، وإصابات المفاصل والإصابات الرياضية', zh: '骨折、关节和运动损伤'}
+      }
+    ]
+  },
+  {
     id: 'chicago',
     country: 'us',
     name: {en: 'Chicago', zh: '芝加哥'},

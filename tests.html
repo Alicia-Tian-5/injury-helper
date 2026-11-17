@@ -172,12 +172,24 @@ test('city hospitals: a city is found in Chinese or English, with spaces, capita
   equal(findCity('西安').id, 'xian');
   equal(findCity("Xi'an").id, 'xian');
 });
+test('city hospitals: the 20 largest Chinese cities by GDP are all listed, in Chinese and English', function () {
+  [['上海', 'Shanghai'], ['北京', 'Beijing'], ['深圳', 'Shenzhen'], ['重庆', 'Chongqing'], ['广州', 'Guangzhou'],
+   ['苏州', 'Suzhou'], ['成都', 'Chengdu'], ['杭州', 'Hangzhou'], ['武汉', 'Wuhan'], ['南京', 'Nanjing'],
+   ['宁波', 'Ningbo'], ['天津', 'Tianjin'], ['青岛', 'Qingdao'], ['无锡', 'Wuxi'], ['长沙', 'Changsha'],
+   ['郑州', 'Zhengzhou'], ['福州', 'Fuzhou'], ['济南', 'Jinan'], ['合肥', 'Hefei'], ['佛山', 'Foshan']].forEach(function (pair) {
+    var city = findCity(pair[0]);
+    if (city === null) throw new Error(pair[0] + ' is not listed');
+    equal(findCity(pair[1]), city);
+    equal(findCity(pair[0] + '市'), city);
+  });
+});
 test('city hospitals: an unlisted or empty city finds nothing but still gets a map search there', function () {
   equal(findCity('Tokyo'), null);
   equal(findCity('   '), null);
-  var links = cityMapLinks(' 杭州 ');
-  equal(links.amap, 'https://uri.amap.com/search?keyword=' + encodeURIComponent('杭州 运动医学科'));
-  equal(links.google, 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('sports medicine orthopedics in 杭州'));
+  equal(findCity('拉萨'), null);
+  var links = cityMapLinks(' 拉萨 ');
+  equal(links.amap, 'https://uri.amap.com/search?keyword=' + encodeURIComponent('拉萨 运动医学科'));
+  equal(links.google, 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('sports medicine orthopedics in 拉萨'));
 });
 [['es', 'Spanish'], ['fr', 'French'], ['ru', 'Russian'], ['ar', 'Arabic']].forEach(function (language) {
   var code = language[0], name = language[1];
