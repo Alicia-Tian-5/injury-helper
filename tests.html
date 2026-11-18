@@ -479,6 +479,15 @@ test('chat: when the AI writes Spanish itself, it is told to sound like a native
   if (prompt.indexOf('native Spanish speaker') === -1) throw new Error('no native-speaker instruction');
   equal(chatSystemPrompt('en'), CHAT_SYSTEM_PROMPT);
 });
+test('chat: the AI is told not to use stock comfort lines, and its example replies do not use them either', function () {
+  CHAT_STOCK_PHRASES.forEach(function (phrase) {
+    if (CHAT_SYSTEM_PROMPT.indexOf('"' + phrase + '"') === -1) throw new Error('not banned: ' + phrase);
+    CHAT_EXAMPLES.forEach(function (example) {
+      if (example[1].toLowerCase().indexOf(phrase.toLowerCase()) >= 0) throw new Error('an example uses: ' + phrase);
+    });
+  });
+  if (CHAT_SYSTEM_PROMPT.indexOf('988') === -1 || CHAT_SYSTEM_PROMPT.indexOf('12356') === -1) throw new Error('hotlines missing');
+});
 test('chat: empty messages are not sent and long ones are cut to the limit', function () {
   equal(cleanChatMessage('   '), null);
   equal(cleanChatMessage('  我很难受 '), '我很难受');
