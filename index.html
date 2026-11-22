@@ -226,6 +226,9 @@ h1 a{color:var(--acc)}
 .install .actions{justify-content:flex-start;margin-top:12px}
 .install .primary{width:auto}
 .install .link-btn{margin:0;padding:8px 0}
+.rts-result{border-top:1px solid var(--line);margin-top:16px;padding-top:4px}
+.rts-result h3{margin-top:12px}
+.rts-note{font-size:14px;margin:12px 0 0}
 .trend{margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .trend svg{display:block;width:100%;height:auto}
 .trend .grid{stroke:var(--line);stroke-width:1}
@@ -712,6 +715,26 @@ h1 a{text-decoration:none}
       <p class="success" id="calendarDone" role="status" hidden></p>
     </div>
   </section>
+  <section class="card rts" id="rtsCard">
+    <h2 id="rtsTitle"></h2>
+    <p class="muted" id="rtsIntro"></p>
+    <form id="rtsForm" novalidate>
+      <label class="field"><span id="rtsInjuryLabel"></span><select id="rtsInjury"></select></label>
+      <div id="rtsQuestions"></div>
+      <fieldset class="field" id="rtsHop" hidden>
+        <legend id="rtsHopTitle"></legend>
+        <p class="muted" id="rtsHopHint"></p>
+        <div class="plan-dates">
+          <label class="field"><span id="rtsHopInjured"></span><input id="rtsHopInjuredInput" type="number" inputmode="decimal" min="1" max="400"></label>
+          <label class="field"><span id="rtsHopOther"></span><input id="rtsHopOtherInput" type="number" inputmode="decimal" min="1" max="400"></label>
+        </div>
+      </fieldset>
+      <button type="submit" class="primary" id="rtsCheck" hidden></button>
+      <p class="error" id="rtsError" role="alert" hidden></p>
+    </form>
+    <div class="rts-result" id="rtsResult" aria-live="polite" hidden></div>
+    <p class="muted rts-note" id="rtsNote"></p>
+  </section>
   <section class="card">
     <h2 id="logTitle"></h2>
     <p class="muted" id="logIntro"></p>
@@ -803,6 +826,7 @@ h1 a{text-decoration:none}
 <script src="knowledge.js"></script>
 <script src="city-hospitals.js"></script>
 <script src="rehab-plan.js"></script>
+<script src="return-to-sport.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -1163,7 +1187,30 @@ var T = {
     friendsBlock: 'Block',
     friendsBlockConfirm: 'Block {0}? They can no longer ask to be your friend, your friendship ends, and you will not see their messages in the rooms. They are not told.',
     friendsBlockedTitle: 'Blocked people ({0})',
-    friendsUnblock: 'Unblock'
+    friendsUnblock: 'Unblock',
+    rtsTitle: 'Ready to play again?',
+    rtsIntro: 'Answer a few questions to see whether your leg is ready for sport, and what to work on if not.',
+    rtsInjuryLabel: 'Your injury',
+    rtsInjuryPick: 'Choose your injury',
+    rtsHopTitle: 'One-leg hop for distance (optional)',
+    rtsHopHint: 'Stand on one leg, hop forward as far as you can and land on the same leg. Measure from the start line to your heel in centimetres. Then do the same on the other leg.',
+    rtsHopInjured: 'Injured leg (cm)',
+    rtsHopOther: 'Other leg (cm)',
+    rtsCheck: 'Check',
+    rtsMissing: 'Please answer every question.',
+    rtsBadHop: 'Enter both distances in centimetres (1–400), or leave both empty.',
+    rtsDoctorTitle: 'Ask your doctor first',
+    rtsDoctorText: 'After a broken bone or a dislocated joint, only a doctor or physiotherapist can tell when it has healed enough, often with an X-ray. Ask them at your next visit.',
+    rtsNotYetTitle: 'Not yet',
+    rtsNotYetIntro: 'Work on these first, then check again:',
+    rtsStepTitle: 'You can start going back, step by step',
+    rtsStepIntro: 'Spend at least a few days at each step. If it hurts or swells, go back one step.',
+    rtsStepHop: 'Before matches, do the one-leg hop test above to check your strength.',
+    rtsReadyTitle: 'Mostly ready to play',
+    rtsReadyIntro: 'Your answers and hop test look good. Still go back in steps, a few days each, and drop back a step if it hurts or swells.',
+    rtsReadyTips: 'Warm up well every time. For the first few months, an ankle brace or knee support can help stop it happening again.',
+    rtsHopShown: 'Hop test: your injured leg reached {0}% of the other.',
+    rtsNote: 'This is a self-check for reference, not a medical decision. After surgery, follow your doctor and physiotherapist.'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -1518,7 +1565,30 @@ var T = {
     friendsBlock: 'Bloquear',
     friendsBlockConfirm: '¿Bloquear a {0}? Ya no podrá pedirte amistad, vuestra amistad termina y no verás sus mensajes en las salas. No se le avisa.',
     friendsBlockedTitle: 'Personas bloqueadas ({0})',
-    friendsUnblock: 'Desbloquear'
+    friendsUnblock: 'Desbloquear',
+    rtsTitle: '¿Listo para volver a jugar?',
+    rtsIntro: 'Responde unas preguntas para saber si tu pierna está lista para el deporte y qué trabajar si no lo está.',
+    rtsInjuryLabel: 'Tu lesión',
+    rtsInjuryPick: 'Elige tu lesión',
+    rtsHopTitle: 'Salto a una pierna (opcional)',
+    rtsHopHint: 'Sobre una pierna, salta hacia delante lo más lejos que puedas y cae sobre la misma pierna. Mide en centímetros desde la línea de salida hasta el talón. Luego haz lo mismo con la otra pierna.',
+    rtsHopInjured: 'Pierna lesionada (cm)',
+    rtsHopOther: 'Otra pierna (cm)',
+    rtsCheck: 'Comprobar',
+    rtsMissing: 'Responde todas las preguntas.',
+    rtsBadHop: 'Escribe las dos distancias en centímetros (1–400), o deja las dos vacías.',
+    rtsDoctorTitle: 'Pregunta primero a tu médico',
+    rtsDoctorText: 'Después de un hueso roto o una articulación luxada, solo un médico o fisioterapeuta puede decir cuándo ha sanado lo suficiente, a menudo con una radiografía. Pregúntale en tu próxima visita.',
+    rtsNotYetTitle: 'Todavía no',
+    rtsNotYetIntro: 'Trabaja primero en esto y luego vuelve a comprobar:',
+    rtsStepTitle: 'Puedes empezar a volver, paso a paso',
+    rtsStepIntro: 'Pasa al menos unos días en cada paso. Si duele o se hincha, vuelve al paso anterior.',
+    rtsStepHop: 'Antes de jugar partidos, haz arriba la prueba de salto a una pierna para comprobar tu fuerza.',
+    rtsReadyTitle: 'Casi listo para jugar',
+    rtsReadyIntro: 'Tus respuestas y la prueba de salto se ven bien. Aun así, vuelve por pasos, unos días cada uno, y retrocede un paso si duele o se hincha.',
+    rtsReadyTips: 'Calienta bien cada vez. Durante los primeros meses, una tobillera o rodillera puede ayudar a que no vuelva a pasar.',
+    rtsHopShown: 'Prueba de salto: tu pierna lesionada llegó al {0}% de la otra.',
+    rtsNote: 'Es una autoevaluación orientativa, no una decisión médica. Después de una operación, sigue a tu médico y a tu fisioterapeuta.'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -1873,7 +1943,30 @@ var T = {
     friendsBlock: 'Bloquer',
     friendsBlockConfirm: 'Bloquer {0} ? Cette personne ne pourra plus te demander en ami, votre amitié prend fin, et tu ne verras plus ses messages dans les salons. Elle n’est pas prévenue.',
     friendsBlockedTitle: 'Personnes bloquées ({0})',
-    friendsUnblock: 'Débloquer'
+    friendsUnblock: 'Débloquer',
+    rtsTitle: 'Prêt à rejouer ?',
+    rtsIntro: 'Réponds à quelques questions pour savoir si ta jambe est prête pour le sport, et sur quoi travailler sinon.',
+    rtsInjuryLabel: 'Ta blessure',
+    rtsInjuryPick: 'Choisis ta blessure',
+    rtsHopTitle: 'Saut sur une jambe (facultatif)',
+    rtsHopHint: 'Sur une jambe, saute en avant le plus loin possible et atterris sur la même jambe. Mesure en centimètres de la ligne de départ à ton talon. Puis fais pareil avec l’autre jambe.',
+    rtsHopInjured: 'Jambe blessée (cm)',
+    rtsHopOther: 'Autre jambe (cm)',
+    rtsCheck: 'Vérifier',
+    rtsMissing: 'Réponds à toutes les questions.',
+    rtsBadHop: 'Écris les deux distances en centimètres (1–400), ou laisse les deux vides.',
+    rtsDoctorTitle: 'Demande d’abord à ton médecin',
+    rtsDoctorText: 'Après une fracture ou une luxation, seul un médecin ou un kiné peut dire quand c’est assez guéri, souvent avec une radio. Demande-lui à ta prochaine visite.',
+    rtsNotYetTitle: 'Pas encore',
+    rtsNotYetIntro: 'Travaille d’abord sur ces points, puis refais le test :',
+    rtsStepTitle: 'Tu peux commencer à reprendre, étape par étape',
+    rtsStepIntro: 'Reste au moins quelques jours à chaque étape. Si ça fait mal ou que ça gonfle, reviens à l’étape d’avant.',
+    rtsStepHop: 'Avant les matchs, fais le test de saut sur une jambe ci-dessus pour vérifier ta force.',
+    rtsReadyTitle: 'Presque prêt à jouer',
+    rtsReadyIntro: 'Tes réponses et le test de saut sont bons. Reprends quand même par étapes, quelques jours chacune, et reviens en arrière si ça fait mal ou que ça gonfle.',
+    rtsReadyTips: 'Échauffe-toi bien à chaque fois. Les premiers mois, une chevillère ou une genouillère peut aider à éviter que ça recommence.',
+    rtsHopShown: 'Test de saut : ta jambe blessée a atteint {0} % de l’autre.',
+    rtsNote: 'C’est une auto-évaluation indicative, pas une décision médicale. Après une opération, suis ton médecin et ton kiné.'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -2228,7 +2321,30 @@ var T = {
     friendsBlock: 'Заблокировать',
     friendsBlockConfirm: 'Заблокировать {0}? Этот человек больше не сможет добавить тебя в друзья, ваша дружба закончится, и ты не будешь видеть его сообщения в комнатах. Ему не сообщат.',
     friendsBlockedTitle: 'Заблокированные ({0})',
-    friendsUnblock: 'Разблокировать'
+    friendsUnblock: 'Разблокировать',
+    rtsTitle: 'Готов вернуться в спорт?',
+    rtsIntro: 'Ответь на несколько вопросов, чтобы понять, готова ли нога к спорту и над чем поработать, если нет.',
+    rtsInjuryLabel: 'Твоя травма',
+    rtsInjuryPick: 'Выбери травму',
+    rtsHopTitle: 'Прыжок на одной ноге в длину (необязательно)',
+    rtsHopHint: 'Встань на одну ногу, прыгни вперёд как можно дальше и приземлись на ту же ногу. Измерь в сантиметрах от линии старта до пятки. Потом сделай то же другой ногой.',
+    rtsHopInjured: 'Травмированная нога (см)',
+    rtsHopOther: 'Другая нога (см)',
+    rtsCheck: 'Проверить',
+    rtsMissing: 'Ответь на все вопросы.',
+    rtsBadHop: 'Введи оба расстояния в сантиметрах (1–400) или оставь оба пустыми.',
+    rtsDoctorTitle: 'Сначала спроси врача',
+    rtsDoctorText: 'После перелома или вывиха только врач или физиотерапевт может сказать, достаточно ли всё зажило, часто по рентгену. Спроси на следующем приёме.',
+    rtsNotYetTitle: 'Пока рано',
+    rtsNotYetIntro: 'Сначала поработай над этим, потом проверь снова:',
+    rtsStepTitle: 'Можно начинать возвращаться, шаг за шагом',
+    rtsStepIntro: 'Проводи на каждом шаге хотя бы несколько дней. Если больно или появился отёк, вернись на шаг назад.',
+    rtsStepHop: 'Перед матчами сделай прыжковый тест выше, чтобы проверить силу.',
+    rtsReadyTitle: 'Почти готов играть',
+    rtsReadyIntro: 'Ответы и прыжковый тест хорошие. Всё равно возвращайся по шагам, по несколько дней на каждый, и отступай на шаг, если больно или появился отёк.',
+    rtsReadyTips: 'Каждый раз хорошо разминайся. Первые месяцы бандаж на голеностоп или колено поможет избежать повторной травмы.',
+    rtsHopShown: 'Прыжковый тест: травмированная нога — {0}% от другой.',
+    rtsNote: 'Это самопроверка для ориентира, а не медицинское решение. После операции следуй указаниям врача и физиотерапевта.'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -2584,7 +2700,30 @@ var T = {
     friendsBlock: 'حظر',
     friendsBlockConfirm: 'هل تحظر {0}؟ لن يستطيع طلب صداقتك بعد الآن، وستنتهي صداقتكما، ولن ترى رسائله في الغرف. لن يُبلَّغ بذلك.',
     friendsBlockedTitle: 'المحظورون ({0})',
-    friendsUnblock: 'إلغاء الحظر'
+    friendsUnblock: 'إلغاء الحظر',
+    rtsTitle: 'هل أنت مستعد للعودة إلى اللعب؟',
+    rtsIntro: 'أجب عن بعض الأسئلة لتعرف إن كانت ساقك جاهزة للرياضة، وعلى ماذا تعمل إن لم تكن.',
+    rtsInjuryLabel: 'إصابتك',
+    rtsInjuryPick: 'اختر إصابتك',
+    rtsHopTitle: 'القفز على ساق واحدة لأبعد مسافة (اختياري)',
+    rtsHopHint: 'قف على ساق واحدة، واقفز إلى الأمام أبعد ما تستطيع، وانزل على الساق نفسها. قِس بالسنتيمتر من خط البداية حتى كعبك. ثم افعل الشيء نفسه بالساق الأخرى.',
+    rtsHopInjured: 'الساق المصابة (سم)',
+    rtsHopOther: 'الساق الأخرى (سم)',
+    rtsCheck: 'تحقّق',
+    rtsMissing: 'يرجى الإجابة عن كل الأسئلة.',
+    rtsBadHop: 'اكتب المسافتين بالسنتيمتر (1–400)، أو اترك الاثنتين فارغتين.',
+    rtsDoctorTitle: 'اسأل طبيبك أولًا',
+    rtsDoctorText: 'بعد كسر في العظم أو خلع في المفصل، وحده الطبيب أو أخصائي العلاج الطبيعي يستطيع أن يحدد متى التأم بما يكفي، وغالبًا بصورة أشعة. اسأله في زيارتك القادمة.',
+    rtsNotYetTitle: 'ليس بعد',
+    rtsNotYetIntro: 'اعمل على هذه أولًا، ثم تحقّق مرة أخرى:',
+    rtsStepTitle: 'يمكنك أن تبدأ العودة، خطوة بخطوة',
+    rtsStepIntro: 'ابقَ بضعة أيام على الأقل في كل خطوة. إذا شعرت بألم أو ظهر تورم، فارجع خطوة.',
+    rtsStepHop: 'قبل المباريات، قم باختبار القفز على ساق واحدة في الأعلى لتتحقق من قوتك.',
+    rtsReadyTitle: 'جاهز تقريبًا للعب',
+    rtsReadyIntro: 'إجاباتك واختبار القفز جيدة. مع ذلك عُد على خطوات، بضعة أيام لكل خطوة، وارجع خطوة إذا شعرت بألم أو ظهر تورم.',
+    rtsReadyTips: 'قم بالإحماء جيدًا في كل مرة. في الأشهر الأولى، قد تساعد دعامة الكاحل أو الركبة على منع تكرار الإصابة.',
+    rtsHopShown: 'اختبار القفز: وصلت ساقك المصابة إلى {0}% من الأخرى.',
+    rtsNote: 'هذا فحص ذاتي للاسترشاد، وليس قرارًا طبيًا. بعد الجراحة، اتبع تعليمات طبيبك وأخصائي العلاج الطبيعي.'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -2937,7 +3076,30 @@ var T = {
     friendsBlock: '拉黑',
     friendsBlockConfirm: '拉黑 {0}？对方将不能再加你为好友，你们的好友关系会被删除，你也不会再在聊天室里看到对方的消息。对方不会收到通知。',
     friendsBlockedTitle: '已拉黑的人（{0}）',
-    friendsUnblock: '取消拉黑'
+    friendsUnblock: '取消拉黑',
+    rtsTitle: '能回场上了吗？',
+    rtsIntro: '回答几个问题，看看你的腿能不能回去运动；还不行的话，接下来该练什么。',
+    rtsInjuryLabel: '你的伤',
+    rtsInjuryPick: '选择你的伤',
+    rtsHopTitle: '单腿跳远测试（选填）',
+    rtsHopHint: '单腿站好，尽量往前跳远，用同一条腿落地。用厘米量从起跳线到脚后跟的距离。另一条腿也这样跳一次。',
+    rtsHopInjured: '受伤的腿（厘米）',
+    rtsHopOther: '另一条腿（厘米）',
+    rtsCheck: '查看结果',
+    rtsMissing: '请回答所有问题。',
+    rtsBadHop: '请用厘米填两条腿的距离（1–400），或者两个都不填。',
+    rtsDoctorTitle: '先问医生',
+    rtsDoctorText: '骨折或关节脱位以后，什么时候长好了，只有医生或康复师能判断，通常要拍片子。下次复诊时问问他们。',
+    rtsNotYetTitle: '还不行',
+    rtsNotYetIntro: '先练好这几项，再来检查：',
+    rtsStepTitle: '可以开始一步步回去了',
+    rtsStepIntro: '每个阶段至少待几天。如果疼了或者肿了，就退回上一个阶段。',
+    rtsStepHop: '比赛之前，做一下上面的单腿跳远测试，看看力量够不够。',
+    rtsReadyTitle: '基本可以回场了',
+    rtsReadyIntro: '你的回答和跳远测试都不错。还是要一步步回去，每个阶段待几天；疼了或肿了就退回上一个阶段。',
+    rtsReadyTips: '每次运动前都好好热身。头几个月戴护踝或护膝，可以帮助防止再次受伤。',
+    rtsHopShown: '跳远测试：受伤的腿跳了另一条腿的 {0}%。',
+    rtsNote: '这只是自测参考，不能代替医生的判断。做过手术的人，请听医生和康复师的。'
   }
 };
 
@@ -4282,6 +4444,7 @@ function renderAll() {
   renderOffline();
   renderPlan();
   renderLog();
+  renderReturnToSport();
   renderGroupChat();
   renderFriends();
   renderCategories();
@@ -4290,6 +4453,120 @@ function renderAll() {
   if (showingResults) renderResults();
   if (!$('error').hidden) showMissing();
 }
+
+// ---- Return to sport check ----
+// Answers are kept while the page is open, so switching language keeps them.
+var rts = {injury: '', answers: {}, result: null};
+
+function renderReturnToSport() {
+  ['rtsTitle', 'rtsIntro', 'rtsInjuryLabel', 'rtsHopTitle', 'rtsHopHint', 'rtsHopInjured', 'rtsHopOther', 'rtsCheck', 'rtsNote']
+    .forEach(function (key) { $(key).textContent = t(key); });
+  var select = $('rtsInjury');
+  select.innerHTML = '';
+  var first = document.createElement('option');
+  first.value = '';
+  first.textContent = t('rtsInjuryPick');
+  select.appendChild(first);
+  RTS_INJURIES.forEach(function (id) {
+    var option = document.createElement('option');
+    option.value = id;
+    option.textContent = L(findInjury(id).name);
+    select.appendChild(option);
+  });
+  select.value = rts.injury;
+
+  var questions = rtsQuestions(rts.injury);
+  var missingIds = rts.result && rts.result.status === 'missing' ? rts.result.ids : [];
+  var list = $('rtsQuestions');
+  list.innerHTML = '';
+  questions.forEach(function (question, i) {
+    var fs = document.createElement('fieldset');
+    if (missingIds.indexOf(question.id) >= 0) fs.className = 'missing';
+    var legend = document.createElement('legend');
+    legend.textContent = (i + 1) + '. ' + L(question.text);
+    fs.appendChild(legend);
+    var options = document.createElement('div');
+    options.className = 'options';
+    YES_NO.forEach(function (opt) {
+      var label = document.createElement('label');
+      var input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'rts-' + question.id;
+      input.checked = rts.answers[question.id] === opt.value;
+      input.addEventListener('change', function () {
+        rts.answers[question.id] = opt.value;
+        fs.classList.remove('missing');
+      });
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(L(opt.text)));
+      options.appendChild(label);
+    });
+    fs.appendChild(options);
+    list.appendChild(fs);
+  });
+  var selfCheck = questions.length > 0;
+  $('rtsHop').hidden = !selfCheck;
+  $('rtsCheck').hidden = !selfCheck;
+
+  var status = rts.result ? rts.result.status : null;
+  $('rtsError').hidden = status !== 'missing' && status !== 'badHop';
+  if (status === 'missing') $('rtsError').textContent = t('rtsMissing');
+  if (status === 'badHop') $('rtsError').textContent = t('rtsBadHop');
+  renderReturnToSportResult();
+}
+
+function renderReturnToSportResult() {
+  var box = $('rtsResult');
+  box.innerHTML = '';
+  var result = rts.injury && RTS_DOCTOR_INJURIES.indexOf(rts.injury) >= 0 ? {status: 'doctor'} : rts.result;
+  var shown = result && ['doctor', 'notYet', 'stepByStep', 'ready'].indexOf(result.status) >= 0;
+  box.hidden = !shown;
+  if (!shown) return;
+  function add(tag, text) {
+    var element = document.createElement(tag);
+    element.textContent = text;
+    box.appendChild(element);
+    return element;
+  }
+  function addList(tag, items) {
+    var list = document.createElement(tag);
+    list.className = tag === 'ol' ? 'steps' : 'points';
+    items.forEach(function (text) { list.appendChild(document.createElement('li')).textContent = text; });
+    box.appendChild(list);
+  }
+  var hopLine = result.hopPercent != null ? t('rtsHopShown').replace('{0}', result.hopPercent) : null;
+  if (result.status === 'doctor') {
+    add('h3', t('rtsDoctorTitle'));
+    add('p', t('rtsDoctorText'));
+  } else if (result.status === 'notYet') {
+    add('h3', t('rtsNotYetTitle'));
+    add('p', t('rtsNotYetIntro'));
+    addList('ul', result.failed.map(function (id) {
+      if (id === 'hopDistance') return L(RTS_HOP_WORK).replace('{0}', result.hopPercent);
+      return L(RTS_QUESTIONS.filter(function (q) { return q.id === id; })[0].work);
+    }));
+  } else {
+    add('h3', t(result.status === 'ready' ? 'rtsReadyTitle' : 'rtsStepTitle'));
+    if (hopLine) add('p', hopLine);
+    add('p', t(result.status === 'ready' ? 'rtsReadyIntro' : 'rtsStepIntro'));
+    addList('ol', RTS_STAGES.map(L));
+    add('p', t(result.status === 'ready' ? 'rtsReadyTips' : 'rtsStepHop'));
+  }
+}
+
+$('rtsInjury').addEventListener('change', function () {
+  rts.injury = this.value;
+  rts.result = null;
+  renderReturnToSport();
+});
+
+$('rtsForm').addEventListener('submit', function (event) {
+  event.preventDefault();
+  rts.result = returnToSportResult(rts.injury, rts.answers, $('rtsHopInjuredInput').value, $('rtsHopOtherInput').value);
+  renderReturnToSport();
+  var target = rts.result.status === 'missing' || rts.result.status === 'badHop' ? $('rtsError') : $('rtsResult');
+  target.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+});
 
 // ---- Shared cases ----
 // window.caseStore comes from firebase-cases.js, a module that loads after

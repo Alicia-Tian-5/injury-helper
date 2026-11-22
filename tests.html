@@ -17,6 +17,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="chat.js"></script>
 <script src="recovery-log.js"></script>
 <script src="rehab-plan.js"></script>
+<script src="return-to-sport.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -319,6 +320,54 @@ test('plan: the calendar file repeats each exercise on its days at the chosen ti
 function doneMarks(itemId, dates) {
   return dates.map(function (date) { return {key: doneKey(itemId, date), itemId: itemId, date: date}; });
 }
+test('return to sport: any "no" means not yet, with what to work on', function () {
+  var answers = {walk: 'yes', swelling: 'yes', motion: 'yes', balance: 'no', hop: 'yes', cutting: 'yes'};
+  var result = returnToSportResult('ankle', answers, '', '');
+  equal(result.status, 'notYet');
+  equal(result.failed.join(','), 'balance');
+});
+test('return to sport: all yes without a hop test means step by step; with a good hop test, mostly ready', function () {
+  var answers = {walk: 'yes', swelling: 'yes', motion: 'yes', balance: 'yes', hop: 'yes', cutting: 'yes'};
+  equal(returnToSportResult('ankle', answers, '', '').status, 'stepByStep');
+  var ready = returnToSportResult('ankle', answers, '95', '100');
+  equal(ready.status, 'ready');
+  equal(ready.hopPercent, 95);
+});
+test('return to sport: a hop under 90% of the other leg is not yet, even with every answer yes', function () {
+  var answers = {walk: 'yes', swelling: 'yes', motion: 'yes', balance: 'yes', hop: 'yes', cutting: 'yes'};
+  var result = returnToSportResult('strain', answers, '80', '100');
+  equal(result.status, 'notYet');
+  equal(result.failed.join(','), 'hopDistance');
+  equal(result.hopPercent, 80);
+  equal(returnToSportResult('strain', answers, '90', '100').status, 'ready');
+});
+test('return to sport: unanswered questions and odd hop distances are caught', function () {
+  equal(returnToSportResult('ankle', {walk: 'yes'}, '', '').ids.join(','), 'swelling,motion,balance,hop,cutting');
+  var answers = {walk: 'yes', swelling: 'yes', motion: 'yes', balance: 'yes', hop: 'yes', cutting: 'yes'};
+  equal(returnToSportResult('ankle', answers, '100', '').status, 'badHop');
+  equal(returnToSportResult('ankle', answers, '0', '100').status, 'badHop');
+  equal(returnToSportResult('ankle', answers, 'abc', '100').status, 'badHop');
+  equal(returnToSportResult('ankle', answers, '500', '100').status, 'badHop');
+});
+test('return to sport: a kneecap dislocation also needs a doctor\'s go-ahead; broken bones and dislocations go to the doctor', function () {
+  equal(rtsQuestions('patella').map(function (q) { return q.id; }).indexOf('cleared') >= 0, true);
+  equal(rtsQuestions('ankle').map(function (q) { return q.id; }).indexOf('cleared'), -1);
+  var answers = {walk: 'yes', swelling: 'yes', motion: 'yes', balance: 'yes', hop: 'yes', cutting: 'yes', cleared: 'no'};
+  equal(returnToSportResult('patella', answers, '', '').failed.join(','), 'cleared');
+  equal(returnToSportResult('fracture', {}, '', '').status, 'doctor');
+  equal(returnToSportResult('dislocation', {}, '', '').status, 'doctor');
+  equal(rtsQuestions('fracture').length, 0);
+});
+test('return to sport: every question, piece of advice and stage is in all six languages, and every injury exists', function () {
+  var texts = [RTS_HOP_WORK].concat(RTS_STAGES);
+  RTS_QUESTIONS.forEach(function (q) { texts.push(q.text, q.work); });
+  texts.forEach(function (text) {
+    ['en', 'es', 'fr', 'ru', 'ar', 'zh'].forEach(function (code) {
+      if (!text[code]) throw new Error('missing ' + code + ' in ' + text.en);
+    });
+  });
+  RTS_INJURIES.forEach(function (id) { if (!findInjury(id)) throw new Error('no injury ' + id); });
+});
 test('report: counts each exercise as ticked days out of planned days, up to today', function () {
   var everyDay = planItem({name: 'Quad sets', start: '2026-11-10', end: ''});
   everyDay.id = 1;
