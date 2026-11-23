@@ -283,19 +283,18 @@ h1 a{color:var(--acc)}
 .search-type{display:inline-block;font-size:12px;font-weight:600;color:var(--acc);border:1px solid var(--acc);border-radius:10px;padding:0 8px;margin-inline-end:8px;vertical-align:2px}
 .search-list strong{font-weight:600}
 .search-list small{display:block;color:var(--muted);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.learn-menu h3{font-size:18px;font-weight:700;margin:24px 0 8px}
-.learn-menu ul{list-style:none;margin:0;padding:0;background:var(--card);border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow)}
-.learn-menu li+li{border-top:1px solid var(--line)}
-.learn-menu a{display:flex;align-items:center;gap:12px;padding:12px 16px;min-height:56px;text-decoration:none;color:var(--text)}
-.learn-menu a:hover{background:var(--acc-soft)}
-.learn-menu a span{flex:1}
-.learn-menu strong{display:block;font-size:16px;font-weight:600;color:var(--acc)}
-.learn-menu small{display:block;font-size:14px;color:var(--muted);line-height:1.4}
-.learn-menu a::after{content:"›";font-size:24px;color:var(--muted)}
-[dir=rtl] .learn-menu a::after{content:"‹"}
-.learn-title{font-size:26px}
-.learn-back{display:inline-block;margin:0 0 12px;padding:8px 0;font-weight:600;color:var(--acc);text-decoration:none}
-.learn-parts.single{display:block}
+.page-menu h3{font-size:18px;font-weight:700;margin:24px 0 8px}
+.page-menu ul{list-style:none;margin:0;padding:0;background:var(--card);border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow)}
+.page-menu li+li{border-top:1px solid var(--line)}
+.page-menu a{display:flex;align-items:center;gap:12px;padding:12px 16px;min-height:56px;text-decoration:none;color:var(--text)}
+.page-menu a:hover{background:var(--acc-soft)}
+.page-menu a span{flex:1}
+.page-menu strong{display:block;font-size:16px;font-weight:600;color:var(--acc)}
+.page-menu small{display:block;font-size:14px;color:var(--muted);line-height:1.4}
+.page-menu a::after{content:"›";font-size:24px;color:var(--muted)}
+[dir=rtl] .page-menu a::after{content:"‹"}
+.page-back{display:inline-block;margin:0 0 12px;padding:8px 0;font-weight:600;color:var(--acc);text-decoration:none}
+.section-off{display:none !important}
 .flash-outline{animation:flash-outline 1.6s ease-out}
 @keyframes flash-outline{0%,40%{box-shadow:0 0 0 3px #e8a33d}100%{box-shadow:0 0 0 3px transparent}}
 @media (prefers-reduced-motion:reduce){.flash-outline{animation:none;outline:3px solid #e8a33d}}
@@ -385,7 +384,7 @@ body.touring .site-header{z-index:21;pointer-events:none}
 .facts div{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--acc);border-radius:4px;padding:14px;text-align:center;box-shadow:var(--shadow)}
 .facts strong{display:block;font-size:28px;font-weight:700;color:var(--acc);line-height:1.2}
 .facts span{color:var(--muted);font-size:15px}
-.section-title{font-size:22px;font-weight:600;margin:0 0 12px}
+.section-title{font-size:26px;font-weight:600;margin:0 0 12px}
 .row-2>.card{margin-bottom:14px}
 .site-footer{background:#13283f;color:#e3eaf2;margin-top:24px}
 .site-footer .wrap{max-width:1180px;margin:0 auto;padding:28px 16px;text-align:center}
@@ -478,7 +477,6 @@ h1 a{text-decoration:none}
   .feature svg{width:36px;height:36px}
   .row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
   .injuries{grid-template-columns:repeat(5,1fr)}
-  #view-comfort:not([hidden]),#view-log:not([hidden]),.learn-parts{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
   #hospitalList,#cityHospitals{display:grid;grid-template-columns:1fr 1fr;column-gap:32px}
   .place+.place{border-top:0}
   .place{border-bottom:1px solid var(--line)}
@@ -555,7 +553,7 @@ h1 a{text-decoration:none}
 <div class="account-bar" id="accountBar" hidden><span id="accountWho"></span><button type="button" class="link-btn" id="accountSignOut"></button></div>
 
 <div class="view" id="view-home" hidden>
-  <a class="card home-today" id="homeToday" href="#log" hidden></a>
+  <a class="card home-today" id="homeToday" href="#log/plan" hidden></a>
   <section class="cover">
     <div id="coverSlides" aria-hidden="true"></div>
     <div class="cover-veil"></div>
@@ -649,7 +647,7 @@ h1 a{text-decoration:none}
       <p class="error" id="rehabPlanError" role="alert" hidden></p>
       <p class="success" id="rehabPlanDone" role="status" hidden></p>
       <p class="muted" id="rehabPlanLater" hidden></p>
-      <a class="secondary go-plan" href="#log" id="rehabPlanGo" hidden></a>
+      <a class="secondary go-plan" href="#log/plan" id="rehabPlanGo" hidden></a>
     </div>
   </section>
   <div class="actions"><button type="button" class="secondary" id="seeComfortBtn"></button><button type="button" class="secondary" id="seeCasesBtn"></button><button type="button" class="secondary" id="restartBtn"></button></div>
@@ -657,7 +655,10 @@ h1 a{text-decoration:none}
 </div>
 
 <div class="view" id="view-comfort" hidden>
-  <section class="card advice-comfort">
+  <h2 class="section-title" id="comfortPageTitle"></h2>
+  <nav class="page-menu" id="comfortMenu" aria-labelledby="comfortPageTitle"></nav>
+  <a class="page-back" href="#comfort" id="comfortBack" hidden></a>
+  <section class="card advice-comfort" id="comfortCard">
     <h2 id="comfortTitle"></h2>
     <div id="comfort"></div>
     <div class="counseling">
@@ -721,7 +722,7 @@ h1 a{text-decoration:none}
     </div>
     <p class="error" id="friendsError" role="alert" hidden></p>
   </section>
-  <section class="card chat">
+  <section class="card chat" id="chatCard">
     <h2 id="chatTitle"></h2>
     <p class="muted" id="chatIntro"></p>
     <div class="chat-crisis" id="chatCrisis" role="alert" hidden></div>
@@ -736,7 +737,10 @@ h1 a{text-decoration:none}
 </div>
 
 <div class="view" id="view-hospitals" hidden>
-  <section class="card">
+  <h2 class="section-title" id="hospitalsPageTitle"></h2>
+  <nav class="page-menu" id="hospitalsMenu" aria-labelledby="hospitalsPageTitle"></nav>
+  <a class="page-back" href="#hospitals" id="hospitalsBack" hidden></a>
+  <section class="card" id="cityCard">
     <h2 id="cityTitle"></h2>
     <p class="muted" id="cityIntro"></p>
     <form class="city-form" id="cityForm" novalidate>
@@ -772,7 +776,7 @@ h1 a{text-decoration:none}
     <p class="error" id="dvSaveFailed" role="alert" hidden></p>
     <button type="button" class="secondary" id="dvClear"></button>
   </section>
-  <section class="card">
+  <section class="card" id="nearbyCard">
     <h2 id="hospitalsTitle"></h2>
     <p class="muted" id="hospitalsIntro"></p>
     <div id="hospitalList"></div>
@@ -781,10 +785,10 @@ h1 a{text-decoration:none}
 </div>
 
 <div class="view" id="view-learn" hidden>
-  <h2 class="section-title learn-title" id="learnTitle"></h2>
+  <h2 class="section-title" id="learnTitle"></h2>
   <p class="muted learn-intro" id="learnIntro"></p>
-  <nav class="learn-menu" id="learnMenu" aria-labelledby="learnTitle"></nav>
-  <a class="learn-back" href="#learn" id="learnBack" hidden></a>
+  <nav class="page-menu" id="learnMenu" aria-labelledby="learnTitle"></nav>
+  <a class="page-back" href="#learn" id="learnBack" hidden></a>
   <section class="card risk" id="riskCard">
     <h2 id="riskTitle"></h2>
     <p class="muted" id="riskIntro"></p>
@@ -875,6 +879,9 @@ h1 a{text-decoration:none}
 </div>
 
 <div class="view" id="view-log" hidden>
+  <h2 class="section-title" id="logPageTitle"></h2>
+  <nav class="page-menu" id="logMenu" aria-labelledby="logPageTitle"></nav>
+  <a class="page-back" href="#log" id="logBack" hidden></a>
   <section class="card" id="reportCard">
     <h2 id="reportTitle"></h2>
     <p class="muted" id="reportIntro"></p>
@@ -948,7 +955,7 @@ h1 a{text-decoration:none}
     <div class="rts-result" id="rtsResult" aria-live="polite" hidden></div>
     <p class="muted rts-note" id="rtsNote"></p>
   </section>
-  <section class="card">
+  <section class="card" id="logFormCard">
     <h2 id="logTitle"></h2>
     <p class="muted" id="logIntro"></p>
     <form id="logForm" novalidate>
@@ -974,7 +981,7 @@ h1 a{text-decoration:none}
     </form>
     <p class="success" id="logSaved" role="status" hidden></p>
   </section>
-  <section class="card">
+  <section class="card" id="logListCard">
     <h2 id="logListTitle"></h2>
     <div class="trend" id="logTrend" hidden>
       <h3 id="logTrendTitle"></h3>
@@ -1403,7 +1410,7 @@ var T = {
     groupFriendIncoming: 'Wants to be your friend',
     groupFriendFailed: 'Could not send the request. The person may not be able to receive requests yet; try again later.',
     friendsTitle: 'My friends',
-    friendsIntro: 'To add a friend, tap “Add friend” under their message in a room above. Once they accept, you can chat privately: only the two of you can read it.',
+    friendsIntro: 'To add a friend, tap “Add friend” under their message in a group chat room. Once they accept, you can chat privately: only the two of you can read it.',
     friendsRequestsTitle: 'Friend requests',
     friendsRequestText: '{0} wants to be your friend',
     friendsAccept: 'Accept',
@@ -1586,12 +1593,27 @@ var T = {
     searchTypeCity: 'City',
     learnToolsTitle: 'Prevention tools',
     learnKnowledgeTitle: 'Health tips',
-    learnBack: '← Back to contents',
+    pageBack: '← Back to contents',
     learnMenuRisk: '7 questions: which body parts to protect',
     learnMenuWarmup: 'Pick a sport and follow along with a timer',
     learnMenuTraining: 'Log sessions; get a warning if you add too much',
     learnMenuGear: 'What to wear, and whether your shoes need replacing',
-    learnMenuWeather: 'Today’s weather and what it means for training'
+    learnMenuWeather: 'Today’s weather and what it means for training',
+    menuComfortWords: 'A few kind words, and counselling hotlines',
+    menuChat: 'Tell the AI how you feel',
+    menuGroup: 'Rooms for people with the same injury',
+    menuFriends: 'Private chats with friends you added',
+    menuCity: 'Hospitals known for sports injuries in your city',
+    menuDoctor: 'Put the pain into words; what to bring and ask',
+    menuNearby: 'Emergency rooms, clinics and pharmacies on a map',
+    logDailyTitle: 'Every day',
+    logSometimesTitle: 'When you need it',
+    menuPlan: 'Today’s exercises from your doctor or physio',
+    menuToday: 'Pain, a photo and a note for today',
+    menuRecords: 'Everything you wrote, and how the pain has changed',
+    menuReturn: 'Check whether you are ready to play again',
+    menuReport: 'One page for your next check-up',
+    menuBackup: 'Keep your records safe when you change phones'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -1923,7 +1945,7 @@ var T = {
     groupFriendIncoming: 'Quiere ser tu amigo',
     groupFriendFailed: 'No se pudo enviar la solicitud. Puede que esa persona aún no pueda recibir solicitudes; inténtalo más tarde.',
     friendsTitle: 'Mis amigos',
-    friendsIntro: 'Para añadir un amigo, toca «Añadir amigo» bajo su mensaje en una sala de arriba. Cuando acepte, podréis chatear en privado: solo vosotros dos podréis leerlo.',
+    friendsIntro: 'Para añadir un amigo, toca «Añadir amigo» bajo su mensaje en una sala del chat de grupo. Cuando acepte, podréis chatear en privado: solo vosotros dos podréis leerlo.',
     friendsRequestsTitle: 'Solicitudes de amistad',
     friendsRequestText: '{0} quiere ser tu amigo',
     friendsAccept: 'Aceptar',
@@ -2106,12 +2128,27 @@ var T = {
     searchTypeCity: 'Ciudad',
     learnToolsTitle: 'Herramientas de prevención',
     learnKnowledgeTitle: 'Consejos de salud',
-    learnBack: '← Volver al índice',
+    pageBack: '← Volver al índice',
     learnMenuRisk: '7 preguntas: qué partes del cuerpo proteger',
     learnMenuWarmup: 'Elige un deporte y sigue los ejercicios con temporizador',
     learnMenuTraining: 'Apunta sesiones; aviso si subes demasiado',
     learnMenuGear: 'Qué llevar, y si toca cambiar de zapatillas',
-    learnMenuWeather: 'El tiempo de hoy y lo que significa para entrenar'
+    learnMenuWeather: 'El tiempo de hoy y lo que significa para entrenar',
+    menuComfortWords: 'Unas palabras de ánimo y líneas de apoyo psicológico',
+    menuChat: 'Cuéntale a la IA cómo te sientes',
+    menuGroup: 'Salas para personas con la misma lesión',
+    menuFriends: 'Chats privados con los amigos que añadiste',
+    menuCity: 'Hospitales conocidos por lesiones deportivas en tu ciudad',
+    menuDoctor: 'Describe el dolor; qué llevar y qué preguntar',
+    menuNearby: 'Urgencias, clínicas y farmacias en el mapa',
+    logDailyTitle: 'Cada día',
+    logSometimesTitle: 'Cuando lo necesites',
+    menuPlan: 'Los ejercicios de hoy de tu médico o fisio',
+    menuToday: 'Dolor, una foto y una nota de hoy',
+    menuRecords: 'Todo lo que escribiste y cómo ha cambiado el dolor',
+    menuReturn: 'Comprueba si estás listo para volver a jugar',
+    menuReport: 'Una página para tu próxima consulta',
+    menuBackup: 'Guarda tus registros al cambiar de móvil'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -2443,7 +2480,7 @@ var T = {
     groupFriendIncoming: 'Veut être ton ami',
     groupFriendFailed: 'Impossible d’envoyer la demande. Cette personne ne peut peut-être pas encore en recevoir ; réessaie plus tard.',
     friendsTitle: 'Mes amis',
-    friendsIntro: 'Pour ajouter un ami, touche « Ajouter en ami » sous son message dans un salon ci-dessus. Une fois la demande acceptée, vous pourrez discuter en privé : vous seuls pourrez le lire.',
+    friendsIntro: 'Pour ajouter un ami, touche « Ajouter en ami » sous son message dans un salon du chat de groupe. Une fois la demande acceptée, vous pourrez discuter en privé : vous seuls pourrez le lire.',
     friendsRequestsTitle: 'Demandes d’ami',
     friendsRequestText: '{0} veut être ton ami',
     friendsAccept: 'Accepter',
@@ -2626,12 +2663,27 @@ var T = {
     searchTypeCity: 'Ville',
     learnToolsTitle: 'Outils de prévention',
     learnKnowledgeTitle: 'Conseils santé',
-    learnBack: '← Retour au sommaire',
+    pageBack: '← Retour au sommaire',
     learnMenuRisk: '7 questions : quelles parties du corps protéger',
     learnMenuWarmup: 'Choisis un sport et suis les mouvements avec un minuteur',
     learnMenuTraining: 'Note tes séances ; alerte si tu en fais trop d’un coup',
     learnMenuGear: 'Quoi porter, et faut-il changer de chaussures',
-    learnMenuWeather: 'La météo du jour et ce qu’elle change pour l’entraînement'
+    learnMenuWeather: 'La météo du jour et ce qu’elle change pour l’entraînement',
+    menuComfortWords: 'Quelques mots de réconfort, et des lignes d’écoute',
+    menuChat: 'Dis à l’IA comment tu te sens',
+    menuGroup: 'Des salons pour les personnes avec la même blessure',
+    menuFriends: 'Discussions privées avec les amis ajoutés',
+    menuCity: 'Les hôpitaux réputés pour les blessures sportives dans ta ville',
+    menuDoctor: 'Mettre la douleur en mots ; quoi apporter et demander',
+    menuNearby: 'Urgences, cliniques et pharmacies sur une carte',
+    logDailyTitle: 'Chaque jour',
+    logSometimesTitle: 'Quand tu en as besoin',
+    menuPlan: 'Les exercices du jour de ton médecin ou kiné',
+    menuToday: 'Douleur, photo et note du jour',
+    menuRecords: 'Tout ce que tu as noté, et l’évolution de la douleur',
+    menuReturn: 'Vérifie si tu es prêt à rejouer',
+    menuReport: 'Une page pour ton prochain rendez-vous',
+    menuBackup: 'Garde tes données en changeant de téléphone'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -2963,7 +3015,7 @@ var T = {
     groupFriendIncoming: 'Хочет дружить',
     groupFriendFailed: 'Не удалось отправить заявку. Возможно, этот человек пока не может их получать; попробуй позже.',
     friendsTitle: 'Мои друзья',
-    friendsIntro: 'Чтобы добавить друга, нажми «Добавить в друзья» под его сообщением в комнате выше. Когда он примет заявку, вы сможете переписываться лично: читать будете только вы двое.',
+    friendsIntro: 'Чтобы добавить друга, нажми «Добавить в друзья» под его сообщением в групповом чате. Когда он примет заявку, вы сможете переписываться лично: читать будете только вы двое.',
     friendsRequestsTitle: 'Заявки в друзья',
     friendsRequestText: '{0} хочет добавить тебя в друзья',
     friendsAccept: 'Принять',
@@ -3146,12 +3198,27 @@ var T = {
     searchTypeCity: 'Город',
     learnToolsTitle: 'Профилактика',
     learnKnowledgeTitle: 'Советы о здоровье',
-    learnBack: '← К содержанию',
+    pageBack: '← К содержанию',
     learnMenuRisk: '7 вопросов: какие части тела беречь',
     learnMenuWarmup: 'Выбери вид спорта и повторяй упражнения под таймер',
     learnMenuTraining: 'Записывай тренировки; предупреждение при резком росте',
     learnMenuGear: 'Что надеть и не пора ли менять обувь',
-    learnMenuWeather: 'Погода сегодня и что она значит для тренировки'
+    learnMenuWeather: 'Погода сегодня и что она значит для тренировки',
+    menuComfortWords: 'Несколько тёплых слов и телефоны психологической помощи',
+    menuChat: 'Расскажи ИИ, как ты себя чувствуешь',
+    menuGroup: 'Комнаты для людей с такой же травмой',
+    menuFriends: 'Личные чаты с добавленными друзьями',
+    menuCity: 'Больницы твоего города, известные лечением спортивных травм',
+    menuDoctor: 'Опиши боль словами; что взять и о чём спросить',
+    menuNearby: 'Травмпункты, клиники и аптеки на карте',
+    logDailyTitle: 'Каждый день',
+    logSometimesTitle: 'Когда понадобится',
+    menuPlan: 'Упражнения на сегодня от врача или реабилитолога',
+    menuToday: 'Боль, фото и заметка за сегодня',
+    menuRecords: 'Всё, что ты записал, и как менялась боль',
+    menuReturn: 'Проверь, готов ли ты вернуться к игре',
+    menuReport: 'Одна страница для следующего приёма',
+    menuBackup: 'Сохрани записи при смене телефона'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -3484,7 +3551,7 @@ var T = {
     groupFriendIncoming: 'يريد أن يكون صديقك',
     groupFriendFailed: 'تعذّر إرسال الطلب. ربما لا يستطيع هذا الشخص استقبال الطلبات بعد؛ حاول لاحقًا.',
     friendsTitle: 'أصدقائي',
-    friendsIntro: 'لإضافة صديق، اضغط «إضافة صديق» تحت رسالته في إحدى الغرف أعلاه. بعد أن يقبل، يمكنكما الدردشة على انفراد: لا يقرأها غيركما.',
+    friendsIntro: 'لإضافة صديق، اضغط «إضافة صديق» تحت رسالته في إحدى غرف الدردشة الجماعية. بعد أن يقبل، يمكنكما الدردشة على انفراد: لا يقرأها غيركما.',
     friendsRequestsTitle: 'طلبات الصداقة',
     friendsRequestText: '{0} يريد أن يكون صديقك',
     friendsAccept: 'قبول',
@@ -3667,12 +3734,27 @@ var T = {
     searchTypeCity: 'مدينة',
     learnToolsTitle: 'أدوات الوقاية',
     learnKnowledgeTitle: 'نصائح صحية',
-    learnBack: '← العودة إلى المحتويات',
+    pageBack: '← العودة إلى المحتويات',
     learnMenuRisk: '7 أسئلة: أي أجزاء الجسم تحميها',
     learnMenuWarmup: 'اختر رياضة واتبع الحركات مع مؤقت',
     learnMenuTraining: 'سجّل حصصك؛ وتنبيه إذا زدت كثيرًا',
     learnMenuGear: 'ماذا تلبس، وهل حان تغيير حذائك',
-    learnMenuWeather: 'طقس اليوم وما يعنيه للتدريب'
+    learnMenuWeather: 'طقس اليوم وما يعنيه للتدريب',
+    menuComfortWords: 'بضع كلمات طيبة، وخطوط الدعم النفسي',
+    menuChat: 'أخبر الذكاء الاصطناعي بما تشعر به',
+    menuGroup: 'غرف لأشخاص لديهم الإصابة نفسها',
+    menuFriends: 'دردشات خاصة مع الأصدقاء الذين أضفتهم',
+    menuCity: 'مستشفيات معروفة بعلاج الإصابات الرياضية في مدينتك',
+    menuDoctor: 'صِف الألم بالكلمات؛ ماذا تحضر وماذا تسأل',
+    menuNearby: 'الطوارئ والعيادات والصيدليات على الخريطة',
+    logDailyTitle: 'كل يوم',
+    logSometimesTitle: 'عند الحاجة',
+    menuPlan: 'تمارين اليوم من طبيبك أو أخصائي العلاج الطبيعي',
+    menuToday: 'الألم وصورة وملاحظة اليوم',
+    menuRecords: 'كل ما كتبته، وكيف تغيّر الألم',
+    menuReturn: 'تحقق هل أنت مستعد للعودة إلى اللعب',
+    menuReport: 'صفحة واحدة لموعدك القادم',
+    menuBackup: 'احفظ سجلاتك عند تغيير الهاتف'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -4002,7 +4084,7 @@ var T = {
     groupFriendIncoming: '对方想加你为好友',
     groupFriendFailed: '申请没有发出去。对方可能暂时还不能接收申请，请稍后再试。',
     friendsTitle: '我的好友',
-    friendsIntro: '想加好友，就在上面的聊天室里点对方消息下面的"加好友"。对方接受以后，你们就可以私聊，只有你们两个人看得到。',
+    friendsIntro: '想加好友，就在群聊里点对方消息下面的"加好友"。对方接受以后，你们就可以私聊，只有你们两个人看得到。',
     friendsRequestsTitle: '好友申请',
     friendsRequestText: '{0} 想加你为好友',
     friendsAccept: '接受',
@@ -4185,12 +4267,27 @@ var T = {
     searchTypeCity: '城市',
     learnToolsTitle: '预防工具',
     learnKnowledgeTitle: '运动知识',
-    learnBack: '← 返回目录',
+    pageBack: '← 返回目录',
     learnMenuRisk: '7 个问题，看看最该保护哪些部位',
     learnMenuWarmup: '选好运动，跟着倒计时一个个动作做',
     learnMenuTraining: '记下每次训练，加得太猛会提醒',
     learnMenuGear: '该穿什么鞋、戴什么护具，鞋该不该换',
-    learnMenuWeather: '看看今天的天气对训练有什么影响'
+    learnMenuWeather: '看看今天的天气对训练有什么影响',
+    menuComfortWords: '几句安慰的话，还有心理热线',
+    menuChat: '把你的感受告诉 AI',
+    menuGroup: '和受同样伤的人一起聊',
+    menuFriends: '和你加的好友私聊',
+    menuCity: '按城市找擅长运动损伤的医院',
+    menuDoctor: '说清楚疼的感觉；要带什么、问什么',
+    menuNearby: '地图上找附近的急诊、诊所和药店',
+    logDailyTitle: '每天用的',
+    logSometimesTitle: '需要时用的',
+    menuPlan: '医生或康复师让你做的今天的训练',
+    menuToday: '记下今天的疼痛、照片和感受',
+    menuRecords: '以前写的记录，看看疼痛怎么变化',
+    menuReturn: '测测能不能回到场上',
+    menuReport: '整理成一页，复诊时给医生看',
+    menuBackup: '换手机时把记录保存好'
   }
 };
 
@@ -4270,7 +4367,7 @@ function renderKnowledge() {
   KNOWLEDGE.forEach(function (part) {
     var section = document.createElement('section');
     section.className = 'card learn-part';
-    section.dataset.part = part.id;
+    section.id = 'learnPart-' + part.id;
     var heading = document.createElement('h2');
     heading.textContent = L(part.title);
     section.appendChild(heading);
@@ -4404,7 +4501,7 @@ function showView() {
   scrollToCurrentTab();
   // The chart is sized to its box, which has no width while hidden.
   if (view === 'log' && !locked) renderPainTrend();
-  if (view === 'learn') showLearnSection();
+  showPageSection(view);
   syncGroupListener();
 }
 
@@ -5254,7 +5351,8 @@ function openPrivateChat(id) {
     renderFriends();
   });
   renderFriends();
-  $('friendsCard').scrollIntoView({block: 'start'});
+  if (location.hash.slice(1) !== 'comfort/friends') location.hash = 'comfort/friends';
+  else $('friendsCard').scrollIntoView({block: 'start'});
 }
 
 function closePrivateChat() {
@@ -5546,7 +5644,7 @@ function renderAll() {
   renderDoctorVisit();
   renderTour();
   renderSearch();
-  renderLearnMenu();
+  renderPageMenus();
   updateHeaderHeight();
   renderGroupChat();
   renderFriends();
@@ -6250,9 +6348,7 @@ $('dvCopy').addEventListener('click', function () {
 });
 
 $('dvOpenReport').addEventListener('click', function () {
-  location.hash = 'log';
-  // Wait for the page to switch, then bring the report into sight.
-  setTimeout(function () { $('reportCard').scrollIntoView({behavior: 'smooth', block: 'start'}); }, 50);
+  location.hash = 'log/report';
 });
 
 $('dvClear').addEventListener('click', function () {
@@ -6455,12 +6551,14 @@ function flashSection(element) {
 function openSearchResult(entry) {
   setSearchPanelOpen(false);
   $('searchInput').value = '';
-  var view = {feature: entry.view, injury: 'assess', topic: 'learn', city: 'hospitals'}[entry.type];
-  // On the health page each tool and knowledge part opens on its own.
-  var tool = LEARN_TOOLS.filter(function (item) { return item.card === entry.anchor; })[0];
-  if (tool) view = 'learn/' + tool.id;
-  if (entry.type === 'topic') view = 'learn/' + entry.topicPart;
-  location.hash = view;
+  // Pages with a contents list open the section that holds the result.
+  var address = {
+    feature: sectionAddressOf(entry.view, entry.anchor && $(entry.anchor)),
+    injury: 'assess',
+    topic: 'learn/' + entry.topicPart,
+    city: 'hospitals/city'
+  }[entry.type];
+  location.hash = address;
   // Showing a view scrolls to the top, so act once it is shown.
   setTimeout(function () {
     if (entry.type === 'feature') {
@@ -6519,59 +6617,112 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
-// ---- Health page: a contents list, each item opening on its own ----
-// The address is #learn for the list and #learn/<section> for one section,
-// so the back button and shared links work.
-var LEARN_TOOLS = [
-  {id: 'risk', card: 'riskCard', title: 'riskTitle', text: 'learnMenuRisk'},
-  {id: 'warmup', card: 'warmupCard', title: 'warmupTitle', text: 'learnMenuWarmup'},
-  {id: 'training', card: 'trainingCard', title: 'trainingTitle', text: 'learnMenuTraining'},
-  {id: 'gear', card: 'gearCard', title: 'gearTitle', text: 'learnMenuGear'},
-  {id: 'weather', card: 'weatherCard', title: 'weatherTitle', text: 'learnMenuWeather'}
-];
-
-// The section in the address, or '' for the list. An unknown one shows the list.
-function learnSection() {
-  var parts = location.hash.slice(1).split('/');
-  if (parts[0] !== 'learn' || !parts[1]) return '';
-  var known = LEARN_TOOLS.some(function (tool) { return tool.id === parts[1]; }) ||
-    KNOWLEDGE.some(function (part) { return part.id === parts[1]; });
-  return known ? parts[1] : '';
+// ---- Pages shown as a contents list, one section at a time ----
+// The address is #<page> for the list and #<page>/<section> for one section,
+// so the back button and shared links work. Each section lists the cards it
+// shows; anything not in a section (such as the emergency numbers) always
+// shows.
+function sectionItem(id, show, titleKey, textKey) {
+  return {id: id, show: show, title: t(titleKey), text: t(textKey)};
 }
 
-function renderLearnMenu() {
-  var menu = $('learnMenu');
-  menu.innerHTML = '';
-  function group(titleKey, items) {
-    menu.appendChild(document.createElement('h3')).textContent = t(titleKey);
-    var list = menu.appendChild(document.createElement('ul'));
-    items.forEach(function (item) {
-      var link = list.appendChild(document.createElement('li')).appendChild(document.createElement('a'));
-      link.href = '#learn/' + item.id;
-      var words = link.appendChild(document.createElement('span'));
-      words.appendChild(document.createElement('strong')).textContent = item.title;
-      words.appendChild(document.createElement('small')).textContent = item.text;
+var PAGE_SECTIONS = {
+  learn: {header: ['learnTitle', 'learnIntro'], groups: function () {
+    // A knowledge part is described by its first few topics.
+    var separator = lang === 'zh' ? '、' : lang === 'ar' ? '، ' : ', ';
+    return [
+      {title: t('learnToolsTitle'), items: [
+        sectionItem('risk', ['riskCard'], 'riskTitle', 'learnMenuRisk'),
+        sectionItem('warmup', ['warmupCard'], 'warmupTitle', 'learnMenuWarmup'),
+        sectionItem('training', ['trainingCard'], 'trainingTitle', 'learnMenuTraining'),
+        sectionItem('gear', ['gearCard'], 'gearTitle', 'learnMenuGear'),
+        sectionItem('weather', ['weatherCard'], 'weatherTitle', 'learnMenuWeather')]},
+      {title: t('learnKnowledgeTitle'), items: KNOWLEDGE.map(function (part) {
+        var topics = part.topics.slice(0, 3).map(function (topic) { return L(topic.title); });
+        return {id: part.id, show: ['learnPart-' + part.id], title: L(part.title), text: topics.join(separator) + '…'};
+      })}];
+  }},
+  comfort: {header: ['comfortPageTitle'], groups: function () {
+    return [{title: '', items: [
+      sectionItem('words', ['comfortCard'], 'comfortTitle', 'menuComfortWords'),
+      sectionItem('chat', ['chatCard'], 'chatTitle', 'menuChat'),
+      sectionItem('group', ['groupCard'], 'groupTitle', 'menuGroup'),
+      sectionItem('friends', ['friendsCard'], 'friendsTitle', 'menuFriends')]}];
+  }},
+  hospitals: {header: ['hospitalsPageTitle'], groups: function () {
+    return [{title: '', items: [
+      sectionItem('city', ['cityCard'], 'cityTitle', 'menuCity'),
+      sectionItem('doctor', ['dvCard'], 'dvTitle', 'menuDoctor'),
+      sectionItem('nearby', ['nearbyCard'], 'hospitalsTitle', 'menuNearby')]}];
+  }},
+  log: {header: ['logPageTitle'], groups: function () {
+    return [
+      {title: t('logDailyTitle'), items: [
+        sectionItem('plan', ['planCard'], 'planTitle', 'menuPlan'),
+        sectionItem('today', ['logFormCard'], 'logTitle', 'menuToday'),
+        sectionItem('records', ['logListCard'], 'logListTitle', 'menuRecords')]},
+      {title: t('logSometimesTitle'), items: [
+        sectionItem('return', ['rtsCard'], 'rtsTitle', 'menuReturn'),
+        sectionItem('report', ['reportCard', 'report'], 'reportTitle', 'menuReport'),
+        sectionItem('backup', ['backupCard'], 'backupTitle', 'menuBackup')]}];
+  }}
+};
+
+function pageSectionItems(view) {
+  return PAGE_SECTIONS[view].groups().reduce(function (all, group) { return all.concat(group.items); }, []);
+}
+
+// The section in the address, or '' for the list. An unknown one shows the list.
+function currentSection() {
+  var parts = location.hash.slice(1).split('/');
+  var page = PAGE_SECTIONS[parts[0]];
+  if (!page || !parts[1]) return '';
+  return pageSectionItems(parts[0]).some(function (item) { return item.id === parts[1]; }) ? parts[1] : '';
+}
+
+// The address of the section that shows an element, such as 'log/backup',
+// or just the page when no section holds it.
+function sectionAddressOf(view, element) {
+  if (!PAGE_SECTIONS[view] || !element) return view;
+  var item = pageSectionItems(view).filter(function (one) {
+    return one.show.some(function (id) { return $(id) && $(id).contains(element); });
+  })[0];
+  return item ? view + '/' + item.id : view;
+}
+
+function renderPageMenus() {
+  Object.keys(PAGE_SECTIONS).forEach(function (view) {
+    $(view + 'Back').textContent = t('pageBack');
+    if (view !== 'learn') $(view + 'PageTitle').textContent = t('nav' + view.charAt(0).toUpperCase() + view.slice(1));
+    var menu = $(view + 'Menu');
+    menu.innerHTML = '';
+    PAGE_SECTIONS[view].groups().forEach(function (group) {
+      if (group.title) menu.appendChild(document.createElement('h3')).textContent = group.title;
+      var list = menu.appendChild(document.createElement('ul'));
+      group.items.forEach(function (item) {
+        var link = list.appendChild(document.createElement('li')).appendChild(document.createElement('a'));
+        link.href = '#' + view + '/' + item.id;
+        var words = link.appendChild(document.createElement('span'));
+        words.appendChild(document.createElement('strong')).textContent = item.title;
+        words.appendChild(document.createElement('small')).textContent = item.text;
+      });
     });
-  }
-  group('learnToolsTitle', LEARN_TOOLS.map(function (tool) { return {id: tool.id, title: t(tool.title), text: t(tool.text)}; }));
-  // A knowledge part is described by its first few topics.
-  group('learnKnowledgeTitle', KNOWLEDGE.map(function (part) {
-    var topics = part.topics.slice(0, 3).map(function (topic) { return L(topic.title); });
-    return {id: part.id, title: L(part.title), text: topics.join(lang === 'zh' ? '、' : lang === 'ar' ? '، ' : ', ') + '…'};
-  }));
-  $('learnBack').textContent = t('learnBack');
-  showLearnSection();
+    showPageSection(view);
+  });
 }
 
 // Shows the list, or only the chosen section with a way back.
-function showLearnSection() {
-  var section = learnSection();
-  ['learnTitle', 'learnIntro', 'learnMenu'].forEach(function (id) { $(id).hidden = !!section; });
-  $('learnBack').hidden = !section;
-  LEARN_TOOLS.forEach(function (tool) { $(tool.card).hidden = tool.id !== section; });
-  var parts = $('learnParts');
-  parts.classList.add('single');
-  parts.querySelectorAll('[data-part]').forEach(function (part) { part.hidden = part.dataset.part !== section; });
+function showPageSection(view) {
+  var page = PAGE_SECTIONS[view];
+  if (!page) return;
+  var section = currentView() === view ? currentSection() : '';
+  page.header.concat([view + 'Menu']).forEach(function (id) { $(id).hidden = !!section; });
+  $(view + 'Back').hidden = !section;
+  pageSectionItems(view).forEach(function (item) {
+    item.show.forEach(function (id) { if ($(id)) $(id).classList.toggle('section-off', item.id !== section); });
+  });
+  // The chart is sized to its box, which has no width while hidden.
+  if (view === 'log' && section === 'records') renderPainTrend();
 }
 
 // The header stays at the top, so scrolling to a section leaves room for it.

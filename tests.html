@@ -1010,20 +1010,27 @@ function testSpanishSwitch() {
         doc.getElementById('tourSkip').click();
         equal(doc.getElementById('tour').hidden, true);
       });
-      test('page: the health page shows a list first, and each item opens on its own', function () {
+      test('page: pages with many cards show a contents list first, and each item opens on its own', function () {
+        function shown(id) { var element = doc.getElementById(id); return !element.hidden && !element.classList.contains('section-off'); }
+        function go(address) { doc.defaultView.location.hash = address; page.showView(); }
         var links = doc.querySelectorAll('#learnMenu a');
         equal(links.length, 5 + page.KNOWLEDGE.length);
         equal(links[4].getAttribute('href'), '#learn/weather');
-        doc.defaultView.location.hash = 'learn/weather';
-        page.showView();
-        equal(doc.getElementById('learnMenu').hidden, true);
-        equal(doc.getElementById('weatherCard').hidden, false);
-        equal(doc.getElementById('warmupCard').hidden, true);
-        equal(doc.getElementById('learnBack').hidden, false);
-        doc.defaultView.location.hash = 'learn';
-        page.showView();
-        equal(doc.getElementById('learnMenu').hidden, false);
-        equal(doc.getElementById('weatherCard').hidden, true);
+        go('learn/weather');
+        equal(shown('learnMenu') + ' ' + shown('weatherCard') + ' ' + shown('warmupCard') + ' ' + shown('learnBack'), 'false true false true');
+        go('learn');
+        equal(shown('learnMenu') + ' ' + shown('weatherCard'), 'true false');
+        equal(doc.querySelectorAll('#logMenu a').length, 6);
+        equal(doc.querySelectorAll('#comfortMenu a').length, 4);
+        equal(doc.querySelectorAll('#hospitalsMenu a').length, 3);
+        go('hospitals/city');
+        equal(shown('cityCard') + ' ' + shown('dvCard') + ' ' + shown('nearbyCard'), 'true false false');
+        go('hospitals');
+        equal(shown('hospitalsMenu') + ' ' + shown('cityCard'), 'true false');
+        equal(page.sectionAddressOf('log', doc.getElementById('backupTitle')), 'log/backup');
+        equal(page.sectionAddressOf('comfort', doc.getElementById('chatTitle')), 'comfort/chat');
+        equal(doc.getElementById('homeToday').getAttribute('href'), '#log/plan');
+        go('');
       });
       test('page: starts without errors, so every heading and button has its text', function () {
         var empty = [].slice.call(doc.querySelectorAll('h1, h2, h3, button, summary'))
