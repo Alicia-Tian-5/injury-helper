@@ -19,6 +19,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="rehab-plan.js"></script>
 <script src="return-to-sport.js"></script>
 <script src="risk-check.js"></script>
+<script src="warmup.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -357,6 +358,45 @@ test('risk check: every question, option, body part and tip is in all six langua
   texts.forEach(function (text) {
     ['en', 'es', 'fr', 'ru', 'ar', 'zh'].forEach(function (code) { if (!text[code]) throw new Error('missing ' + code + ' in ' + text.en); });
   });
+});
+test('warm-up: every sport has a routine of about 6–7 minutes, and every move exists in all six languages', function () {
+  RISK_SPORTS.forEach(function (sport) {
+    var steps = warmupRoutine(sport.id);
+    equal(steps.length > 0, true);
+    equal(warmupTotalMinutes(sport.id) >= 5 && warmupTotalMinutes(sport.id) <= 10, true);
+    steps.forEach(function (step) { if (!WARMUP_MOVES[step.move]) throw new Error('no move ' + step.move); });
+  });
+  Object.keys(WARMUP_MOVES).forEach(function (id) {
+    [WARMUP_MOVES[id].name, WARMUP_MOVES[id].how].forEach(function (text) {
+      ['en', 'es', 'fr', 'ru', 'ar', 'zh'].forEach(function (code) { if (!text[code]) throw new Error('missing ' + code + ' in ' + id); });
+    });
+  });
+});
+test('warm-up: the countdown moves to the next move at zero and finishes after the last', function () {
+  var timer = warmupStart('basketball');
+  equal(timer.index, 0);
+  equal(timer.left, 120);
+  for (var i = 0; i < 119; i++) timer = warmupTick(timer);
+  equal(timer.left, 1);
+  timer = warmupTick(timer);
+  equal(timer.index, 1);
+  equal(timer.left, 60);
+  for (var j = 0; j < 4; j++) timer = warmupSkip(timer);
+  equal(timer.index, 5);
+  equal(timer.done, false);
+  timer = warmupSkip(timer);
+  equal(timer.done, true);
+  equal(warmupTick(timer).done, true);
+});
+test('warm-up: a paused timer does not count down, and skip keeps it paused', function () {
+  var timer = warmupTogglePause(warmupStart('running'));
+  equal(warmupTick(timer).left, 120);
+  timer = warmupSkip(timer);
+  equal(timer.paused, true);
+  equal(timer.index, 1);
+  equal(warmupTogglePause(timer).paused, false);
+  equal(warmupClock(90), '1:30');
+  equal(warmupClock(45), '0:45');
 });
 test('return to sport: any "no" means not yet, with what to work on', function () {
   var answers = {walk: 'yes', swelling: 'yes', motion: 'yes', balance: 'no', hop: 'yes', cutting: 'yes'};

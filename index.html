@@ -231,6 +231,15 @@ h1 a{color:var(--acc)}
 .rts-note{font-size:14px;margin:12px 0 0}
 .rts-result h4{margin:14px 0 2px}
 .risk{margin-bottom:16px}
+.warmup{margin-bottom:16px}
+.warmup-run{text-align:center}
+.warmup-run h3{font-size:24px;margin:4px 0 8px;color:var(--acc)}
+.warmup-clock{font-size:56px;font-weight:700;font-variant-numeric:tabular-nums;margin:8px 0;color:var(--acc)}
+.warmup-clock.paused{color:var(--muted)}
+.warmup-buttons{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.warmup-buttons .primary{width:auto;flex:1 1 140px}
+.warmup-buttons .secondary{flex:1 1 100px;min-height:48px}
+#warmupList{text-align:start}
 .trend{margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .trend svg{display:block;width:100%;height:auto}
 .trend .grid{stroke:var(--line);stroke-width:1}
@@ -672,6 +681,35 @@ h1 a{text-decoration:none}
     <div class="rts-result" id="riskResult" aria-live="polite" hidden></div>
     <p class="muted rts-note" id="riskNote"></p>
   </section>
+  <section class="card warmup" id="warmupCard">
+    <h2 id="warmupTitle"></h2>
+    <p class="muted" id="warmupIntro"></p>
+    <div id="warmupSetup">
+      <label class="field"><span id="warmupSportLabel"></span><select id="warmupSport"></select></label>
+      <div id="warmupPreview" hidden>
+        <p class="muted" id="warmupTotal"></p>
+        <ol class="points" id="warmupList"></ol>
+      </div>
+      <button type="button" class="primary" id="warmupStart" disabled></button>
+    </div>
+    <div class="warmup-run" id="warmupRun" aria-live="polite" hidden>
+      <p class="muted" id="warmupStep"></p>
+      <h3 id="warmupMove"></h3>
+      <p id="warmupHow"></p>
+      <p class="warmup-clock" id="warmupClock"></p>
+      <p class="muted" id="warmupNext"></p>
+      <div class="warmup-buttons">
+        <button type="button" class="primary" id="warmupPause"></button>
+        <button type="button" class="secondary" id="warmupSkip"></button>
+        <button type="button" class="secondary" id="warmupStop"></button>
+      </div>
+    </div>
+    <div class="warmup-run" id="warmupDone" aria-live="polite" hidden>
+      <h3 id="warmupDoneTitle"></h3>
+      <p id="warmupDoneText"></p>
+      <button type="button" class="secondary" id="warmupAgain"></button>
+    </div>
+  </section>
   <div class="learn-parts" id="learnParts"></div>
 </div>
 
@@ -842,6 +880,7 @@ h1 a{text-decoration:none}
 <script src="rehab-plan.js"></script>
 <script src="return-to-sport.js"></script>
 <script src="risk-check.js"></script>
+<script src="warmup.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -1237,7 +1276,23 @@ var T = {
     riskNoAreas: 'Nothing stands out from your answers. Keep warming up and building strength.',
     riskHabitsTitle: 'Habits to change',
     riskNoHabits: 'Your habits look good. Keep them up.',
-    riskNote: 'A general guide based on common patterns, not a medical assessment.'
+    riskNote: 'A general guide based on common patterns, not a medical assessment.',
+    warmupTitle: 'Warm up with me',
+    warmupIntro: 'Pick your sport and follow along: one move at a time, with a timer. A beep tells you when to switch.',
+    warmupSportLabel: 'Your sport',
+    warmupSportPick: 'Choose a sport',
+    warmupStart: 'Start',
+    warmupTotal: 'About {0} minutes, {1} moves.',
+    warmupStep: 'Move {0} of {1}',
+    warmupNext: 'Next: {0}',
+    warmupLast: 'Last move',
+    warmupPause: 'Pause',
+    warmupResume: 'Continue',
+    warmupSkip: 'Skip',
+    warmupStop: 'Stop',
+    warmupDoneTitle: 'Warm-up done!',
+    warmupDoneText: 'Your body is ready. Start your sport gently for the first few minutes, and stop if anything hurts.',
+    warmupAgain: 'Back to the start'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -1627,7 +1682,23 @@ var T = {
     riskNoAreas: 'Nada destaca en tus respuestas. Sigue calentando y ganando fuerza.',
     riskHabitsTitle: 'Hábitos que cambiar',
     riskNoHabits: 'Tus hábitos se ven bien. Sigue así.',
-    riskNote: 'Una guía general basada en patrones comunes, no una evaluación médica.'
+    riskNote: 'Una guía general basada en patrones comunes, no una evaluación médica.',
+    warmupTitle: 'Calienta conmigo',
+    warmupIntro: 'Elige tu deporte y sigue los ejercicios uno a uno, con un temporizador. Un pitido te avisa cuándo cambiar.',
+    warmupSportLabel: 'Tu deporte',
+    warmupSportPick: 'Elige un deporte',
+    warmupStart: 'Empezar',
+    warmupTotal: 'Unos {0} minutos, {1} ejercicios.',
+    warmupStep: 'Ejercicio {0} de {1}',
+    warmupNext: 'Siguiente: {0}',
+    warmupLast: 'Último ejercicio',
+    warmupPause: 'Pausa',
+    warmupResume: 'Seguir',
+    warmupSkip: 'Saltar',
+    warmupStop: 'Parar',
+    warmupDoneTitle: '¡Calentamiento hecho!',
+    warmupDoneText: 'Tu cuerpo está listo. Empieza tu deporte con suavidad los primeros minutos y para si algo duele.',
+    warmupAgain: 'Volver al inicio'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -2017,7 +2088,23 @@ var T = {
     riskNoAreas: 'Rien ne ressort de tes réponses. Continue à t’échauffer et à te renforcer.',
     riskHabitsTitle: 'Habitudes à changer',
     riskNoHabits: 'Tes habitudes sont bonnes. Continue comme ça.',
-    riskNote: 'Un guide général fondé sur des cas courants, pas un avis médical.'
+    riskNote: 'Un guide général fondé sur des cas courants, pas un avis médical.',
+    warmupTitle: 'Échauffe-toi avec moi',
+    warmupIntro: 'Choisis ton sport et suis les mouvements un par un, avec un minuteur. Un bip t’indique quand changer.',
+    warmupSportLabel: 'Ton sport',
+    warmupSportPick: 'Choisis un sport',
+    warmupStart: 'Commencer',
+    warmupTotal: 'Environ {0} minutes, {1} mouvements.',
+    warmupStep: 'Mouvement {0} sur {1}',
+    warmupNext: 'Ensuite : {0}',
+    warmupLast: 'Dernier mouvement',
+    warmupPause: 'Pause',
+    warmupResume: 'Reprendre',
+    warmupSkip: 'Passer',
+    warmupStop: 'Arrêter',
+    warmupDoneTitle: 'Échauffement terminé !',
+    warmupDoneText: 'Ton corps est prêt. Reprends ton sport en douceur les premières minutes, et arrête si quelque chose fait mal.',
+    warmupAgain: 'Revenir au début'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -2407,7 +2494,23 @@ var T = {
     riskNoAreas: 'По твоим ответам ничего особенно не выделяется. Продолжай разминаться и укреплять мышцы.',
     riskHabitsTitle: 'Привычки, которые стоит изменить',
     riskNoHabits: 'Привычки у тебя хорошие. Так держать.',
-    riskNote: 'Общий ориентир по частым случаям, а не медицинская оценка.'
+    riskNote: 'Общий ориентир по частым случаям, а не медицинская оценка.',
+    warmupTitle: 'Разминка вместе со мной',
+    warmupIntro: 'Выбери свой вид спорта и повторяй упражнения по одному, с таймером. Сигнал подскажет, когда переходить к следующему.',
+    warmupSportLabel: 'Твой вид спорта',
+    warmupSportPick: 'Выбери вид спорта',
+    warmupStart: 'Начать',
+    warmupTotal: 'Около {0} минут, {1} упражнений.',
+    warmupStep: 'Упражнение {0} из {1}',
+    warmupNext: 'Дальше: {0}',
+    warmupLast: 'Последнее упражнение',
+    warmupPause: 'Пауза',
+    warmupResume: 'Продолжить',
+    warmupSkip: 'Пропустить',
+    warmupStop: 'Остановить',
+    warmupDoneTitle: 'Разминка закончена!',
+    warmupDoneText: 'Тело готово. Первые минуты занимайся спокойно и остановись, если что-то болит.',
+    warmupAgain: 'В начало'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -2798,7 +2901,23 @@ var T = {
     riskNoAreas: 'لا شيء بارز في إجاباتك. واصل الإحماء وتقوية عضلاتك.',
     riskHabitsTitle: 'عادات يجب تغييرها',
     riskNoHabits: 'عاداتك جيدة. حافظ عليها.',
-    riskNote: 'دليل عام مبني على حالات شائعة، وليس تقييمًا طبيًا.'
+    riskNote: 'دليل عام مبني على حالات شائعة، وليس تقييمًا طبيًا.',
+    warmupTitle: 'قم بالإحماء معي',
+    warmupIntro: 'اختر رياضتك واتبع الحركات واحدة تلو الأخرى مع مؤقت. ستسمع صفارة عندما يحين وقت التبديل.',
+    warmupSportLabel: 'رياضتك',
+    warmupSportPick: 'اختر رياضة',
+    warmupStart: 'ابدأ',
+    warmupTotal: 'نحو {0} دقائق، {1} حركات.',
+    warmupStep: 'الحركة {0} من {1}',
+    warmupNext: 'التالي: {0}',
+    warmupLast: 'الحركة الأخيرة',
+    warmupPause: 'إيقاف مؤقت',
+    warmupResume: 'متابعة',
+    warmupSkip: 'تخطٍّ',
+    warmupStop: 'إنهاء',
+    warmupDoneTitle: 'انتهى الإحماء!',
+    warmupDoneText: 'جسمك جاهز. ابدأ رياضتك بهدوء في الدقائق الأولى، وتوقف إذا شعرت بأي ألم.',
+    warmupAgain: 'العودة إلى البداية'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -3186,7 +3305,23 @@ var T = {
     riskNoAreas: '从你的回答看，没有特别容易受伤的部位。继续保持热身和力量训练。',
     riskHabitsTitle: '要改的习惯',
     riskNoHabits: '你的习惯很好，继续保持。',
-    riskNote: '这是根据常见情况给的参考，不是医生的诊断。'
+    riskNote: '这是根据常见情况给的参考，不是医生的诊断。',
+    warmupTitle: '跟着热身',
+    warmupIntro: '选好运动，跟着一个一个动作做，每个动作都有倒计时，响一声就换下一个。',
+    warmupSportLabel: '你的运动',
+    warmupSportPick: '选一项运动',
+    warmupStart: '开始',
+    warmupTotal: '大约 {0} 分钟，{1} 个动作。',
+    warmupStep: '第 {0} 个，共 {1} 个',
+    warmupNext: '下一个：{0}',
+    warmupLast: '最后一个动作',
+    warmupPause: '暂停',
+    warmupResume: '继续',
+    warmupSkip: '跳过',
+    warmupStop: '结束',
+    warmupDoneTitle: '热身完成！',
+    warmupDoneText: '身体已经热起来了。刚开始运动的几分钟慢一点，哪里疼就停下来。',
+    warmupAgain: '回到开始'
   }
 };
 
@@ -4533,6 +4668,7 @@ function renderAll() {
   renderLog();
   renderReturnToSport();
   renderRiskCheck();
+  renderWarmup();
   renderGroupChat();
   renderFriends();
   renderCategories();
@@ -4636,6 +4772,106 @@ $('riskForm').addEventListener('submit', function (event) {
   renderRiskCheck();
   (risk.result.status === 'missing' ? $('riskError') : $('riskResult')).scrollIntoView({behavior: 'smooth', block: 'nearest'});
 });
+
+// ---- Warm-up follow-along ----
+// The timer keeps running when the language changes; only the texts redraw.
+var warmup = {sport: '', timer: null, interval: null, audio: null};
+
+// A short beep when a move ends, plus a buzz on phones that support it.
+function warmupBeep() {
+  if (navigator.vibrate) navigator.vibrate(200);
+  if (!warmup.audio) return;
+  var osc = warmup.audio.createOscillator();
+  var gain = warmup.audio.createGain();
+  osc.frequency.value = 880;
+  gain.gain.value = 0.2;
+  osc.connect(gain);
+  gain.connect(warmup.audio.destination);
+  osc.start();
+  osc.stop(warmup.audio.currentTime + 0.25);
+}
+
+function warmupStopTimer() {
+  clearInterval(warmup.interval);
+  warmup.interval = null;
+}
+
+function renderWarmup() {
+  ['warmupTitle', 'warmupIntro', 'warmupSportLabel', 'warmupStart', 'warmupSkip', 'warmupStop', 'warmupDoneTitle', 'warmupDoneText', 'warmupAgain']
+    .forEach(function (key) { $(key).textContent = t(key); });
+  var select = $('warmupSport');
+  select.innerHTML = '';
+  var first = document.createElement('option');
+  first.value = '';
+  first.textContent = t('warmupSportPick');
+  select.appendChild(first);
+  RISK_SPORTS.forEach(function (sport) {
+    var option = document.createElement('option');
+    option.value = sport.id;
+    option.textContent = L(sport.name);
+    select.appendChild(option);
+  });
+  select.value = warmup.sport;
+  var steps = warmupRoutine(warmup.sport);
+  $('warmupStart').disabled = !warmup.sport;
+  $('warmupPreview').hidden = !warmup.sport;
+  $('warmupTotal').textContent = t('warmupTotal').replace('{0}', warmupTotalMinutes(warmup.sport)).replace('{1}', steps.length);
+  var list = $('warmupList');
+  list.innerHTML = '';
+  steps.forEach(function (step) {
+    list.appendChild(document.createElement('li')).textContent = L(WARMUP_MOVES[step.move].name) + ' · ' + warmupClock(step.seconds);
+  });
+  var timer = warmup.timer;
+  $('warmupSetup').hidden = !!timer;
+  $('warmupRun').hidden = !timer || timer.done;
+  $('warmupDone').hidden = !timer || !timer.done;
+  if (!timer || timer.done) return;
+  var move = WARMUP_MOVES[steps[timer.index].move];
+  $('warmupStep').textContent = t('warmupStep').replace('{0}', timer.index + 1).replace('{1}', steps.length);
+  $('warmupMove').textContent = L(move.name);
+  $('warmupHow').textContent = L(move.how);
+  $('warmupClock').textContent = warmupClock(timer.left);
+  $('warmupClock').classList.toggle('paused', timer.paused);
+  var next = steps[timer.index + 1];
+  $('warmupNext').textContent = next ? t('warmupNext').replace('{0}', L(WARMUP_MOVES[next.move].name)) : t('warmupLast');
+  $('warmupPause').textContent = t(timer.paused ? 'warmupResume' : 'warmupPause');
+}
+
+// Moves the timer on, beeping when a move changes or the warm-up ends.
+function warmupSetTimer(timer) {
+  var moved = warmup.timer && (timer.index !== warmup.timer.index || timer.done);
+  warmup.timer = timer;
+  if (moved) warmupBeep();
+  if (timer.done) warmupStopTimer();
+  renderWarmup();
+}
+
+$('warmupSport').addEventListener('change', function () {
+  warmup.sport = this.value;
+  renderWarmup();
+});
+
+$('warmupStart').addEventListener('click', function () {
+  // Sound may only start after a tap, so the audio is set up here.
+  var AudioType = window.AudioContext || window.webkitAudioContext;
+  if (!warmup.audio && AudioType) warmup.audio = new AudioType();
+  warmup.timer = warmupStart(warmup.sport);
+  warmupStopTimer();
+  warmup.interval = setInterval(function () { warmupSetTimer(warmupTick(warmup.timer)); }, 1000);
+  renderWarmup();
+  $('warmupCard').scrollIntoView({behavior: 'smooth', block: 'start'});
+});
+
+$('warmupPause').addEventListener('click', function () { warmupSetTimer(warmupTogglePause(warmup.timer)); });
+$('warmupSkip').addEventListener('click', function () { warmupSetTimer(warmupSkip(warmup.timer)); });
+
+function warmupBackToStart() {
+  warmupStopTimer();
+  warmup.timer = null;
+  renderWarmup();
+}
+$('warmupStop').addEventListener('click', warmupBackToStart);
+$('warmupAgain').addEventListener('click', warmupBackToStart);
 
 // ---- Return to sport check ----
 // Answers are kept while the page is open, so switching language keeps them.
