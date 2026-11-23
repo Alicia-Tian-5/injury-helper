@@ -90,7 +90,7 @@ function buildSearchEntries(texts) {
     part.topics.forEach(function (topic, index) {
       var text = {};
       SEARCH_LANGUAGES.forEach(function (code) { text[code] = topic.points.map(function (point) { return point[code] || ''; }).join(' '); });
-      entries.push({type: 'topic', key: 'topic-' + part.id + index, title: topic.title, text: text, words: [], topic: part.id + index});
+      entries.push({type: 'topic', key: 'topic-' + part.id + index, title: topic.title, text: text, words: [], topic: part.id + index, topicPart: part.id});
     });
   });
   CITY_HOSPITALS.forEach(function (city) {

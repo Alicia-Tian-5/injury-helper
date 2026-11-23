@@ -1010,12 +1010,20 @@ function testSpanishSwitch() {
         doc.getElementById('tourSkip').click();
         equal(doc.getElementById('tour').hidden, true);
       });
-      test('page: the health page contents list has a button for each card, and each opens its card', function () {
-        var buttons = doc.querySelectorAll('#learnTocList button');
-        equal(buttons.length, 6);
-        buttons[4].click();
-        equal(doc.getElementById('weatherCard').classList.contains('flash-outline'), true);
-        equal(doc.querySelectorAll('#view-learn [data-toc-back]').length >= 6, true);
+      test('page: the health page shows a list first, and each item opens on its own', function () {
+        var links = doc.querySelectorAll('#learnMenu a');
+        equal(links.length, 5 + page.KNOWLEDGE.length);
+        equal(links[4].getAttribute('href'), '#learn/weather');
+        doc.defaultView.location.hash = 'learn/weather';
+        page.showView();
+        equal(doc.getElementById('learnMenu').hidden, true);
+        equal(doc.getElementById('weatherCard').hidden, false);
+        equal(doc.getElementById('warmupCard').hidden, true);
+        equal(doc.getElementById('learnBack').hidden, false);
+        doc.defaultView.location.hash = 'learn';
+        page.showView();
+        equal(doc.getElementById('learnMenu').hidden, false);
+        equal(doc.getElementById('weatherCard').hidden, true);
       });
       test('page: starts without errors, so every heading and button has its text', function () {
         var empty = [].slice.call(doc.querySelectorAll('h1, h2, h3, button, summary'))
