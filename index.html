@@ -263,6 +263,30 @@ h1 a{color:var(--acc)}
 .dv-bring label{flex:1 1 100%}
 .dv-report{margin:8px 0 0;padding:8px 0}
 .dv-asks-tip{display:block;color:var(--muted);font-size:15px}
+.search-btn{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;background:var(--card);color:var(--acc);border:1px solid var(--line)}
+.search-btn svg{width:20px;height:20px}
+.search-btn[aria-expanded="true"]{border-color:var(--acc);background:var(--acc-soft)}
+.search-panel{order:4;width:100%;padding:4px 0 6px}
+.search-box input{width:100%;font:inherit;font-size:17px;color:var(--text);background:var(--card);border:1.5px solid var(--acc);border-radius:6px;padding:11px 14px}
+.search-box input:focus{outline:2px solid var(--acc);outline-offset:0}
+.search-panel .search-results{max-height:60vh;overflow-y:auto}
+.search-results:empty{display:none}
+.search-results{margin-top:6px;text-align:start}
+.search-hint{font-size:15px;color:var(--muted);margin:6px 0}
+.search-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
+.search-chips button{background:var(--acc-soft);color:var(--acc);border:1px solid var(--line);border-radius:16px;padding:6px 12px;min-height:36px;font-size:15px}
+.search-list{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:6px;background:var(--card);overflow:hidden}
+.search-list li+li{border-top:1px solid var(--line)}
+.search-list button{display:block;width:100%;text-align:start;background:none;color:var(--text);padding:10px 14px;min-height:48px}
+.search-list button:hover,.search-list button:focus{background:var(--acc-soft);outline:none}
+.search-type{display:inline-block;font-size:12px;font-weight:600;color:var(--acc);border:1px solid var(--acc);border-radius:10px;padding:0 8px;margin-inline-end:8px;vertical-align:2px}
+.search-list strong{font-weight:600}
+.search-list small{display:block;color:var(--muted);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.home-search{max-width:480px;margin:0 auto 12px}
+.home-search-results{max-width:480px;margin:-6px auto 14px}
+.search-flash{animation:search-flash 1.6s ease-out}
+@keyframes search-flash{0%,40%{box-shadow:0 0 0 3px #e8a33d}100%{box-shadow:0 0 0 3px transparent}}
+@media (prefers-reduced-motion:reduce){.search-flash{animation:none;outline:3px solid #e8a33d}}
 .tour-again{margin:10px 0 0}
 .tour-again .link-btn{margin:0;padding:8px 0}
 .tour-again-hint{margin:0}
@@ -472,6 +496,11 @@ h1 a{text-decoration:none}
       <a href="#log" data-view="log"><span id="navLog"></span></a>
       <a href="#learn" data-view="learn"><span id="navLearn"></span></a>
     </nav>
+    <div class="search-panel" id="searchPanel" hidden>
+      <div class="search-box"><label class="visually-hidden" for="searchInput" id="searchLabel"></label><input id="searchInput" type="search" maxlength="60" autocomplete="off" enterkeyhint="search"></div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+    <button type="button" class="search-btn" id="searchBtn" aria-expanded="false" aria-controls="searchPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg></button>
     <div class="lang-menu" id="langMenu">
       <button id="langBtn" aria-haspopup="true" aria-expanded="false" aria-controls="langList"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9M12 3c-2.5 2.6-3.8 5.6-3.8 9s1.3 6.4 3.8 9"/></svg>Language</button>
       <ul class="lang-list" id="langList" hidden>
@@ -530,6 +559,8 @@ h1 a{text-decoration:none}
       <div class="cover-text">
         <p class="slogan" id="slogan"></p>
         <p class="cover-intro" id="coverIntro"></p>
+        <div class="search-box home-search"><label class="visually-hidden" for="homeSearchInput" id="homeSearchLabel"></label><input id="homeSearchInput" type="search" maxlength="60" autocomplete="off" enterkeyhint="search"></div>
+        <div class="search-results home-search-results" id="homeSearchResults"></div>
         <div class="cover-actions"><a class="primary start" href="#assess" id="startBtn"></a><a class="secondary start" href="#comfort" id="chatCta"></a></div>
         <p class="tour-again"><button type="button" class="link-btn" id="tourOpen"></button></p>
         <p class="muted tour-again-hint" id="tourAgainHint" role="status" hidden></p>
@@ -1031,6 +1062,7 @@ h1 a{text-decoration:none}
 <script src="weather.js"></script>
 <script src="doctor-visit.js"></script>
 <script src="tour.js"></script>
+<script src="search.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -1542,7 +1574,16 @@ var T = {
     tourGo: 'Go there now',
     tourBack: 'Back',
     tourNext: 'Next',
-    tourFinish: 'Start using it'
+    tourFinish: 'Start using it',
+    searchOpen: 'Search the site',
+    searchPlaceholder: 'Search: ankle, hospital, warm up…',
+    searchTry: 'Try one of these:',
+    searchSuggestions: 'ankle|knee|hospital|warm up|feeling down',
+    searchNone: 'Nothing found for “{0}”. Try other words, for example:',
+    searchTypeFeature: 'Feature',
+    searchTypeInjury: 'Injury',
+    searchTypeTopic: 'Health tip',
+    searchTypeCity: 'City'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -2048,7 +2089,16 @@ var T = {
     tourGo: 'Ir ahora',
     tourBack: 'Atrás',
     tourNext: 'Siguiente',
-    tourFinish: 'Empezar'
+    tourFinish: 'Empezar',
+    searchOpen: 'Buscar en la web',
+    searchPlaceholder: 'Busca: tobillo, hospital, calentar…',
+    searchTry: 'Prueba con una de estas:',
+    searchSuggestions: 'tobillo|rodilla|hospital|calentamiento|triste',
+    searchNone: 'No se encontró nada para «{0}». Prueba con otras palabras, por ejemplo:',
+    searchTypeFeature: 'Función',
+    searchTypeInjury: 'Lesión',
+    searchTypeTopic: 'Consejo',
+    searchTypeCity: 'Ciudad'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -2554,7 +2604,16 @@ var T = {
     tourGo: 'Y aller maintenant',
     tourBack: 'Retour',
     tourNext: 'Suivant',
-    tourFinish: 'Commencer'
+    tourFinish: 'Commencer',
+    searchOpen: 'Rechercher sur le site',
+    searchPlaceholder: 'Rechercher : cheville, hôpital, échauffement…',
+    searchTry: 'Essaie l’un de ces mots :',
+    searchSuggestions: 'cheville|genou|hôpital|échauffement|moral',
+    searchNone: 'Rien trouvé pour « {0} ». Essaie d’autres mots, par exemple :',
+    searchTypeFeature: 'Fonction',
+    searchTypeInjury: 'Blessure',
+    searchTypeTopic: 'Conseil santé',
+    searchTypeCity: 'Ville'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -3060,7 +3119,16 @@ var T = {
     tourGo: 'Перейти сейчас',
     tourBack: 'Назад',
     tourNext: 'Далее',
-    tourFinish: 'Начать'
+    tourFinish: 'Начать',
+    searchOpen: 'Поиск по сайту',
+    searchPlaceholder: 'Поиск: голеностоп, больница, разминка…',
+    searchTry: 'Попробуй одно из этих слов:',
+    searchSuggestions: 'голеностоп|колено|больница|разминка|грустно',
+    searchNone: 'По запросу «{0}» ничего не найдено. Попробуй другие слова, например:',
+    searchTypeFeature: 'Функция',
+    searchTypeInjury: 'Травма',
+    searchTypeTopic: 'Совет',
+    searchTypeCity: 'Город'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -3567,7 +3635,16 @@ var T = {
     tourGo: 'اذهب الآن',
     tourBack: 'رجوع',
     tourNext: 'التالي',
-    tourFinish: 'ابدأ الاستخدام'
+    tourFinish: 'ابدأ الاستخدام',
+    searchOpen: 'ابحث في الموقع',
+    searchPlaceholder: 'ابحث: الكاحل، مستشفى، الإحماء…',
+    searchTry: 'جرّب إحدى هذه الكلمات:',
+    searchSuggestions: 'الكاحل|الركبة|مستشفى|الإحماء|حزين',
+    searchNone: 'لم يتم العثور على شيء لـ«{0}». جرّب كلمات أخرى، مثلًا:',
+    searchTypeFeature: 'ميزة',
+    searchTypeInjury: 'إصابة',
+    searchTypeTopic: 'نصيحة صحية',
+    searchTypeCity: 'مدينة'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -4071,7 +4148,16 @@ var T = {
     tourGo: '现在就去',
     tourBack: '上一步',
     tourNext: '下一步',
-    tourFinish: '开始使用'
+    tourFinish: '开始使用',
+    searchOpen: '搜索网站',
+    searchPlaceholder: '搜索：脚踝、医院、热身……',
+    searchTry: '试试这些：',
+    searchSuggestions: '脚踝|膝盖|医院|热身|心情',
+    searchNone: '没有找到"{0}"。试试换个说法，比如：',
+    searchTypeFeature: '功能',
+    searchTypeInjury: '伤情',
+    searchTypeTopic: '知识',
+    searchTypeCity: '城市'
   }
 };
 
@@ -5424,6 +5510,7 @@ function renderAll() {
   renderWeather();
   renderDoctorVisit();
   renderTour();
+  renderSearch();
   renderGroupChat();
   renderFriends();
   renderCategories();
@@ -6259,6 +6346,163 @@ document.addEventListener('keydown', function (e) {
       e.preventDefault();
       first.focus();
     }
+  }
+});
+
+// ---- Site search ----
+// Two boxes share the same search: one in the header (behind the magnifier
+// button, on every page) and one on the home page.
+var SEARCH_ENTRIES = buildSearchEntries(T);
+var SEARCH_TYPE_KEYS = {feature: 'searchTypeFeature', injury: 'searchTypeInjury', topic: 'searchTypeTopic', city: 'searchTypeCity'};
+
+function renderSearch() {
+  $('searchBtn').setAttribute('aria-label', t('searchOpen'));
+  $('searchBtn').title = t('searchOpen');
+  ['searchLabel', 'homeSearchLabel'].forEach(function (id) { $(id).textContent = t('searchOpen'); });
+  ['searchInput', 'homeSearchInput'].forEach(function (id) { $(id).placeholder = t('searchPlaceholder'); });
+  renderSearchResults($('searchInput'), $('searchResults'), !$('searchPanel').hidden);
+  renderSearchResults($('homeSearchInput'), $('homeSearchResults'), document.activeElement === $('homeSearchInput') || $('homeSearchInput').value !== '');
+}
+
+// `showHelp` shows the suggested words while nothing is typed yet.
+function renderSearchResults(input, box, showHelp) {
+  box.innerHTML = '';
+  var query = input.value.trim();
+  function chips() {
+    var row = document.createElement('div');
+    row.className = 'search-chips';
+    t('searchSuggestions').split('|').forEach(function (word) {
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.textContent = word;
+      chip.addEventListener('click', function () {
+        input.value = word;
+        renderSearchResults(input, box, true);
+        input.focus();
+      });
+      row.appendChild(chip);
+    });
+    box.appendChild(row);
+  }
+  function hint(text) {
+    var p = document.createElement('p');
+    p.className = 'search-hint';
+    p.textContent = text;
+    box.appendChild(p);
+  }
+  if (!query) {
+    if (!showHelp) return;
+    hint(t('searchTry'));
+    chips();
+    return;
+  }
+  var results = searchSite(query, lang, SEARCH_ENTRIES);
+  if (results.length === 0) {
+    hint(t('searchNone').replace('{0}', query));
+    chips();
+    return;
+  }
+  var list = document.createElement('ul');
+  list.className = 'search-list';
+  results.forEach(function (entry) {
+    var button = document.createElement('button');
+    button.type = 'button';
+    var type = document.createElement('span');
+    type.className = 'search-type';
+    type.textContent = t(SEARCH_TYPE_KEYS[entry.type]);
+    button.appendChild(type);
+    button.appendChild(document.createElement('strong')).textContent = entry.title[lang] || entry.title.en;
+    var text = entry.text[lang] || entry.text.en;
+    if (text) button.appendChild(document.createElement('small')).textContent = text;
+    button.addEventListener('click', function () { openSearchResult(entry); });
+    list.appendChild(document.createElement('li')).appendChild(button);
+  });
+  box.appendChild(list);
+}
+
+function setSearchPanelOpen(open) {
+  $('searchPanel').hidden = !open;
+  $('searchBtn').setAttribute('aria-expanded', open);
+  renderSearchResults($('searchInput'), $('searchResults'), open);
+  if (open) $('searchInput').focus();
+}
+
+// Briefly outlines what a result opened, so the eye finds it.
+function flashSearchTarget(element) {
+  if (!element) return;
+  element.scrollIntoView({behavior: 'smooth', block: 'start'});
+  element.classList.remove('search-flash');
+  void element.offsetWidth;
+  element.classList.add('search-flash');
+}
+
+function openSearchResult(entry) {
+  setSearchPanelOpen(false);
+  $('searchInput').value = '';
+  $('homeSearchInput').value = '';
+  renderSearchResults($('homeSearchInput'), $('homeSearchResults'), false);
+  var view = {feature: entry.view, injury: 'assess', topic: 'learn', city: 'hospitals'}[entry.type];
+  location.hash = view;
+  // Showing a view scrolls to the top, so act once it is shown.
+  setTimeout(function () {
+    if (entry.type === 'feature') {
+      var anchor = entry.anchor && $(entry.anchor);
+      if (anchor) flashSearchTarget(anchor.closest('section') || anchor);
+    } else if (entry.type === 'injury') {
+      var injury = findInjury(entry.injury);
+      pickCategory(CATEGORIES.filter(function (category) { return category.injuries.indexOf(injury) >= 0; })[0]);
+      pickInjury(injury);
+      flashSearchTarget($('questionsCard'));
+    } else if (entry.type === 'topic') {
+      var details = $('learnParts').querySelector('details[data-key="' + entry.topic + '"]');
+      details.open = true;
+      flashSearchTarget(details);
+    } else if (entry.type === 'city') {
+      var city = CITY_HOSPITALS.filter(function (c) { return c.id === entry.city; })[0];
+      $('cityInput').value = city.name[lang] || city.name.en;
+      citySearchText = $('cityInput').value;
+      renderCityResult();
+      flashSearchTarget($('cityResult').closest('section'));
+    }
+  }, 60);
+}
+
+$('searchBtn').addEventListener('click', function () { setSearchPanelOpen($('searchPanel').hidden); });
+
+[[$('searchInput'), $('searchResults')], [$('homeSearchInput'), $('homeSearchResults')]].forEach(function (pair) {
+  var input = pair[0];
+  var box = pair[1];
+  input.addEventListener('input', function () { renderSearchResults(input, box, true); });
+  input.addEventListener('focus', function () { renderSearchResults(input, box, true); });
+  input.addEventListener('keydown', function (e) {
+    var first = box.querySelector('.search-list button');
+    if (e.key === 'Enter' && first) {
+      e.preventDefault();
+      first.click();
+    } else if (e.key === 'ArrowDown' && first) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
+  // Up and down move through the results; Escape goes back to the box.
+  box.addEventListener('keydown', function (e) {
+    var buttons = Array.prototype.slice.call(box.querySelectorAll('.search-list button'));
+    var index = buttons.indexOf(document.activeElement);
+    if (index < 0) return;
+    if (e.key === 'ArrowDown' && index < buttons.length - 1) { e.preventDefault(); buttons[index + 1].focus(); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); (index === 0 ? input : buttons[index - 1]).focus(); }
+  });
+});
+
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape') return;
+  if (!$('searchPanel').hidden) {
+    setSearchPanelOpen(false);
+    $('searchBtn').focus();
+  } else if ($('homeSearchResults').contains(document.activeElement) || document.activeElement === $('homeSearchInput')) {
+    $('homeSearchInput').value = '';
+    renderSearchResults($('homeSearchInput'), $('homeSearchResults'), false);
+    $('homeSearchInput').focus();
   }
 });
 

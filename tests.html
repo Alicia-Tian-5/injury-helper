@@ -25,6 +25,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="weather.js"></script>
 <script src="doctor-visit.js"></script>
 <script src="tour.js"></script>
+<script src="search.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -1015,6 +1016,33 @@ function testSpanishSwitch() {
           })
           .map(function (element) { return element.id || element.className || element.tagName; });
         if (empty.length) throw new Error('empty: ' + empty.join(', '));
+      });
+      test('search: everyday words find the right injury, feature, health tip and city', function () {
+        var entries = page.buildSearchEntries(page.T);
+        function keys(query, code) { return page.searchSite(query, code || 'zh', entries).map(function (e) { return e.key; }); }
+        equal(keys('崴脚')[0], 'injury-ankle');
+        equal(keys('我崴脚了')[0], 'injury-ankle');
+        var doctor = keys('医生');
+        equal(doctor.indexOf('feature-doctorVisit') >= 0 && doctor.indexOf('feature-report') >= 0, true);
+        var warm = keys('热身');
+        equal(warm.indexOf('feature-warmup') >= 0 && warm.indexOf('topic-prevent0') >= 0, true);
+        equal(keys('上海').indexOf('city-shanghai') >= 0, true);
+        equal(keys('ankle', 'zh')[0], 'injury-ankle');
+        equal(keys('abcxyz').length, 0);
+        equal(keys('a', 'en').length, 0);
+        equal(keys('pain', 'en').indexOf('feature-chat'), -1);
+        equal(keys('膝').length <= 8, true);
+        var knee = keys('膝盖');
+        equal(knee[0], 'injury-patella');
+        equal(knee.indexOf('feature-gear') > 0 && knee.indexOf('feature-risk') > 0, true);
+      });
+      test('search: every suggested word finds something, in all six languages', function () {
+        var entries = page.buildSearchEntries(page.T);
+        ['en', 'es', 'fr', 'ru', 'ar', 'zh'].forEach(function (code) {
+          page.T[code].searchSuggestions.split('|').forEach(function (word) {
+            if (page.searchSite(word, code, entries).length === 0) throw new Error(code + ': nothing for ' + word);
+          });
+        });
       });
       test('language: Spanish has every interface text that English has', function () {
         if (!page.T.es) throw new Error('there is no Spanish interface text');

@@ -22,6 +22,7 @@ const PAGE_FILES = [
   'weather.js',
   'doctor-visit.js',
   'tour.js',
+  'search.js',
   'report.js',
   'backup.js',
   'group-chat.js',
