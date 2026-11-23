@@ -247,6 +247,9 @@ h1 a{color:var(--acc)}
 .training-jump{color:var(--red);font-weight:600}
 .gear{margin-bottom:16px}
 #gearAdvice{margin-bottom:8px}
+.weather{margin-bottom:16px}
+.weather-here{margin-top:10px}
+.weather-good{color:var(--green);font-weight:600}
 .trend{margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .trend svg{display:block;width:100%;height:auto}
 .trend .grid{stroke:var(--line);stroke-width:1}
@@ -749,6 +752,19 @@ h1 a{text-decoration:none}
     </form>
     <div class="rts-result" id="shoeResult" aria-live="polite" hidden></div>
   </section>
+  <section class="card weather" id="weatherCard">
+    <h2 id="weatherTitle"></h2>
+    <p class="muted" id="weatherIntro"></p>
+    <form class="city-form" id="weatherForm" novalidate>
+      <label class="field"><span id="weatherCityLabel"></span><input id="weatherCity" type="text" maxlength="60" autocomplete="address-level2"></label>
+      <button type="submit" class="primary" id="weatherSearch"></button>
+    </form>
+    <button type="button" class="secondary weather-here" id="weatherHereBtn"></button>
+    <p class="muted" id="weatherLoading" role="status" hidden></p>
+    <p class="error" id="weatherError" role="alert" hidden></p>
+    <div class="rts-result" id="weatherResult" aria-live="polite" hidden></div>
+    <p class="muted rts-note" id="weatherNote"></p>
+  </section>
   <div class="learn-parts" id="learnParts"></div>
 </div>
 
@@ -922,6 +938,7 @@ h1 a{text-decoration:none}
 <script src="warmup.js"></script>
 <script src="training-load.js"></script>
 <script src="gear.js"></script>
+<script src="weather.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -1369,7 +1386,32 @@ var T = {
     shoeTitle: 'Do my shoes need replacing?',
     shoeCheck: 'Check my shoes',
     shoeOk: 'Your shoes look fine for now. Check again every few months.',
-    shoeReplace: 'Time for new shoes'
+    shoeReplace: 'Time for new shoes',
+    weatherTitle: 'Is today good for sport?',
+    weatherIntro: 'See today’s weather and what it means for training.',
+    weatherCityLabel: 'City',
+    weatherCityHint: 'for example Shanghai or Chicago',
+    weatherSearch: 'Check',
+    weatherHereBtn: 'Use my location',
+    weatherHere: 'Where you are',
+    weatherLoadingMsg: 'Checking the weather…',
+    weatherEmpty: 'Type a city first.',
+    weatherNotFound: 'No city found with that name. Check the spelling or try a nearby big city.',
+    weatherFailed: 'The weather could not be loaded. Check your internet connection and try again.',
+    weatherNoPermission: 'Location is turned off for this site. Allow it in your browser settings, or type your city instead.',
+    weatherNoLocation: 'Your location could not be found. Type your city instead.',
+    weatherTemp: 'Temperature: {0} to {1}°C',
+    weatherFeels: 'Feels like: {0} to {1}°C',
+    weatherRain: 'Chance of rain: {0}%',
+    weatherWind: 'Wind: up to {0} km/h',
+    weatherUv: 'UV index: {0}',
+    weatherGood: 'Today looks good for sport. Still warm up first!',
+    weatherWarn_hot: 'Hot today',
+    weatherWarn_cold: 'Cold today',
+    weatherWarn_rain: 'Rain likely',
+    weatherWarn_wind: 'Windy',
+    weatherWarn_uv: 'Strong sun',
+    weatherNote: 'Weather data from Open-Meteo. Your location is only used to look up the weather and is not saved.'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -1811,7 +1853,32 @@ var T = {
     shoeTitle: '¿Tengo que cambiar mis zapatillas?',
     shoeCheck: 'Revisar mis zapatillas',
     shoeOk: 'Tus zapatillas están bien por ahora. Vuelve a revisarlas cada pocos meses.',
-    shoeReplace: 'Toca cambiar de zapatillas'
+    shoeReplace: 'Toca cambiar de zapatillas',
+    weatherTitle: '¿Hoy es buen día para hacer deporte?',
+    weatherIntro: 'Mira el tiempo de hoy y lo que significa para entrenar.',
+    weatherCityLabel: 'Ciudad',
+    weatherCityHint: 'por ejemplo Madrid o Ciudad de México',
+    weatherSearch: 'Consultar',
+    weatherHereBtn: 'Usar mi ubicación',
+    weatherHere: 'Donde estás',
+    weatherLoadingMsg: 'Consultando el tiempo…',
+    weatherEmpty: 'Escribe primero una ciudad.',
+    weatherNotFound: 'No se encontró ninguna ciudad con ese nombre. Revisa cómo está escrita o prueba una ciudad grande cercana.',
+    weatherFailed: 'No se pudo cargar el tiempo. Revisa tu conexión a internet e inténtalo de nuevo.',
+    weatherNoPermission: 'La ubicación está desactivada para este sitio. Actívala en los ajustes del navegador o escribe tu ciudad.',
+    weatherNoLocation: 'No se pudo encontrar tu ubicación. Escribe tu ciudad.',
+    weatherTemp: 'Temperatura: de {0} a {1} °C',
+    weatherFeels: 'Sensación térmica: de {0} a {1} °C',
+    weatherRain: 'Probabilidad de lluvia: {0} %',
+    weatherWind: 'Viento: hasta {0} km/h',
+    weatherUv: 'Índice UV: {0}',
+    weatherGood: 'Hoy es un buen día para hacer deporte. ¡Pero calienta primero!',
+    weatherWarn_hot: 'Hoy hace calor',
+    weatherWarn_cold: 'Hoy hace frío',
+    weatherWarn_rain: 'Probable lluvia',
+    weatherWarn_wind: 'Viento fuerte',
+    weatherWarn_uv: 'Sol fuerte',
+    weatherNote: 'Datos del tiempo de Open-Meteo. Tu ubicación solo se usa para consultar el tiempo y no se guarda.'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -2253,7 +2320,32 @@ var T = {
     shoeTitle: 'Faut-il changer mes chaussures ?',
     shoeCheck: 'Vérifier mes chaussures',
     shoeOk: 'Tes chaussures vont bien pour l’instant. Revérifie tous les quelques mois.',
-    shoeReplace: 'Il est temps de changer de chaussures'
+    shoeReplace: 'Il est temps de changer de chaussures',
+    weatherTitle: 'Aujourd’hui, temps à faire du sport ?',
+    weatherIntro: 'Vois la météo du jour et ce qu’elle change pour l’entraînement.',
+    weatherCityLabel: 'Ville',
+    weatherCityHint: 'par exemple Paris ou Montréal',
+    weatherSearch: 'Voir',
+    weatherHereBtn: 'Utiliser ma position',
+    weatherHere: 'Là où tu es',
+    weatherLoadingMsg: 'Recherche de la météo…',
+    weatherEmpty: 'Écris d’abord une ville.',
+    weatherNotFound: 'Aucune ville trouvée avec ce nom. Vérifie l’orthographe ou essaie une grande ville proche.',
+    weatherFailed: 'La météo n’a pas pu être chargée. Vérifie ta connexion internet et réessaie.',
+    weatherNoPermission: 'La localisation est désactivée pour ce site. Autorise-la dans les réglages du navigateur, ou écris ta ville.',
+    weatherNoLocation: 'Ta position n’a pas pu être trouvée. Écris ta ville.',
+    weatherTemp: 'Température : de {0} à {1} °C',
+    weatherFeels: 'Ressenti : de {0} à {1} °C',
+    weatherRain: 'Risque de pluie : {0} %',
+    weatherWind: 'Vent : jusqu’à {0} km/h',
+    weatherUv: 'Indice UV : {0}',
+    weatherGood: 'Aujourd’hui, le temps est bon pour le sport. Échauffe-toi quand même !',
+    weatherWarn_hot: 'Chaud aujourd’hui',
+    weatherWarn_cold: 'Froid aujourd’hui',
+    weatherWarn_rain: 'Pluie probable',
+    weatherWarn_wind: 'Vent fort',
+    weatherWarn_uv: 'Soleil fort',
+    weatherNote: 'Données météo d’Open-Meteo. Ta position sert seulement à chercher la météo et n’est pas enregistrée.'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -2695,7 +2787,32 @@ var T = {
     shoeTitle: 'Пора ли менять обувь?',
     shoeCheck: 'Проверить обувь',
     shoeOk: 'Пока обувь в порядке. Проверяй её раз в несколько месяцев.',
-    shoeReplace: 'Пора купить новую обувь'
+    shoeReplace: 'Пора купить новую обувь',
+    weatherTitle: 'Подходит ли сегодня погода для спорта?',
+    weatherIntro: 'Посмотри погоду на сегодня и что она значит для тренировки.',
+    weatherCityLabel: 'Город',
+    weatherCityHint: 'например, Москва или Санкт-Петербург',
+    weatherSearch: 'Узнать',
+    weatherHereBtn: 'Моё местоположение',
+    weatherHere: 'Там, где ты',
+    weatherLoadingMsg: 'Узнаём погоду…',
+    weatherEmpty: 'Сначала введи город.',
+    weatherNotFound: 'Город с таким названием не найден. Проверь написание или попробуй ближайший крупный город.',
+    weatherFailed: 'Не удалось загрузить погоду. Проверь подключение к интернету и попробуй снова.',
+    weatherNoPermission: 'Для этого сайта отключена геолокация. Разреши её в настройках браузера или введи город.',
+    weatherNoLocation: 'Не удалось определить местоположение. Введи город.',
+    weatherTemp: 'Температура: от {0} до {1} °C',
+    weatherFeels: 'Ощущается как: от {0} до {1} °C',
+    weatherRain: 'Вероятность дождя: {0}%',
+    weatherWind: 'Ветер: до {0} км/ч',
+    weatherUv: 'УФ-индекс: {0}',
+    weatherGood: 'Сегодня хорошая погода для спорта. Но сначала разомнись!',
+    weatherWarn_hot: 'Сегодня жарко',
+    weatherWarn_cold: 'Сегодня холодно',
+    weatherWarn_rain: 'Вероятен дождь',
+    weatherWarn_wind: 'Сильный ветер',
+    weatherWarn_uv: 'Сильное солнце',
+    weatherNote: 'Данные о погоде — Open-Meteo. Местоположение используется только для запроса погоды и не сохраняется.'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -3138,7 +3255,32 @@ var T = {
     shoeTitle: 'هل يحتاج حذائي إلى تغيير؟',
     shoeCheck: 'افحص حذائي',
     shoeOk: 'حذاؤك جيد حاليًا. افحصه مجددًا كل بضعة أشهر.',
-    shoeReplace: 'حان وقت حذاء جديد'
+    shoeReplace: 'حان وقت حذاء جديد',
+    weatherTitle: 'هل الطقس اليوم مناسب للرياضة؟',
+    weatherIntro: 'اطّلع على طقس اليوم وما يعنيه للتدريب.',
+    weatherCityLabel: 'المدينة',
+    weatherCityHint: 'مثلًا القاهرة أو دبي',
+    weatherSearch: 'اعرض',
+    weatherHereBtn: 'استخدم موقعي',
+    weatherHere: 'حيث أنت',
+    weatherLoadingMsg: 'جارٍ جلب الطقس…',
+    weatherEmpty: 'اكتب اسم مدينة أولًا.',
+    weatherNotFound: 'لم يتم العثور على مدينة بهذا الاسم. تحقق من الكتابة أو جرّب مدينة كبيرة قريبة.',
+    weatherFailed: 'تعذّر تحميل الطقس. تحقق من اتصالك بالإنترنت وحاول مجددًا.',
+    weatherNoPermission: 'خدمة الموقع متوقفة لهذا الموقع. فعّلها من إعدادات المتصفح، أو اكتب مدينتك.',
+    weatherNoLocation: 'تعذّر تحديد موقعك. اكتب مدينتك.',
+    weatherTemp: 'درجة الحرارة: من {0} إلى {1}°م',
+    weatherFeels: 'الإحساس الفعلي: من {0} إلى {1}°م',
+    weatherRain: 'احتمال المطر: {0}%',
+    weatherWind: 'الرياح: حتى {0} كم/س',
+    weatherUv: 'مؤشر الأشعة فوق البنفسجية: {0}',
+    weatherGood: 'الطقس اليوم مناسب للرياضة. لكن قم بالإحماء أولًا!',
+    weatherWarn_hot: 'حار اليوم',
+    weatherWarn_cold: 'بارد اليوم',
+    weatherWarn_rain: 'مطر محتمل',
+    weatherWarn_wind: 'رياح قوية',
+    weatherWarn_uv: 'شمس قوية',
+    weatherNote: 'بيانات الطقس من Open-Meteo. يُستخدم موقعك فقط لجلب الطقس ولا يُحفظ.'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -3578,7 +3720,32 @@ var T = {
     shoeTitle: '我的鞋该换了吗？',
     shoeCheck: '看看我的鞋',
     shoeOk: '鞋现在还可以，过几个月再看一次。',
-    shoeReplace: '该换新鞋了'
+    shoeReplace: '该换新鞋了',
+    weatherTitle: '今天适合运动吗？',
+    weatherIntro: '看看今天的天气，以及对训练有什么影响。',
+    weatherCityLabel: '城市',
+    weatherCityHint: '比如 上海 或 Chicago',
+    weatherSearch: '查天气',
+    weatherHereBtn: '用我的位置',
+    weatherHere: '你所在的位置',
+    weatherLoadingMsg: '正在查天气…',
+    weatherEmpty: '请先输入城市。',
+    weatherNotFound: '找不到这个城市。检查一下有没有写错，或者试试附近的大城市。',
+    weatherFailed: '查不到天气，请检查网络后再试。',
+    weatherNoPermission: '这个网站没有获得位置权限。可以在浏览器设置里打开，或者直接输入城市。',
+    weatherNoLocation: '找不到你的位置，请直接输入城市。',
+    weatherTemp: '气温：{0} 到 {1}°C',
+    weatherFeels: '体感：{0} 到 {1}°C',
+    weatherRain: '下雨可能：{0}%',
+    weatherWind: '风：最大 {0} 公里/小时',
+    weatherUv: '紫外线指数：{0}',
+    weatherGood: '今天适合运动。别忘了先热身！',
+    weatherWarn_hot: '今天热',
+    weatherWarn_cold: '今天冷',
+    weatherWarn_rain: '可能下雨',
+    weatherWarn_wind: '风大',
+    weatherWarn_uv: '紫外线强',
+    weatherNote: '天气数据来自 Open-Meteo。你的位置只用来查天气，不会保存。'
   }
 };
 
@@ -4928,6 +5095,7 @@ function renderAll() {
   renderWarmup();
   renderTraining();
   renderGear();
+  renderWeather();
   renderGroupChat();
   renderFriends();
   renderCategories();
@@ -5324,6 +5492,121 @@ $('shoeForm').addEventListener('submit', function (event) {
   gear.result = shoeCheckResult(gear.answers);
   renderGear();
   $(gear.result.status === 'missing' ? 'shoeError' : 'shoeResult').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+});
+
+// ---- Weather reminder ----
+// `request` counts lookups, so an older answer arriving late is ignored.
+var weather = {status: 'idle', error: '', place: '', day: null, request: 0};
+
+function renderWeather() {
+  ['weatherTitle', 'weatherIntro', 'weatherCityLabel', 'weatherSearch', 'weatherHereBtn', 'weatherNote'].forEach(function (key) { $(key).textContent = t(key); });
+  $('weatherCity').placeholder = t('weatherCityHint');
+  $('weatherLoading').hidden = weather.status !== 'loading';
+  $('weatherLoading').textContent = t('weatherLoadingMsg');
+  $('weatherError').hidden = weather.status !== 'error';
+  $('weatherError').textContent = weather.error ? t(weather.error) : '';
+  var box = $('weatherResult');
+  box.innerHTML = '';
+  box.hidden = weather.status !== 'done';
+  if (box.hidden) return;
+  var day = weather.day;
+  box.appendChild(document.createElement('h3')).textContent = weather.place || t('weatherHere');
+  var facts = document.createElement('ul');
+  facts.className = 'points';
+  [
+    t('weatherTemp').replace('{0}', Math.round(day.min)).replace('{1}', Math.round(day.max)),
+    t('weatherFeels').replace('{0}', Math.round(day.feelsMin)).replace('{1}', Math.round(day.feelsMax)),
+    t('weatherRain').replace('{0}', day.rainChance),
+    t('weatherWind').replace('{0}', Math.round(day.wind)),
+    t('weatherUv').replace('{0}', Math.round(day.uv))
+  ].forEach(function (text) { facts.appendChild(document.createElement('li')).textContent = text; });
+  box.appendChild(facts);
+  var warnings = weatherWarnings(day);
+  if (warnings.length === 0) {
+    var good = box.appendChild(document.createElement('p'));
+    good.className = 'weather-good';
+    good.textContent = t('weatherGood');
+    return;
+  }
+  warnings.forEach(function (id) {
+    box.appendChild(document.createElement('h4')).textContent = t('weatherWarn_' + id);
+    var list = document.createElement('ul');
+    list.className = 'points';
+    WEATHER_TIPS[id].forEach(function (tip) { list.appendChild(document.createElement('li')).textContent = L(tip); });
+    box.appendChild(list);
+  });
+}
+
+function weatherFail(request, errorKey) {
+  if (request !== weather.request) return;
+  weather.status = 'error';
+  weather.error = errorKey;
+  renderWeather();
+}
+
+// Looks up today's forecast for a place and shows it.
+function showWeatherFor(request, place) {
+  fetch(weatherForecastUrl(place.latitude, place.longitude))
+    .then(function (response) { if (!response.ok) throw new Error('forecast ' + response.status); return response.json(); })
+    .then(function (json) {
+      if (request !== weather.request) return;
+      var day = weatherDayFromForecast(json);
+      if (!day) return weatherFail(request, 'weatherFailed');
+      weather.status = 'done';
+      weather.place = place.name;
+      weather.day = day;
+      renderWeather();
+      $('weatherResult').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+    })
+    .catch(function () { weatherFail(request, 'weatherFailed'); });
+}
+
+function startWeatherLookup() {
+  weather.request++;
+  weather.status = 'loading';
+  weather.error = '';
+  renderWeather();
+  return weather.request;
+}
+
+$('weatherForm').addEventListener('submit', function (event) {
+  event.preventDefault();
+  var city = $('weatherCity').value.trim();
+  if (!city) {
+    weather.status = 'error';
+    weather.error = 'weatherEmpty';
+    renderWeather();
+    return;
+  }
+  var request = startWeatherLookup();
+  var languages = weatherSearchLanguages(city, lang);
+  function search(index) {
+    if (index >= languages.length) return weatherFail(request, 'weatherNotFound');
+    fetch(weatherSearchUrl(city, languages[index]))
+      .then(function (response) { if (!response.ok) throw new Error('search ' + response.status); return response.json(); })
+      .then(function (json) {
+        var place = weatherPlaceFromSearch(json);
+        if (place) showWeatherFor(request, place);
+        else search(index + 1);
+      })
+      .catch(function () { weatherFail(request, 'weatherFailed'); });
+  }
+  search(0);
+});
+
+$('weatherHereBtn').addEventListener('click', function () {
+  if (!navigator.geolocation) {
+    weather.status = 'error';
+    weather.error = 'weatherNoLocation';
+    renderWeather();
+    return;
+  }
+  var request = startWeatherLookup();
+  navigator.geolocation.getCurrentPosition(function (position) {
+    showWeatherFor(request, {name: '', latitude: position.coords.latitude, longitude: position.coords.longitude});
+  }, function (error) {
+    weatherFail(request, error.code === error.PERMISSION_DENIED ? 'weatherNoPermission' : 'weatherNoLocation');
+  }, {timeout: 15000, maximumAge: 600000});
 });
 
 // ---- Return to sport check ----

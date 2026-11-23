@@ -22,6 +22,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="warmup.js"></script>
 <script src="training-load.js"></script>
 <script src="gear.js"></script>
+<script src="weather.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -446,6 +447,35 @@ test('shoe check: any yes means replace, with the reasons; all no is fine; unans
   equal(replace.status, 'replace');
   equal(replace.reasons.join(','), 'tread,age');
   equal(shoeCheckResult({tread: 'no', midsole: 'no', age: 'no', aches: 'no'}).status, 'ok');
+});
+test('weather: hot, cold, rain, wind and strong sun each give a reminder; a mild day gives none', function () {
+  var mild = {max: 20, min: 12, feelsMax: 20, feelsMin: 11, rainChance: 10, wind: 15, uv: 3};
+  equal(weatherWarnings(mild).length, 0);
+  equal(weatherWarnings({max: 35, min: 26, feelsMax: 38, feelsMin: 27, rainChance: 60, wind: 10, uv: 9}).join(','), 'hot,rain,uv');
+  equal(weatherWarnings({max: 3, min: -4, feelsMax: 0, feelsMin: -9, rainChance: 0, wind: 45, uv: 1}).join(','), 'cold,wind');
+  equal(weatherWarnings({max: 30, min: 22, feelsMax: 32, feelsMin: 22, rainChance: 50, wind: 40, uv: 6}).join(','), 'hot,rain,wind,uv');
+});
+test('weather: reads a city search and a forecast, and rejects empty or broken answers', function () {
+  var place = weatherPlaceFromSearch({results: [{name: 'Springfield', admin1: 'Illinois', country: 'United States', latitude: 39.8, longitude: -89.64}]});
+  equal(place.name, 'Springfield, Illinois, United States');
+  equal(weatherPlaceFromSearch({results: [{name: '上海', admin1: '上海市', country: '中国', latitude: 31.2, longitude: 121.5}]}).name, '上海, 中国');
+  equal(weatherPlaceFromSearch({generationtime_ms: 0.1}), null);
+  var day = weatherDayFromForecast({daily: {temperature_2m_max: [16.1], temperature_2m_min: [11.9], apparent_temperature_max: [14.9], apparent_temperature_min: [9.6], precipitation_probability_max: [null], wind_speed_10m_max: [12], uv_index_max: [2.05]}});
+  equal(day.rainChance, 0);
+  equal(day.max, 16.1);
+  equal(weatherDayFromForecast({daily: {temperature_2m_max: [16]}}), null);
+  equal(weatherForecastUrl(31.22222, 121.45806).indexOf('latitude=31.22&longitude=121.46') > 0, true);
+  equal(weatherSearchLanguages('上海', 'en').join(','), 'en,zh');
+  equal(weatherSearchLanguages('Москва', 'zh').join(','), 'zh,ru,en');
+  equal(weatherSearchLanguages('Chicago', 'en').join(','), 'en');
+  equal(weatherSearchUrl('São Paulo', 'es').indexOf('name=S%C3%A3o%20Paulo') > 0, true);
+});
+test('weather: every reminder is in all six languages', function () {
+  Object.keys(WEATHER_TIPS).forEach(function (id) {
+    WEATHER_TIPS[id].forEach(function (tip) {
+      ['en', 'es', 'fr', 'ru', 'ar', 'zh'].forEach(function (code) { if (!tip[code]) throw new Error('missing ' + code + ' in ' + id); });
+    });
+  });
 });
 test('return to sport: any "no" means not yet, with what to work on', function () {
   var answers = {walk: 'yes', swelling: 'yes', motion: 'yes', balance: 'no', hop: 'yes', cutting: 'yes'};

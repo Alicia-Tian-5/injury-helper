@@ -19,6 +19,7 @@ const PAGE_FILES = [
   'warmup.js',
   'training-load.js',
   'gear.js',
+  'weather.js',
   'report.js',
   'backup.js',
   'group-chat.js',
