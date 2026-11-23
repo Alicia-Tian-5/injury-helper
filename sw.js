@@ -15,6 +15,7 @@ const PAGE_FILES = [
   'recovery-log.js',
   'rehab-plan.js',
   'return-to-sport.js',
+  'risk-check.js',
   'report.js',
   'backup.js',
   'group-chat.js',

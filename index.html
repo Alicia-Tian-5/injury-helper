@@ -229,6 +229,8 @@ h1 a{color:var(--acc)}
 .rts-result{border-top:1px solid var(--line);margin-top:16px;padding-top:4px}
 .rts-result h3{margin-top:12px}
 .rts-note{font-size:14px;margin:12px 0 0}
+.rts-result h4{margin:14px 0 2px}
+.risk{margin-bottom:16px}
 .trend{margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .trend svg{display:block;width:100%;height:auto}
 .trend .grid{stroke:var(--line);stroke-width:1}
@@ -658,6 +660,18 @@ h1 a{text-decoration:none}
 <div class="view" id="view-learn" hidden>
   <h2 class="section-title" id="learnTitle"></h2>
   <p class="muted learn-intro" id="learnIntro"></p>
+  <section class="card risk" id="riskCard">
+    <h2 id="riskTitle"></h2>
+    <p class="muted" id="riskIntro"></p>
+    <button type="button" class="primary" id="riskOpen"></button>
+    <form id="riskForm" novalidate hidden>
+      <div id="riskQuestions"></div>
+      <button type="submit" class="primary" id="riskCheck"></button>
+      <p class="error" id="riskError" role="alert" hidden></p>
+    </form>
+    <div class="rts-result" id="riskResult" aria-live="polite" hidden></div>
+    <p class="muted rts-note" id="riskNote"></p>
+  </section>
   <div class="learn-parts" id="learnParts"></div>
 </div>
 
@@ -827,6 +841,7 @@ h1 a{text-decoration:none}
 <script src="city-hospitals.js"></script>
 <script src="rehab-plan.js"></script>
 <script src="return-to-sport.js"></script>
+<script src="risk-check.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -1210,7 +1225,19 @@ var T = {
     rtsReadyIntro: 'Your answers and hop test look good. Still go back in steps, a few days each, and drop back a step if it hurts or swells.',
     rtsReadyTips: 'Warm up well every time. For the first few months, an ankle brace or knee support can help stop it happening again.',
     rtsHopShown: 'Hop test: your injured leg reached {0}% of the other.',
-    rtsNote: 'This is a self-check for reference, not a medical decision. After surgery, follow your doctor and physiotherapist.'
+    rtsNote: 'This is a self-check for reference, not a medical decision. After surgery, follow your doctor and physiotherapist.',
+    riskTitle: 'Where am I most likely to get hurt?',
+    riskIntro: 'Answer 7 quick questions about your sport, past injuries and habits, and see which body parts to protect and how.',
+    riskOpen: 'Take the check',
+    riskCheck: 'Show my result',
+    riskMissing: 'Please answer every question.',
+    riskAreasTitle: 'Body parts to protect',
+    riskBecauseSport: 'Your sport: {0}.',
+    riskBecauseInjury: 'Past injuries: {0}.',
+    riskNoAreas: 'Nothing stands out from your answers. Keep warming up and building strength.',
+    riskHabitsTitle: 'Habits to change',
+    riskNoHabits: 'Your habits look good. Keep them up.',
+    riskNote: 'A general guide based on common patterns, not a medical assessment.'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -1588,7 +1615,19 @@ var T = {
     rtsReadyIntro: 'Tus respuestas y la prueba de salto se ven bien. Aun así, vuelve por pasos, unos días cada uno, y retrocede un paso si duele o se hincha.',
     rtsReadyTips: 'Calienta bien cada vez. Durante los primeros meses, una tobillera o rodillera puede ayudar a que no vuelva a pasar.',
     rtsHopShown: 'Prueba de salto: tu pierna lesionada llegó al {0}% de la otra.',
-    rtsNote: 'Es una autoevaluación orientativa, no una decisión médica. Después de una operación, sigue a tu médico y a tu fisioterapeuta.'
+    rtsNote: 'Es una autoevaluación orientativa, no una decisión médica. Después de una operación, sigue a tu médico y a tu fisioterapeuta.',
+    riskTitle: '¿Dónde tengo más riesgo de lesionarme?',
+    riskIntro: 'Responde 7 preguntas rápidas sobre tu deporte, tus lesiones anteriores y tus hábitos, y mira qué partes del cuerpo proteger y cómo.',
+    riskOpen: 'Hacer la prueba',
+    riskCheck: 'Ver mi resultado',
+    riskMissing: 'Responde todas las preguntas.',
+    riskAreasTitle: 'Partes del cuerpo que proteger',
+    riskBecauseSport: 'Tu deporte: {0}.',
+    riskBecauseInjury: 'Lesiones anteriores: {0}.',
+    riskNoAreas: 'Nada destaca en tus respuestas. Sigue calentando y ganando fuerza.',
+    riskHabitsTitle: 'Hábitos que cambiar',
+    riskNoHabits: 'Tus hábitos se ven bien. Sigue así.',
+    riskNote: 'Una guía general basada en patrones comunes, no una evaluación médica.'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -1966,7 +2005,19 @@ var T = {
     rtsReadyIntro: 'Tes réponses et le test de saut sont bons. Reprends quand même par étapes, quelques jours chacune, et reviens en arrière si ça fait mal ou que ça gonfle.',
     rtsReadyTips: 'Échauffe-toi bien à chaque fois. Les premiers mois, une chevillère ou une genouillère peut aider à éviter que ça recommence.',
     rtsHopShown: 'Test de saut : ta jambe blessée a atteint {0} % de l’autre.',
-    rtsNote: 'C’est une auto-évaluation indicative, pas une décision médicale. Après une opération, suis ton médecin et ton kiné.'
+    rtsNote: 'C’est une auto-évaluation indicative, pas une décision médicale. Après une opération, suis ton médecin et ton kiné.',
+    riskTitle: 'Où ai-je le plus de risques de me blesser ?',
+    riskIntro: 'Réponds à 7 questions rapides sur ton sport, tes blessures passées et tes habitudes, et vois quelles parties du corps protéger et comment.',
+    riskOpen: 'Faire le test',
+    riskCheck: 'Voir mon résultat',
+    riskMissing: 'Réponds à toutes les questions.',
+    riskAreasTitle: 'Parties du corps à protéger',
+    riskBecauseSport: 'Ton sport : {0}.',
+    riskBecauseInjury: 'Blessures passées : {0}.',
+    riskNoAreas: 'Rien ne ressort de tes réponses. Continue à t’échauffer et à te renforcer.',
+    riskHabitsTitle: 'Habitudes à changer',
+    riskNoHabits: 'Tes habitudes sont bonnes. Continue comme ça.',
+    riskNote: 'Un guide général fondé sur des cas courants, pas un avis médical.'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -2344,7 +2395,19 @@ var T = {
     rtsReadyIntro: 'Ответы и прыжковый тест хорошие. Всё равно возвращайся по шагам, по несколько дней на каждый, и отступай на шаг, если больно или появился отёк.',
     rtsReadyTips: 'Каждый раз хорошо разминайся. Первые месяцы бандаж на голеностоп или колено поможет избежать повторной травмы.',
     rtsHopShown: 'Прыжковый тест: травмированная нога — {0}% от другой.',
-    rtsNote: 'Это самопроверка для ориентира, а не медицинское решение. После операции следуй указаниям врача и физиотерапевта.'
+    rtsNote: 'Это самопроверка для ориентира, а не медицинское решение. После операции следуй указаниям врача и физиотерапевта.',
+    riskTitle: 'Где у меня больше всего риск травмы?',
+    riskIntro: 'Ответь на 7 коротких вопросов о спорте, прошлых травмах и привычках и узнай, какие части тела беречь и как.',
+    riskOpen: 'Пройти проверку',
+    riskCheck: 'Показать результат',
+    riskMissing: 'Ответь на все вопросы.',
+    riskAreasTitle: 'Что беречь',
+    riskBecauseSport: 'Твой спорт: {0}.',
+    riskBecauseInjury: 'У тебя было: {0}.',
+    riskNoAreas: 'По твоим ответам ничего особенно не выделяется. Продолжай разминаться и укреплять мышцы.',
+    riskHabitsTitle: 'Привычки, которые стоит изменить',
+    riskNoHabits: 'Привычки у тебя хорошие. Так держать.',
+    riskNote: 'Общий ориентир по частым случаям, а не медицинская оценка.'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -2723,7 +2786,19 @@ var T = {
     rtsReadyIntro: 'إجاباتك واختبار القفز جيدة. مع ذلك عُد على خطوات، بضعة أيام لكل خطوة، وارجع خطوة إذا شعرت بألم أو ظهر تورم.',
     rtsReadyTips: 'قم بالإحماء جيدًا في كل مرة. في الأشهر الأولى، قد تساعد دعامة الكاحل أو الركبة على منع تكرار الإصابة.',
     rtsHopShown: 'اختبار القفز: وصلت ساقك المصابة إلى {0}% من الأخرى.',
-    rtsNote: 'هذا فحص ذاتي للاسترشاد، وليس قرارًا طبيًا. بعد الجراحة، اتبع تعليمات طبيبك وأخصائي العلاج الطبيعي.'
+    rtsNote: 'هذا فحص ذاتي للاسترشاد، وليس قرارًا طبيًا. بعد الجراحة، اتبع تعليمات طبيبك وأخصائي العلاج الطبيعي.',
+    riskTitle: 'أين أنا أكثر عرضة للإصابة؟',
+    riskIntro: 'أجب عن 7 أسئلة سريعة عن رياضتك وإصاباتك السابقة وعاداتك، واعرف أي أجزاء جسمك تحميها وكيف.',
+    riskOpen: 'ابدأ الفحص',
+    riskCheck: 'اعرض نتيجتي',
+    riskMissing: 'يرجى الإجابة عن كل الأسئلة.',
+    riskAreasTitle: 'أجزاء الجسم التي يجب حمايتها',
+    riskBecauseSport: 'رياضتك: {0}.',
+    riskBecauseInjury: 'أُصبت من قبل بـ: {0}.',
+    riskNoAreas: 'لا شيء بارز في إجاباتك. واصل الإحماء وتقوية عضلاتك.',
+    riskHabitsTitle: 'عادات يجب تغييرها',
+    riskNoHabits: 'عاداتك جيدة. حافظ عليها.',
+    riskNote: 'دليل عام مبني على حالات شائعة، وليس تقييمًا طبيًا.'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -3099,7 +3174,19 @@ var T = {
     rtsReadyIntro: '你的回答和跳远测试都不错。还是要一步步回去，每个阶段待几天；疼了或肿了就退回上一个阶段。',
     rtsReadyTips: '每次运动前都好好热身。头几个月戴护踝或护膝，可以帮助防止再次受伤。',
     rtsHopShown: '跳远测试：受伤的腿跳了另一条腿的 {0}%。',
-    rtsNote: '这只是自测参考，不能代替医生的判断。做过手术的人，请听医生和康复师的。'
+    rtsNote: '这只是自测参考，不能代替医生的判断。做过手术的人，请听医生和康复师的。',
+    riskTitle: '测测我容易伤在哪',
+    riskIntro: '回答 7 个小问题：练什么运动、以前受过什么伤、平时的习惯。看看你最该保护哪些部位、怎么保护。',
+    riskOpen: '开始测试',
+    riskCheck: '查看结果',
+    riskMissing: '请回答所有问题。',
+    riskAreasTitle: '最该保护的部位',
+    riskBecauseSport: '你练{0}。',
+    riskBecauseInjury: '你以前：{0}。',
+    riskNoAreas: '从你的回答看，没有特别容易受伤的部位。继续保持热身和力量训练。',
+    riskHabitsTitle: '要改的习惯',
+    riskNoHabits: '你的习惯很好，继续保持。',
+    riskNote: '这是根据常见情况给的参考，不是医生的诊断。'
   }
 };
 
@@ -4445,6 +4532,7 @@ function renderAll() {
   renderPlan();
   renderLog();
   renderReturnToSport();
+  renderRiskCheck();
   renderGroupChat();
   renderFriends();
   renderCategories();
@@ -4453,6 +4541,101 @@ function renderAll() {
   if (showingResults) renderResults();
   if (!$('error').hidden) showMissing();
 }
+
+// ---- Injury risk self-check ----
+var risk = {open: false, answers: {past: []}, result: null};
+
+function renderRiskCheck() {
+  ['riskTitle', 'riskIntro', 'riskOpen', 'riskCheck', 'riskNote'].forEach(function (key) { $(key).textContent = t(key); });
+  $('riskOpen').hidden = risk.open;
+  $('riskForm').hidden = !risk.open;
+  var missingIds = risk.result && risk.result.status === 'missing' ? risk.result.ids : [];
+  var list = $('riskQuestions');
+  list.innerHTML = '';
+  RISK_QUESTIONS.forEach(function (question, i) {
+    var fs = document.createElement('fieldset');
+    if (missingIds.indexOf(question.id) >= 0) fs.className = 'missing';
+    var legend = document.createElement('legend');
+    legend.textContent = (i + 1) + '. ' + L(question.text);
+    fs.appendChild(legend);
+    var options = document.createElement('div');
+    options.className = 'options';
+    question.options.forEach(function (opt) {
+      var label = document.createElement('label');
+      var input = document.createElement('input');
+      input.type = question.multiple ? 'checkbox' : 'radio';
+      input.name = 'risk-' + question.id;
+      input.checked = question.multiple ? risk.answers.past.indexOf(opt.value) >= 0 : risk.answers[question.id] === opt.value;
+      input.addEventListener('change', function () {
+        if (question.multiple) {
+          risk.answers.past = toggleRiskPastInjury(risk.answers.past, opt.value);
+          // "None" and the injuries clear each other, so redraw the ticks.
+          fs.querySelectorAll('input').forEach(function (box, j) { box.checked = risk.answers.past.indexOf(question.options[j].value) >= 0; });
+        } else {
+          risk.answers[question.id] = opt.value;
+        }
+        fs.classList.remove('missing');
+      });
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(L(opt.text)));
+      options.appendChild(label);
+    });
+    fs.appendChild(options);
+    list.appendChild(fs);
+  });
+  $('riskError').hidden = missingIds.length === 0;
+  $('riskError').textContent = t('riskMissing');
+  renderRiskResult();
+}
+
+function renderRiskResult() {
+  var box = $('riskResult');
+  box.innerHTML = '';
+  var result = risk.result;
+  box.hidden = !(result && result.status === 'done');
+  if (box.hidden) return;
+  function add(tag, text) {
+    var element = document.createElement(tag);
+    element.textContent = text;
+    box.appendChild(element);
+  }
+  function addList(items) {
+    var list = document.createElement('ul');
+    list.className = 'points';
+    items.forEach(function (text) { list.appendChild(document.createElement('li')).textContent = text; });
+    box.appendChild(list);
+  }
+  add('h3', t('riskAreasTitle'));
+  if (result.areas.length === 0) add('p', t('riskNoAreas'));
+  result.areas.forEach(function (area) {
+    add('h4', L(RISK_AREAS[area.id].name));
+    var reasons = [];
+    if (area.sport) reasons.push(t('riskBecauseSport').replace('{0}', L(RISK_SPORTS.filter(function (s) { return s.id === risk.answers.sport; })[0].name)));
+    if (area.pastInjuries.length > 0) {
+      reasons.push(t('riskBecauseInjury').replace('{0}', area.pastInjuries.map(function (id) {
+        return L(RISK_PAST_INJURIES.filter(function (injury) { return injury.id === id; })[0].name);
+      }).join(lang === 'zh' ? '、' : ', ')));
+    }
+    add('p', reasons.join(lang === 'zh' ? '' : ' '));
+    addList(area.tips.map(L));
+  });
+  add('h3', t('riskHabitsTitle'));
+  if (result.habits.length === 0) add('p', t('riskNoHabits'));
+  else addList(result.habits.map(function (id) { return L(RISK_HABITS[id]); }));
+}
+
+$('riskOpen').addEventListener('click', function () {
+  risk.open = true;
+  renderRiskCheck();
+  $('riskQuestions').querySelector('input').focus();
+});
+
+$('riskForm').addEventListener('submit', function (event) {
+  event.preventDefault();
+  risk.result = riskCheckResult(risk.answers);
+  renderRiskCheck();
+  (risk.result.status === 'missing' ? $('riskError') : $('riskResult')).scrollIntoView({behavior: 'smooth', block: 'nearest'});
+});
 
 // ---- Return to sport check ----
 // Answers are kept while the page is open, so switching language keeps them.

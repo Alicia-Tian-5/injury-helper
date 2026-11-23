@@ -18,6 +18,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="recovery-log.js"></script>
 <script src="rehab-plan.js"></script>
 <script src="return-to-sport.js"></script>
+<script src="risk-check.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -320,6 +321,43 @@ test('plan: the calendar file repeats each exercise on its days at the chosen ti
 function doneMarks(itemId, dates) {
   return dates.map(function (date) { return {key: doneKey(itemId, date), itemId: itemId, date: date}; });
 }
+test('risk check: basketball with a past kneecap dislocation and sprained ankle puts knee and ankle first, with the kneecap tip', function () {
+  var result = riskCheckResult({sport: 'basketball', times: 'some', past: ['kneecap', 'ankleSprain'], warmup: 'always', sleep: 'yes', jump: 'no', rest: 'yes'});
+  equal(result.status, 'done');
+  equal(result.areas.map(function (area) { return area.id; }).join(','), 'ankle,knee');
+  var knee = result.areas[1];
+  equal(knee.sport, true);
+  equal(knee.pastInjuries.join(','), 'kneecap');
+  equal(knee.tips[0], RISK_AREAS.knee.kneecapTip);
+  equal(result.habits.length, 0);
+});
+test('risk check: a past injury outranks the sport, and at most three parts are shown', function () {
+  var result = riskCheckResult({sport: 'soccer', times: 'often', past: ['shoulder'], warmup: 'always', sleep: 'yes', jump: 'no', rest: 'yes'});
+  equal(result.areas.map(function (area) { return area.id; }).join(','), 'shoulder,ankle,knee');
+  var gym = riskCheckResult({sport: 'running', times: 'few', past: ['back'], warmup: 'always', sleep: 'yes', jump: 'no', rest: 'yes'});
+  equal(gym.areas[0].id, 'lowerBack');
+  equal(gym.areas[0].sport, false);
+});
+test('risk check: habits to change, and nothing stands out for another sport with no past injury', function () {
+  var result = riskCheckResult({sport: 'other', times: 'some', past: ['none'], warmup: 'rarely', sleep: 'no', jump: 'yes', rest: 'no'});
+  equal(result.areas.length, 0);
+  equal(result.habits.join(','), 'warmup,sleep,jump,rest');
+});
+test('risk check: unanswered questions are listed, and "none" and the injuries clear each other', function () {
+  equal(riskCheckResult({sport: 'soccer', past: []}).ids.join(','), 'times,past,warmup,sleep,jump,rest');
+  equal(toggleRiskPastInjury(['kneecap'], 'none').join(','), 'none');
+  equal(toggleRiskPastInjury(['none'], 'ankleSprain').join(','), 'ankleSprain');
+  equal(toggleRiskPastInjury(['kneecap', 'ankleSprain'], 'kneecap').join(','), 'ankleSprain');
+});
+test('risk check: every question, option, body part and tip is in all six languages', function () {
+  var texts = [RISK_AREAS.knee.kneecapTip];
+  RISK_QUESTIONS.forEach(function (q) { texts.push(q.text); q.options.forEach(function (opt) { texts.push(opt.text); }); });
+  Object.keys(RISK_AREAS).forEach(function (id) { texts.push(RISK_AREAS[id].name); texts = texts.concat(RISK_AREAS[id].tips); });
+  Object.keys(RISK_HABITS).forEach(function (id) { texts.push(RISK_HABITS[id]); });
+  texts.forEach(function (text) {
+    ['en', 'es', 'fr', 'ru', 'ar', 'zh'].forEach(function (code) { if (!text[code]) throw new Error('missing ' + code + ' in ' + text.en); });
+  });
+});
 test('return to sport: any "no" means not yet, with what to work on', function () {
   var answers = {walk: 'yes', swelling: 'yes', motion: 'yes', balance: 'no', hop: 'yes', cutting: 'yes'};
   var result = returnToSportResult('ankle', answers, '', '');
