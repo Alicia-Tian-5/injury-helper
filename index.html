@@ -295,6 +295,33 @@ h1 a{color:var(--acc)}
 [dir=rtl] .page-menu a::after{content:"‹"}
 .page-back{display:inline-block;margin:0 0 12px;padding:8px 0;font-weight:600;color:var(--acc);text-decoration:none}
 .section-off{display:none !important}
+.checkin-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 6px}
+.checkin-stats div{background:var(--acc-soft);border-radius:6px;padding:12px;text-align:center}
+.checkin-stats strong{display:block;font-size:32px;font-weight:700;color:var(--acc);line-height:1.2}
+.checkin-stats span{font-size:14px;color:var(--muted)}
+.checkin h3{margin-top:18px}
+.checkin-today{list-style:none;margin:0;padding:0}
+.checkin-today li{display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.checkin-today li span:nth-child(2){flex:1}
+.checkin-today .done{color:var(--green);font-weight:700}
+.checkin-today .todo{color:var(--muted)}
+.checkin-today b{color:var(--acc);font-size:15px}
+.checkin-calendar{width:100%;border-collapse:collapse;table-layout:fixed;text-align:center;font-size:14px}
+.checkin-calendar th{color:var(--muted);font-weight:600;padding:4px 0}
+.checkin-calendar td{padding:2px}
+.checkin-calendar td span{display:block;border-radius:6px;padding:6px 0;line-height:1.2;min-height:40px}
+.checkin-calendar td.on span{background:var(--acc);color:var(--on-acc);font-weight:600}
+.checkin-calendar td.today span{box-shadow:inset 0 0 0 2px var(--acc)}
+.checkin-calendar small{display:block;font-size:12px;min-height:14px}
+.checkin-badges{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.checkin-badges li{border:1px solid var(--line);border-radius:6px;padding:10px;text-align:center}
+.checkin-badges li.locked{opacity:.5;filter:grayscale(1)}
+.checkin-badges .icon{display:block;font-size:28px;line-height:1.2}
+.checkin-badges strong{display:block;font-size:15px}
+.checkin-badges small{display:block;color:var(--muted);font-size:13px}
+.checkin-celebrate{background:#fff5e0;border:1.5px solid #e8a33d;border-radius:6px;padding:12px 14px;margin:10px 0;color:#3d2a00}
+.checkin-celebrate p{margin:0 0 10px;font-weight:600}
+.checkin-celebrate .primary{width:auto}
 .flash-outline{animation:flash-outline 1.6s ease-out}
 @keyframes flash-outline{0%,40%{box-shadow:0 0 0 3px #e8a33d}100%{box-shadow:0 0 0 3px transparent}}
 @media (prefers-reduced-motion:reduce){.flash-outline{animation:none;outline:3px solid #e8a33d}}
@@ -935,6 +962,28 @@ h1 a{text-decoration:none}
       <p class="success" id="calendarDone" role="status" hidden></p>
     </div>
   </section>
+  <section class="card checkin" id="checkinCard">
+    <h2 id="checkinTitle"></h2>
+    <p class="muted" id="checkinIntro"></p>
+    <p class="muted" id="checkinStatus" role="status"></p>
+    <div id="checkinBody" hidden>
+      <div class="checkin-celebrate" id="checkinCelebrate" role="status" hidden>
+        <p id="checkinCelebrateText"></p>
+        <button type="button" class="primary" id="checkinCelebrateOk"></button>
+      </div>
+      <div class="checkin-stats">
+        <div><strong id="checkinStreak"></strong><span id="checkinStreakLabel"></span></div>
+        <div><strong id="checkinTotal"></strong><span id="checkinTotalLabel"></span></div>
+      </div>
+      <h3 id="checkinTodayTitle"></h3>
+      <ul class="checkin-today" id="checkinToday"></ul>
+      <h3 id="checkinMonth"></h3>
+      <table class="checkin-calendar" id="checkinCalendar"></table>
+      <h3 id="checkinBadgesTitle"></h3>
+      <ul class="checkin-badges" id="checkinBadges"></ul>
+    </div>
+    <p class="muted rts-note" id="checkinNote"></p>
+  </section>
   <section class="card rts" id="rtsCard">
     <h2 id="rtsTitle"></h2>
     <p class="muted" id="rtsIntro"></p>
@@ -1075,6 +1124,7 @@ h1 a{text-decoration:none}
 <script src="search.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
+<script src="checkin.js"></script>
 <script src="group-chat.js"></script>
 <script src="friends.js"></script>
 <script src="account.js"></script>
@@ -1369,7 +1419,7 @@ var T = {
     reportRecords: 'Daily records',
     reportRecordsNone: 'No daily records.',
     backupTitle: 'Backup and restore',
-    backupIntro: 'Your records, photos and rehab plan are kept only in this browser. Download a backup file to get them back on a new phone or after clearing the browser. The file holds your photos and notes, so keep it to yourself.',
+    backupIntro: 'Your records, photos, rehab plan, training log and check-ins are kept only in this browser. Download a backup file to get them back on a new phone or after clearing the browser. The file holds your photos and notes, so keep it to yourself.',
     backupMake: 'Download backup',
     backupEmpty: 'There is nothing to back up yet.',
     backupMade: 'Backup saved to your downloads.',
@@ -1613,7 +1663,24 @@ var T = {
     menuRecords: 'Everything you wrote, and how the pain has changed',
     menuReturn: 'Check whether you are ready to play again',
     menuReport: 'One page for your next check-up',
-    menuBackup: 'Keep your records safe when you change phones'
+    menuBackup: 'Keep your records safe when you change phones',
+    checkinTitle: 'Check-ins and points',
+    checkinIntro: 'Do your rehab, write a record, warm up or log training, and the points come by themselves. Any of them on a day is a check-in.',
+    checkinLoading: 'Counting your points…',
+    checkinStreakLabel: 'days in a row',
+    checkinTotalLabel: 'points in all',
+    checkinTodayTitle: 'Today',
+    checkinDone: 'done',
+    checkinNotYet: 'not yet',
+    checkinBadgesTitle: 'Badges',
+    checkinEarned: 'Earned {0}',
+    checkinMissingDays: '{0} more days in a row',
+    checkinMissingPoints: '{0} more points',
+    checkinNew: '🎉 New badge: {0}',
+    checkinCelebrateOk: 'Great!',
+    checkinNote: 'Points are only for badges. Planned rest days in your rehab plan do not break a streak. Saved on this device only.',
+    menuCheckin: 'Points for every day you keep going, and badges',
+    homeStreak: '{0} days in a row 🔥'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -1904,7 +1971,7 @@ var T = {
     reportRecords: 'Registros diarios',
     reportRecordsNone: 'No hay registros diarios.',
     backupTitle: 'Copia de seguridad',
-    backupIntro: 'Tus registros, fotos y plan de rehabilitación se guardan solo en este navegador. Descarga una copia para recuperarlos en un móvil nuevo o después de borrar los datos del navegador. El archivo contiene tus fotos y notas, así que guárdalo para ti.',
+    backupIntro: 'Tus registros, fotos, plan de rehabilitación, entrenamientos y registros diarios se guardan solo en este navegador. Descarga una copia para recuperarlos en un móvil nuevo o después de borrar los datos del navegador. El archivo contiene tus fotos y notas, así que guárdalo para ti.',
     backupMake: 'Descargar copia',
     backupEmpty: 'Todavía no hay nada que copiar.',
     backupMade: 'Copia guardada en tus descargas.',
@@ -2148,7 +2215,24 @@ var T = {
     menuRecords: 'Todo lo que escribiste y cómo ha cambiado el dolor',
     menuReturn: 'Comprueba si estás listo para volver a jugar',
     menuReport: 'Una página para tu próxima consulta',
-    menuBackup: 'Guarda tus registros al cambiar de móvil'
+    menuBackup: 'Guarda tus registros al cambiar de móvil',
+    checkinTitle: 'Registro diario y puntos',
+    checkinIntro: 'Haz la rehabilitación, escribe un registro, calienta o apunta un entrenamiento, y los puntos llegan solos. Cualquiera de ellos cuenta como día registrado.',
+    checkinLoading: 'Contando tus puntos…',
+    checkinStreakLabel: 'días seguidos',
+    checkinTotalLabel: 'puntos en total',
+    checkinTodayTitle: 'Hoy',
+    checkinDone: 'hecho',
+    checkinNotYet: 'todavía no',
+    checkinBadgesTitle: 'Insignias',
+    checkinEarned: 'Conseguida el {0}',
+    checkinMissingDays: 'Faltan {0} días seguidos',
+    checkinMissingPoints: 'Faltan {0} puntos',
+    checkinNew: '🎉 Nueva insignia: {0}',
+    checkinCelebrateOk: '¡Genial!',
+    checkinNote: 'Los puntos solo sirven para insignias. Los días de descanso de tu plan no rompen la racha. Solo se guarda en este dispositivo.',
+    menuCheckin: 'Puntos por cada día que sigues, e insignias',
+    homeStreak: '{0} días seguidos 🔥'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -2439,7 +2523,7 @@ var T = {
     reportRecords: 'Notes quotidiennes',
     reportRecordsNone: 'Aucune note quotidienne.',
     backupTitle: 'Sauvegarde et restauration',
-    backupIntro: 'Tes notes, tes photos et ton plan de rééducation sont gardés seulement dans ce navigateur. Télécharge une sauvegarde pour les retrouver sur un nouveau téléphone ou après avoir effacé les données du navigateur. Le fichier contient tes photos et tes notes : garde-le pour toi.',
+    backupIntro: 'Tes notes, tes photos, ton plan de rééducation, ton carnet d’entraînement et tes présences sont gardés seulement dans ce navigateur. Télécharge une sauvegarde pour les retrouver sur un nouveau téléphone ou après avoir effacé les données du navigateur. Le fichier contient tes photos et tes notes : garde-le pour toi.',
     backupMake: 'Télécharger la sauvegarde',
     backupEmpty: 'Il n’y a encore rien à sauvegarder.',
     backupMade: 'Sauvegarde enregistrée dans tes téléchargements.',
@@ -2683,7 +2767,24 @@ var T = {
     menuRecords: 'Tout ce que tu as noté, et l’évolution de la douleur',
     menuReturn: 'Vérifie si tu es prêt à rejouer',
     menuReport: 'Une page pour ton prochain rendez-vous',
-    menuBackup: 'Garde tes données en changeant de téléphone'
+    menuBackup: 'Garde tes données en changeant de téléphone',
+    checkinTitle: 'Présence et points',
+    checkinIntro: 'Fais ta rééducation, écris une note, échauffe-toi ou note un entraînement, et les points arrivent tout seuls. Un seul suffit pour valider la journée.',
+    checkinLoading: 'Calcul de tes points…',
+    checkinStreakLabel: 'jours d’affilée',
+    checkinTotalLabel: 'points au total',
+    checkinTodayTitle: 'Aujourd’hui',
+    checkinDone: 'fait',
+    checkinNotYet: 'pas encore',
+    checkinBadgesTitle: 'Badges',
+    checkinEarned: 'Obtenu le {0}',
+    checkinMissingDays: 'Encore {0} jours d’affilée',
+    checkinMissingPoints: 'Encore {0} points',
+    checkinNew: '🎉 Nouveau badge : {0}',
+    checkinCelebrateOk: 'Super !',
+    checkinNote: 'Les points servent seulement aux badges. Les jours de repos prévus dans ton plan ne cassent pas la série. Enregistré sur cet appareil seulement.',
+    menuCheckin: 'Des points pour chaque jour où tu continues, et des badges',
+    homeStreak: '{0} jours d’affilée 🔥'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -2974,7 +3075,7 @@ var T = {
     reportRecords: 'Записи по дням',
     reportRecordsNone: 'Записей по дням нет.',
     backupTitle: 'Резервная копия',
-    backupIntro: 'Твои записи, фото и план реабилитации хранятся только в этом браузере. Скачай резервную копию, чтобы вернуть их на новом телефоне или после очистки данных браузера. В файле есть твои фото и записи, поэтому никому его не передавай.',
+    backupIntro: 'Твои записи, фото, план реабилитации, дневник тренировок и отметки хранятся только в этом браузере. Скачай резервную копию, чтобы вернуть их на новом телефоне или после очистки данных браузера. В файле есть твои фото и записи, поэтому никому его не передавай.',
     backupMake: 'Скачать копию',
     backupEmpty: 'Пока нечего сохранять.',
     backupMade: 'Копия сохранена в загрузках.',
@@ -3218,7 +3319,24 @@ var T = {
     menuRecords: 'Всё, что ты записал, и как менялась боль',
     menuReturn: 'Проверь, готов ли ты вернуться к игре',
     menuReport: 'Одна страница для следующего приёма',
-    menuBackup: 'Сохрани записи при смене телефона'
+    menuBackup: 'Сохрани записи при смене телефона',
+    checkinTitle: 'Отметки и очки',
+    checkinIntro: 'Делай упражнения, пиши заметку, разминайся или записывай тренировку — очки начисляются сами. Любое из этого засчитывает день.',
+    checkinLoading: 'Считаем очки…',
+    checkinStreakLabel: 'дней подряд',
+    checkinTotalLabel: 'очков всего',
+    checkinTodayTitle: 'Сегодня',
+    checkinDone: 'сделано',
+    checkinNotYet: 'ещё нет',
+    checkinBadgesTitle: 'Значки',
+    checkinEarned: 'Получен {0}',
+    checkinMissingDays: 'Ещё {0} дн. подряд',
+    checkinMissingPoints: 'Ещё {0} очков',
+    checkinNew: '🎉 Новый значок: {0}',
+    checkinCelebrateOk: 'Отлично!',
+    checkinNote: 'Очки нужны только для значков. Дни отдыха из плана реабилитации не прерывают серию. Хранится только на этом устройстве.',
+    menuCheckin: 'Очки за каждый день, когда ты не сдаёшься, и значки',
+    homeStreak: '{0} дн. подряд 🔥'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -3510,7 +3628,7 @@ var T = {
     reportRecords: 'التسجيلات اليومية',
     reportRecordsNone: 'لا توجد تسجيلات يومية.',
     backupTitle: 'النسخة الاحتياطية',
-    backupIntro: 'تُحفظ تسجيلاتك وصورك وخطة إعادة التأهيل في هذا المتصفح فقط. نزّل نسخة احتياطية لتستعيدها على هاتف جديد أو بعد مسح بيانات المتصفح. يحتوي الملف على صورك وملاحظاتك، فاحتفظ به لنفسك.',
+    backupIntro: 'تُحفظ تسجيلاتك وصورك وخطة إعادة التأهيل وسجل تدريبك وأيام التزامك في هذا المتصفح فقط. نزّل نسخة احتياطية لتستعيدها على هاتف جديد أو بعد مسح بيانات المتصفح. يحتوي الملف على صورك وملاحظاتك، فاحتفظ به لنفسك.',
     backupMake: 'تنزيل نسخة احتياطية',
     backupEmpty: 'لا يوجد شيء لحفظه بعد.',
     backupMade: 'حُفظت النسخة في التنزيلات.',
@@ -3754,7 +3872,24 @@ var T = {
     menuRecords: 'كل ما كتبته، وكيف تغيّر الألم',
     menuReturn: 'تحقق هل أنت مستعد للعودة إلى اللعب',
     menuReport: 'صفحة واحدة لموعدك القادم',
-    menuBackup: 'احفظ سجلاتك عند تغيير الهاتف'
+    menuBackup: 'احفظ سجلاتك عند تغيير الهاتف',
+    checkinTitle: 'تسجيل الالتزام والنقاط',
+    checkinIntro: 'أنجز تمارين التأهيل، أو اكتب سجلًا، أو قم بالإحماء، أو سجّل تدريبًا، وستأتي النقاط تلقائيًا. أي واحد منها يُحتسب التزامًا لذلك اليوم.',
+    checkinLoading: 'جارٍ حساب نقاطك…',
+    checkinStreakLabel: 'أيام متتالية',
+    checkinTotalLabel: 'مجموع النقاط',
+    checkinTodayTitle: 'اليوم',
+    checkinDone: 'تم',
+    checkinNotYet: 'ليس بعد',
+    checkinBadgesTitle: 'الشارات',
+    checkinEarned: 'حصلت عليها في {0}',
+    checkinMissingDays: 'بقي {0} أيام متتالية',
+    checkinMissingPoints: 'بقي {0} نقطة',
+    checkinNew: '🎉 شارة جديدة: {0}',
+    checkinCelebrateOk: 'رائع!',
+    checkinNote: 'النقاط للشارات فقط. أيام الراحة المخطط لها في خطة التأهيل لا تقطع السلسلة. تُحفظ على هذا الجهاز فقط.',
+    menuCheckin: 'نقاط لكل يوم تواصل فيه، وشارات',
+    homeStreak: '{0} أيام متتالية 🔥'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -4043,7 +4178,7 @@ var T = {
     reportRecords: '每天的记录',
     reportRecordsNone: '没有每天的记录。',
     backupTitle: '备份与恢复',
-    backupIntro: '你的记录、照片和康复计划只保存在这个浏览器里。下载一个备份文件，换手机或清除浏览器数据后也能找回来。文件里有你的照片和记录，请自己保管好，不要随便发给别人。',
+    backupIntro: '你的记录、照片、康复计划、训练记录和打卡只保存在这个浏览器里。下载一个备份文件，换手机或清除浏览器数据后也能找回来。文件里有你的照片和记录，请自己保管好，不要随便发给别人。',
     backupMake: '下载备份',
     backupEmpty: '还没有可以备份的内容。',
     backupMade: '备份已保存到下载文件夹。',
@@ -4287,7 +4422,24 @@ var T = {
     menuRecords: '以前写的记录，看看疼痛怎么变化',
     menuReturn: '测测能不能回到场上',
     menuReport: '整理成一页，复诊时给医生看',
-    menuBackup: '换手机时把记录保存好'
+    menuBackup: '换手机时把记录保存好',
+    checkinTitle: '打卡和积分',
+    checkinIntro: '做康复训练、写记录、跟着热身、记训练，积分会自动加上。当天做了其中任意一件就算打卡。',
+    checkinLoading: '正在计算积分……',
+    checkinStreakLabel: '连续打卡（天）',
+    checkinTotalLabel: '总积分',
+    checkinTodayTitle: '今天',
+    checkinDone: '已完成',
+    checkinNotYet: '还没做',
+    checkinBadgesTitle: '徽章',
+    checkinEarned: '{0} 获得',
+    checkinMissingDays: '还差 {0} 天',
+    checkinMissingPoints: '还差 {0} 分',
+    checkinNew: '🎉 你得到了新徽章：{0}',
+    checkinCelebrateOk: '太好了',
+    checkinNote: '积分只用来换徽章。康复计划里本来安排的休息日不会打断连续打卡。只保存在这台设备上。',
+    menuCheckin: '每天坚持就加分，攒分换徽章',
+    homeStreak: '已连续打卡 {0} 天 🔥'
   }
 };
 
@@ -5644,6 +5796,7 @@ function renderAll() {
   renderDoctorVisit();
   renderTour();
   renderSearch();
+  renderCheckin();
   renderPageMenus();
   updateHeaderHeight();
   renderGroupChat();
@@ -5819,7 +5972,11 @@ function warmupSetTimer(timer) {
   var moved = warmup.timer && (timer.index !== warmup.timer.index || timer.done);
   warmup.timer = timer;
   if (moved) warmupBeep();
-  if (timer.done) warmupStopTimer();
+  if (timer.done && moved) {
+    warmupStopTimer();
+    addWarmupDay(logDateString(new Date()));
+    loadCheckin();
+  }
   renderWarmup();
 }
 
@@ -5921,6 +6078,7 @@ function renderTraining() {
       training.entries = kept;
       training.saved = false;
       renderTraining();
+      loadCheckin();
     });
     li.appendChild(text);
     li.appendChild(remove);
@@ -5942,6 +6100,7 @@ $('trainingForm').addEventListener('submit', function (event) {
     if (saveTrainingEntries(entries)) {
       training.entries = entries;
       training.saved = true;
+      loadCheckin();
       $('trainingMinutes').value = '';
       $('trainingEffort').value = '';
     } else {
@@ -6659,6 +6818,7 @@ var PAGE_SECTIONS = {
     return [
       {title: t('logDailyTitle'), items: [
         sectionItem('plan', ['planCard'], 'planTitle', 'menuPlan'),
+        sectionItem('checkin', ['checkinCard'], 'checkinTitle', 'menuCheckin'),
         sectionItem('today', ['logFormCard'], 'logTitle', 'menuToday'),
         sectionItem('records', ['logListCard'], 'logListTitle', 'menuRecords')]},
       {title: t('logSometimesTitle'), items: [
@@ -6730,6 +6890,105 @@ function updateHeaderHeight() {
   document.documentElement.style.setProperty('--header-height', document.querySelector('.site-header').offsetHeight + 'px');
 }
 window.addEventListener('resize', updateHeaderHeight);
+
+// ---- Check-ins and points ----
+function loadCheckin() {
+  checkin.today = logDateString(new Date());
+  return Promise.all([planStore.all(), planStore.allDone(), logStore.all()]).then(function (results) {
+    var activity = {
+      plan: planDoneDates(results[0], results[1]),
+      log: results[2].map(function (entry) { return entry.date; }),
+      warmup: loadWarmupDays(),
+      training: training.entries.map(function (session) { return session.date; })
+    };
+    checkin.summary = checkinSummary(activity, results[0], checkin.today);
+    checkin.status = 'ready';
+  }).catch(function () {
+    checkin.status = 'error';
+  }).then(function () {
+    renderCheckin();
+    renderPlan();
+  });
+}
+
+function renderCheckin() {
+  ['checkinTitle', 'checkinIntro', 'checkinStreakLabel', 'checkinTotalLabel', 'checkinTodayTitle', 'checkinBadgesTitle', 'checkinNote', 'checkinCelebrateOk']
+    .forEach(function (key) { $(key).textContent = t(key); });
+  var summary = checkin.summary;
+  $('checkinStatus').hidden = checkin.status === 'ready';
+  $('checkinStatus').textContent = checkin.status === 'error' ? t('logLoadFailed') : t('checkinLoading');
+  $('checkinBody').hidden = !summary;
+  if (!summary) return;
+  $('checkinStreak').textContent = summary.streak + (summary.streak > 0 ? ' 🔥' : '');
+  $('checkinTotal').textContent = summary.total;
+
+  var fresh = newBadges(summary, checkin.seen);
+  $('checkinCelebrate').hidden = fresh.length === 0;
+  $('checkinCelebrateText').textContent = t('checkinNew').replace('{0}', fresh.map(function (entry) {
+    return entry.badge.icon + ' ' + L(entry.badge.name);
+  }).join(lang === 'zh' ? '、' : ', '));
+
+  var todayList = $('checkinToday');
+  todayList.innerHTML = '';
+  CHECKIN_ACTIONS.forEach(function (action) {
+    var done = summary.today.actions.indexOf(action.id) >= 0;
+    var li = todayList.appendChild(document.createElement('li'));
+    var mark = li.appendChild(document.createElement('span'));
+    mark.className = done ? 'done' : 'todo';
+    mark.textContent = done ? '✓' : '○';
+    mark.setAttribute('aria-label', t(done ? 'checkinDone' : 'checkinNotYet'));
+    li.appendChild(document.createElement('span')).textContent = L(action.name);
+    li.appendChild(document.createElement('b')).textContent = '+' + action.points;
+  });
+
+  // This month, Monday first; a day with a check-in is filled in, and a
+  // badge earned that day shows its icon.
+  var month = checkin.today.slice(0, 7);
+  var locale = lang === 'zh' ? 'zh-CN' : lang;
+  $('checkinMonth').textContent = new Date(month + '-15T12:00:00').toLocaleDateString(locale, {year: 'numeric', month: 'long'});
+  var calendar = $('checkinCalendar');
+  calendar.innerHTML = '';
+  var head = calendar.appendChild(document.createElement('thead')).appendChild(document.createElement('tr'));
+  for (var d = 0; d < 7; d++) {
+    // 2026-11-02 is a Monday.
+    head.appendChild(document.createElement('th')).textContent = new Date(2026, 10, 2 + d).toLocaleDateString(locale, {weekday: 'narrow'});
+  }
+  var body = calendar.appendChild(document.createElement('tbody'));
+  monthWeeks(month).forEach(function (week) {
+    var row = body.appendChild(document.createElement('tr'));
+    week.forEach(function (date) {
+      var cell = row.appendChild(document.createElement('td'));
+      if (!date) return;
+      var box = cell.appendChild(document.createElement('span'));
+      box.textContent = Number(date.slice(8));
+      var day = summary.days[date];
+      if (day) cell.classList.add('on');
+      if (date === checkin.today) cell.classList.add('today');
+      var badges = summary.badges.filter(function (entry) { return entry.earned === date; });
+      box.appendChild(document.createElement('small')).textContent = badges.map(function (entry) { return entry.badge.icon; }).join('');
+      cell.title = formatShortDate(date) + (day ? ' · +' + day.points : '');
+    });
+  });
+
+  var badgeList = $('checkinBadges');
+  badgeList.innerHTML = '';
+  summary.badges.forEach(function (entry) {
+    var li = badgeList.appendChild(document.createElement('li'));
+    li.className = entry.earned ? 'earned' : 'locked';
+    li.appendChild(document.createElement('span')).className = 'icon';
+    li.firstChild.textContent = entry.badge.icon;
+    li.appendChild(document.createElement('strong')).textContent = L(entry.badge.name);
+    li.appendChild(document.createElement('small')).textContent = entry.earned
+      ? t('checkinEarned').replace('{0}', formatShortDate(entry.earned))
+      : t(entry.badge.kind === 'streak' ? 'checkinMissingDays' : 'checkinMissingPoints').replace('{0}', entry.missing);
+  });
+}
+
+$('checkinCelebrateOk').addEventListener('click', function () {
+  checkin.seen = checkin.summary.badges.filter(function (entry) { return entry.earned; }).map(function (entry) { return entry.badge.id; });
+  writeSetting(CHECKIN_SEEN_KEY, checkin.seen);
+  renderCheckin();
+});
 
 // ---- Return to sport check ----
 // Answers are kept while the page is open, so switching language keeps them.
@@ -7022,6 +7281,10 @@ var plan = {status: 'loading', items: [], done: [], today: logDateString(new Dat
 var account = {status: 'loading', user: null, mode: 'signIn', busy: false, problems: [], error: null, done: null,
   expired: false, signingOut: false};
 var log = {status: 'loading', entries: [], photo: null, photoBad: false, saving: false, saved: false, saveFailed: false, problems: []};
+// Check-ins and points (checkin.js), worked out again whenever something
+// that scores changes. `seen` are badges already celebrated.
+var CHECKIN_SEEN_KEY = 'injury-helper-badges-seen';
+var checkin = {status: 'loading', summary: null, seen: readSetting(CHECKIN_SEEN_KEY, []), today: logDateString(new Date())};
 
 function logProblemText(p) {
   if (p.field === 'date') return t(p.problem === 'future' ? 'logProblemFuture' : 'logProblemDate');
@@ -7335,11 +7598,12 @@ $('backupMake').addEventListener('click', function () {
   resetBackupMessages();
   backup.pending = null;
   readAllRecords().then(function (results) {
-    if (results[0].length === 0 && results[1].length === 0) {
+    var warmupDays = loadWarmupDays();
+    if (results[0].length === 0 && results[1].length === 0 && training.entries.length === 0 && warmupDays.length === 0) {
       backup.empty = true;
       return;
     }
-    var text = JSON.stringify(makeBackup(results[0], results[1], results[2], new Date()));
+    var text = JSON.stringify(makeBackup(results[0], results[1], results[2], new Date(), training.entries, warmupDays));
     var link = document.createElement('a');
     link.href = URL.createObjectURL(new Blob([text], {type: 'application/json'}));
     link.download = backupFileName(logDateString(new Date()));
@@ -7377,10 +7641,15 @@ $('backupConfirmYes').addEventListener('click', function () {
   backup.busy = true;
   renderBackupCard();
   readAllRecords().then(function (results) {
-    var merge = mergeBackup(backup.pending, {entries: results[0], items: results[1]});
+    var merge = mergeBackup(backup.pending, {entries: results[0], items: results[1], training: training.entries, warmupDays: loadWarmupDays()});
     return planStore.restore(merge.items, merge.done).then(function () {
       return logStore.addAll(merge.entries);
     }).then(function () {
+      // The training log and warm-up days are small and kept in this browser's settings.
+      var sessions = training.entries.concat(merge.training);
+      if (!saveTrainingEntries(sessions) || !saveWarmupDays(loadWarmupDays().concat(merge.warmupDays))) throw new Error('settings storage blocked');
+      training.entries = sessions;
+      renderTraining();
       backup.restored = {
         entries: merge.entries.length,
         items: merge.items.filter(function (pair) { return pair.existingId === null; }).length,
@@ -7410,7 +7679,10 @@ function loadLog() {
     log.status = 'ready';
   }).catch(function () {
     log.status = 'error';
-  }).then(renderLog);
+  }).then(function () {
+    renderLog();
+    loadCheckin();
+  });
 }
 
 function resetLogDate() {
@@ -7665,7 +7937,8 @@ function renderPlan() {
     $('homeToday').querySelector('strong').textContent = doneCount === due.length
       ? t('homeTodayAllDone').split('{0}').join(due.length)
       : t('homeToday').replace('{0}', doneCount).replace('{1}', due.length);
-    $('homeToday').querySelector('span').textContent = t('homeTodayGo');
+    var streak = checkin.summary ? checkin.summary.streak : 0;
+    $('homeToday').querySelector('span').textContent = (streak > 0 ? t('homeStreak').replace('{0}', streak) + ' · ' : '') + t('homeTodayGo');
   }
 }
 
@@ -7747,7 +8020,7 @@ $('planToday').addEventListener('change', function (e) {
   planStore.setDone(id, plan.today, done).catch(function () {
     plan.saveFailed = true;
     return loadPlan();
-  });
+  }).then(loadCheckin);
 });
 
 $('planList').addEventListener('click', function (e) {

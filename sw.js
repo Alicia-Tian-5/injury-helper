@@ -25,6 +25,7 @@ const PAGE_FILES = [
   'search.js',
   'report.js',
   'backup.js',
+  'checkin.js',
   'group-chat.js',
   'friends.js',
   'account.js',

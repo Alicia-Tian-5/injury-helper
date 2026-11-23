@@ -117,3 +117,31 @@ function warmupClock(seconds) {
   var rest = seconds % 60;
   return Math.floor(seconds / 60) + ':' + (rest < 10 ? '0' : '') + rest;
 }
+
+// The days a whole warm-up was finished, kept on this device for check-ins.
+var WARMUP_DAYS_KEY = 'injury-helper-warmup-days';
+
+function loadWarmupDays() {
+  try {
+    var saved = JSON.parse(localStorage.getItem(WARMUP_DAYS_KEY));
+    return Array.isArray(saved) ? saved.filter(function (date) { return DATE_PATTERN.test(date); }) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+// Returns false when the browser blocks storage.
+function saveWarmupDays(days) {
+  try {
+    localStorage.setItem(WARMUP_DAYS_KEY, JSON.stringify(days));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function addWarmupDay(date) {
+  var days = loadWarmupDays();
+  if (days.indexOf(date) < 0) days.push(date);
+  return saveWarmupDays(days);
+}

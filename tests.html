@@ -28,6 +28,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="search.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
+<script src="checkin.js"></script>
 <script src="group-chat.js"></script>
 <script src="friends.js"></script>
 <script src="knowledge.js"></script>
@@ -528,6 +529,65 @@ test('tour: starts with "are you hurt" (no language step), every step is in six 
     });
   });
 });
+test('check-ins: each action scores once a day, and any action makes the day a check-in', function () {
+  var today = '2026-11-23';
+  var summary = checkinSummary({plan: [today], log: [today, today], warmup: [], training: [today]}, [], today);
+  equal(summary.today.points, 18);
+  equal(summary.total, 18);
+  equal(summary.streak, 1);
+  equal(checkinSummary({}, [], today).total, 0);
+  equal(checkinSummary({log: ['2026-11-24']}, [], today).total, 0);
+});
+test('check-ins: a missed day breaks the streak, today not done yet does not, and planned rest days do not', function () {
+  var today = '2026-11-23';
+  equal(checkinSummary({log: ['2026-11-20', '2026-11-22']}, [], today).streak, 1);
+  equal(checkinSummary({log: ['2026-11-21', '2026-11-22', today]}, [], today).streak, 3);
+  // Exercises due Monday, Wednesday and Friday: Tuesday 2026-11-17 is a rest day.
+  var items = [{id: 1, days: [1, 3, 5], start: '2026-11-01', end: ''}];
+  equal(checkinSummary({log: ['2026-11-16', '2026-11-18']}, items, '2026-11-18').streak, 2);
+  equal(checkinSummary({log: ['2026-11-16', '2026-11-18']}, [], '2026-11-18').streak, 1);
+});
+test('check-ins: badges are earned on the day the streak or points reach them', function () {
+  var log = [];
+  for (var day = 10; day <= 16; day++) log.push('2026-11-' + day);
+  var summary = checkinSummary({log: log}, [], '2026-11-16');
+  var byId = {};
+  summary.badges.forEach(function (entry) { byId[entry.badge.id] = entry; });
+  equal(byId.streak3.earned, '2026-11-12');
+  equal(byId.streak7.earned, '2026-11-16');
+  equal(byId.streak14.earned, null);
+  equal(byId.streak14.missing, 7);
+  equal(byId.points100.missing, 65);
+  equal(newBadges(summary, ['streak3']).map(function (entry) { return entry.badge.id; }).join(','), 'streak7');
+});
+test('check-ins: a plan day counts only when every exercise due that day is ticked', function () {
+  var items = [{id: 1, days: [0, 1, 2, 3, 4, 5, 6], start: '2026-11-01', end: ''}, {id: 2, days: [1], start: '2026-11-01', end: ''}];
+  var marks = [{itemId: 1, date: '2026-11-16'}, {itemId: 1, date: '2026-11-17'}, {itemId: 2, date: '2026-11-16'}, {itemId: 1, date: '2026-11-23'}];
+  // 2026-11-16 and 2026-11-23 are Mondays, when both are due.
+  equal(planDoneDates(items, marks).sort().join(','), '2026-11-16,2026-11-17');
+});
+test('check-ins: every action and badge is in all six languages, and the calendar starts on Monday', function () {
+  CHECKIN_ACTIONS.concat(CHECKIN_BADGES).forEach(function (item) {
+    ['en', 'es', 'fr', 'ru', 'ar', 'zh'].forEach(function (code) { if (!item.name[code]) throw new Error('missing ' + code + ' in ' + item.id); });
+  });
+  var weeks = monthWeeks('2026-11');
+  equal(weeks[0].join(','), ',,,,,,2026-11-01');
+  equal(weeks[weeks.length - 1][0], '2026-11-30');
+});
+test('backup: keeps training sessions and warm-up days, and older backups without them still restore', function () {
+  var session = {id: 'a1', date: '2026-11-20', minutes: 60, effort: 5, createdAt: 5};
+  var text = JSON.stringify(makeBackup([], [], [], new Date(1), [session], ['2026-11-21']));
+  var backup = readBackup(text);
+  equal(backup.training.length, 1);
+  var merge = mergeBackup(backup, {entries: [], items: [], training: [session], warmupDays: []});
+  equal(merge.training.length + ' ' + merge.warmupDays.join(','), '0 2026-11-21');
+  var old = JSON.parse(text);
+  delete old.training;
+  delete old.warmupDays;
+  equal(readBackup(JSON.stringify(old)).training.length, 0);
+  old.training = [{id: 'x', date: 'soon', minutes: 60, effort: 5, createdAt: 1}];
+  equal(readBackup(JSON.stringify(old)), null);
+});
 test('return to sport: any "no" means not yet, with what to work on', function () {
   var answers = {walk: 'yes', swelling: 'yes', motion: 'yes', balance: 'no', hop: 'yes', cutting: 'yes'};
   var result = returnToSportResult('ankle', answers, '', '');
@@ -1020,7 +1080,7 @@ function testSpanishSwitch() {
         equal(shown('learnMenu') + ' ' + shown('weatherCard') + ' ' + shown('warmupCard') + ' ' + shown('learnBack'), 'false true false true');
         go('learn');
         equal(shown('learnMenu') + ' ' + shown('weatherCard'), 'true false');
-        equal(doc.querySelectorAll('#logMenu a').length, 6);
+        equal(doc.querySelectorAll('#logMenu a').length, 7);
         equal(doc.querySelectorAll('#comfortMenu a').length, 4);
         equal(doc.querySelectorAll('#hospitalsMenu a').length, 3);
         go('hospitals/city');

@@ -1,12 +1,14 @@
 // Backup and restore: the recovery log (with photos), the rehab plan and its
-// ticks in one file, so they survive a new phone or cleared site data. A
-// restore merges: nothing already here is deleted, and nothing is added
-// twice. Needs recovery-log.js and rehab-plan.js.
+// ticks, the training log and the days a warm-up was finished, in one file,
+// so they survive a new phone or cleared site data. A restore merges:
+// nothing already here is deleted, and nothing is added twice. Needs
+// recovery-log.js, rehab-plan.js and training-load.js. Backups made before
+// the training log and warm-up days were added still restore.
 
 var BACKUP_FORMAT = 'injury-helper-backup';
 var BACKUP_VERSION = 1;
 
-function makeBackup(entries, items, marks, now) {
+function makeBackup(entries, items, marks, now, training, warmupDays) {
   return {
     format: BACKUP_FORMAT,
     version: BACKUP_VERSION,
@@ -21,7 +23,11 @@ function makeBackup(entries, items, marks, now) {
       };
     }),
     items: items.map(function (item) { return Object.assign({}, item); }),
-    done: marks.map(function (mark) { return {itemId: mark.itemId, date: mark.date}; })
+    done: marks.map(function (mark) { return {itemId: mark.itemId, date: mark.date}; }),
+    training: (training || []).map(function (session) {
+      return {id: session.id, date: session.date, minutes: session.minutes, effort: session.effort, createdAt: session.createdAt};
+    }),
+    warmupDays: (warmupDays || []).slice()
   };
 }
 
@@ -38,6 +44,11 @@ function isBackupEntry(entry) {
     typeof entry.date === 'string' && typeof entry.text === 'string' && isTime(entry.createdAt) &&
     (entry.photo === null || (typeof entry.photo === 'string' && entry.photo.indexOf('data:image/') === 0)) &&
     logEntryProblems(entry).length === 0;
+}
+
+function isBackupSession(session) {
+  return session !== null && typeof session === 'object' && typeof session.id === 'string' && isTime(session.createdAt) &&
+    trainingEntryProblems(String(session.date), String(session.minutes), String(session.effort), '9999-12-31').length === 0;
 }
 
 function isBackupItem(item) {
@@ -57,6 +68,11 @@ function readBackup(text) {
       backup.version !== BACKUP_VERSION || !isTime(backup.createdAt) ||
       !Array.isArray(backup.entries) || !Array.isArray(backup.items) || !Array.isArray(backup.done)) return null;
   if (!backup.entries.every(isBackupEntry) || !backup.items.every(isBackupItem)) return null;
+  // Older backups have no training log or warm-up days.
+  backup.training = backup.training === undefined ? [] : backup.training;
+  backup.warmupDays = backup.warmupDays === undefined ? [] : backup.warmupDays;
+  if (!Array.isArray(backup.training) || !backup.training.every(isBackupSession)) return null;
+  if (!Array.isArray(backup.warmupDays) || !backup.warmupDays.every(function (date) { return DATE_PATTERN.test(date); })) return null;
   var itemIds = backup.items.map(function (item) { return item.id; });
   var marksFit = backup.done.every(function (mark) {
     return mark !== null && typeof mark === 'object' && itemIds.indexOf(mark.itemId) >= 0 &&
@@ -84,10 +100,15 @@ function mergeBackup(backup, current) {
     var same = current.items.filter(function (existing) { return itemIdentity(existing) === itemIdentity(item); })[0];
     return {item: item, existingId: same ? same.id : null};
   });
+  var sessionIds = (current.training || []).map(function (session) { return session.id; });
+  var training = (backup.training || []).filter(function (session) { return sessionIds.indexOf(session.id) < 0; });
+  var warmupDays = (backup.warmupDays || []).filter(function (date) { return (current.warmupDays || []).indexOf(date) < 0; });
   return {
     entries: entries,
     items: items,
     done: backup.done,
+    training: training,
+    warmupDays: warmupDays,
     skipped: backup.entries.length - entries.length + items.filter(function (pair) { return pair.existingId !== null; }).length
   };
 }
