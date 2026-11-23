@@ -18,6 +18,7 @@ const PAGE_FILES = [
   'risk-check.js',
   'warmup.js',
   'training-load.js',
+  'gear.js',
   'report.js',
   'backup.js',
   'group-chat.js',

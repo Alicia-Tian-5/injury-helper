@@ -21,6 +21,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="risk-check.js"></script>
 <script src="warmup.js"></script>
 <script src="training-load.js"></script>
+<script src="gear.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -426,6 +427,25 @@ test('training log: bad dates, minutes and effort are caught', function () {
   equal(trainingEntryProblems('', '0', '11', today).join(','), 'date,minutes,effort');
   equal(trainingEntryProblems(today, '601', '', today).join(','), 'minutes,effort');
   equal(trainingEntryProblems(today, '1.5', '5', today).join(','), 'minutes');
+});
+test('gear: every sport has shoe and protection tips, all in six languages', function () {
+  RISK_SPORTS.forEach(function (sport) {
+    var guide = GEAR_GUIDE[sport.id];
+    equal(guide.shoes.length > 0 && guide.protect.length > 0, true);
+    guide.shoes.concat(guide.protect).forEach(function (tip) {
+      ['en', 'es', 'fr', 'ru', 'ar', 'zh'].forEach(function (code) { if (!tip[code]) throw new Error('missing ' + code + ' in ' + tip.en); });
+    });
+  });
+  GEAR_SHOE_QUESTIONS.forEach(function (q) {
+    ['en', 'es', 'fr', 'ru', 'ar', 'zh'].forEach(function (code) { if (!q.text[code] || !q.why[code]) throw new Error('missing ' + code + ' in ' + q.id); });
+  });
+});
+test('shoe check: any yes means replace, with the reasons; all no is fine; unanswered are caught', function () {
+  equal(shoeCheckResult({tread: 'yes'}).ids.join(','), 'midsole,age,aches');
+  var replace = shoeCheckResult({tread: 'yes', midsole: 'no', age: 'yes', aches: 'no'});
+  equal(replace.status, 'replace');
+  equal(replace.reasons.join(','), 'tread,age');
+  equal(shoeCheckResult({tread: 'no', midsole: 'no', age: 'no', aches: 'no'}).status, 'ok');
 });
 test('return to sport: any "no" means not yet, with what to work on', function () {
   var answers = {walk: 'yes', swelling: 'yes', motion: 'yes', balance: 'no', hop: 'yes', cutting: 'yes'};

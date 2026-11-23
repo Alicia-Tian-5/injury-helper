@@ -245,6 +245,8 @@ h1 a{color:var(--acc)}
 .training-list li{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding:8px 0}
 .training-list .secondary{padding:6px 14px;font-size:15px}
 .training-jump{color:var(--red);font-weight:600}
+.gear{margin-bottom:16px}
+#gearAdvice{margin-bottom:8px}
 .trend{margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .trend svg{display:block;width:100%;height:auto}
 .trend .grid{stroke:var(--line);stroke-width:1}
@@ -734,6 +736,19 @@ h1 a{text-decoration:none}
     <ul class="training-list" id="trainingList"></ul>
     <p class="muted rts-note" id="trainingNote"></p>
   </section>
+  <section class="card gear" id="gearCard">
+    <h2 id="gearTitle"></h2>
+    <p class="muted" id="gearIntro"></p>
+    <label class="field"><span id="gearSportLabel"></span><select id="gearSport"></select></label>
+    <div id="gearAdvice" hidden></div>
+    <form id="shoeForm" novalidate>
+      <h3 id="shoeTitle"></h3>
+      <div id="shoeQuestions"></div>
+      <button type="submit" class="primary" id="shoeCheck"></button>
+      <p class="error" id="shoeError" role="alert" hidden></p>
+    </form>
+    <div class="rts-result" id="shoeResult" aria-live="polite" hidden></div>
+  </section>
   <div class="learn-parts" id="learnParts"></div>
 </div>
 
@@ -906,6 +921,7 @@ h1 a{text-decoration:none}
 <script src="risk-check.js"></script>
 <script src="warmup.js"></script>
 <script src="training-load.js"></script>
+<script src="gear.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -1344,7 +1360,16 @@ var T = {
     trainingListTitle: 'Recent sessions',
     trainingEmpty: 'No sessions yet.',
     trainingEntry: '{0} · {1} min · effort {2}/10 · load {3}',
-    trainingNote: 'Load = minutes × how hard (1–10). Saved on this device only.'
+    trainingNote: 'Load = minutes × how hard (1–10). Saved on this device only.',
+    gearTitle: 'Gear and shoes',
+    gearIntro: 'The right shoes and protection for your sport, and a quick check of whether your shoes need replacing.',
+    gearSportLabel: 'Your sport',
+    gearShoes: 'Shoes',
+    gearProtect: 'Protection and other gear',
+    shoeTitle: 'Do my shoes need replacing?',
+    shoeCheck: 'Check my shoes',
+    shoeOk: 'Your shoes look fine for now. Check again every few months.',
+    shoeReplace: 'Time for new shoes'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -1777,7 +1802,16 @@ var T = {
     trainingListTitle: 'Sesiones recientes',
     trainingEmpty: 'Todavía no hay sesiones.',
     trainingEntry: '{0} · {1} min · esfuerzo {2}/10 · carga {3}',
-    trainingNote: 'Carga = minutos × dureza (1–10). Solo se guarda en este dispositivo.'
+    trainingNote: 'Carga = minutos × dureza (1–10). Solo se guarda en este dispositivo.',
+    gearTitle: 'Equipo y calzado',
+    gearIntro: 'El calzado y la protección adecuados para tu deporte, y una comprobación rápida de si tus zapatillas necesitan cambio.',
+    gearSportLabel: 'Tu deporte',
+    gearShoes: 'Calzado',
+    gearProtect: 'Protección y otro equipo',
+    shoeTitle: '¿Tengo que cambiar mis zapatillas?',
+    shoeCheck: 'Revisar mis zapatillas',
+    shoeOk: 'Tus zapatillas están bien por ahora. Vuelve a revisarlas cada pocos meses.',
+    shoeReplace: 'Toca cambiar de zapatillas'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -2210,7 +2244,16 @@ var T = {
     trainingListTitle: 'Séances récentes',
     trainingEmpty: 'Aucune séance pour l’instant.',
     trainingEntry: '{0} · {1} min · effort {2}/10 · charge {3}',
-    trainingNote: 'Charge = minutes × difficulté (1–10). Enregistré sur cet appareil seulement.'
+    trainingNote: 'Charge = minutes × difficulté (1–10). Enregistré sur cet appareil seulement.',
+    gearTitle: 'Équipement et chaussures',
+    gearIntro: 'Les bonnes chaussures et protections pour ton sport, et un test rapide pour savoir s’il faut changer tes chaussures.',
+    gearSportLabel: 'Ton sport',
+    gearShoes: 'Chaussures',
+    gearProtect: 'Protections et autre équipement',
+    shoeTitle: 'Faut-il changer mes chaussures ?',
+    shoeCheck: 'Vérifier mes chaussures',
+    shoeOk: 'Tes chaussures vont bien pour l’instant. Revérifie tous les quelques mois.',
+    shoeReplace: 'Il est temps de changer de chaussures'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -2643,7 +2686,16 @@ var T = {
     trainingListTitle: 'Последние тренировки',
     trainingEmpty: 'Тренировок пока нет.',
     trainingEntry: '{0} · {1} мин · тяжесть {2}/10 · нагрузка {3}',
-    trainingNote: 'Нагрузка = минуты × тяжесть (1–10). Хранится только на этом устройстве.'
+    trainingNote: 'Нагрузка = минуты × тяжесть (1–10). Хранится только на этом устройстве.',
+    gearTitle: 'Экипировка и обувь',
+    gearIntro: 'Подходящая обувь и защита для твоего вида спорта и быстрая проверка, не пора ли менять обувь.',
+    gearSportLabel: 'Твой вид спорта',
+    gearShoes: 'Обувь',
+    gearProtect: 'Защита и другая экипировка',
+    shoeTitle: 'Пора ли менять обувь?',
+    shoeCheck: 'Проверить обувь',
+    shoeOk: 'Пока обувь в порядке. Проверяй её раз в несколько месяцев.',
+    shoeReplace: 'Пора купить новую обувь'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -3077,7 +3129,16 @@ var T = {
     trainingListTitle: 'الحصص الأخيرة',
     trainingEmpty: 'لا توجد حصص بعد.',
     trainingEntry: '{0} · {1} دقيقة · الجهد {2}/10 · الحمل {3}',
-    trainingNote: 'الحمل = الدقائق × الصعوبة (1–10). يُحفظ على هذا الجهاز فقط.'
+    trainingNote: 'الحمل = الدقائق × الصعوبة (1–10). يُحفظ على هذا الجهاز فقط.',
+    gearTitle: 'المعدات والأحذية',
+    gearIntro: 'الحذاء والحماية المناسبان لرياضتك، وفحص سريع لمعرفة هل يحتاج حذاؤك إلى تغيير.',
+    gearSportLabel: 'رياضتك',
+    gearShoes: 'الأحذية',
+    gearProtect: 'الحماية ومعدات أخرى',
+    shoeTitle: 'هل يحتاج حذائي إلى تغيير؟',
+    shoeCheck: 'افحص حذائي',
+    shoeOk: 'حذاؤك جيد حاليًا. افحصه مجددًا كل بضعة أشهر.',
+    shoeReplace: 'حان وقت حذاء جديد'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -3508,7 +3569,16 @@ var T = {
     trainingListTitle: '最近的训练',
     trainingEmpty: '还没有训练记录。',
     trainingEntry: '{0} · {1} 分钟 · 累 {2}/10 · 训练量 {3}',
-    trainingNote: '训练量 = 分钟 × 累的程度（1–10）。只保存在这台设备上。'
+    trainingNote: '训练量 = 分钟 × 累的程度（1–10）。只保存在这台设备上。',
+    gearTitle: '装备和鞋',
+    gearIntro: '你的运动该穿什么鞋、戴什么护具，再测一下鞋该不该换了。',
+    gearSportLabel: '你的运动',
+    gearShoes: '鞋',
+    gearProtect: '护具和其他装备',
+    shoeTitle: '我的鞋该换了吗？',
+    shoeCheck: '看看我的鞋',
+    shoeOk: '鞋现在还可以，过几个月再看一次。',
+    shoeReplace: '该换新鞋了'
   }
 };
 
@@ -4857,6 +4927,7 @@ function renderAll() {
   renderRiskCheck();
   renderWarmup();
   renderTraining();
+  renderGear();
   renderGroupChat();
   renderFriends();
   renderCategories();
@@ -5161,6 +5232,98 @@ $('trainingForm').addEventListener('submit', function (event) {
   }
   renderTraining();
   $(training.saved ? 'trainingResult' : 'trainingError').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+});
+
+// ---- Gear and shoes guide ----
+var gear = {sport: '', answers: {}, result: null};
+
+function renderGear() {
+  ['gearTitle', 'gearIntro', 'gearSportLabel', 'shoeTitle', 'shoeCheck'].forEach(function (key) { $(key).textContent = t(key); });
+  var select = $('gearSport');
+  select.innerHTML = '';
+  var first = document.createElement('option');
+  first.value = '';
+  first.textContent = t('warmupSportPick');
+  select.appendChild(first);
+  RISK_SPORTS.forEach(function (sport) {
+    var option = document.createElement('option');
+    option.value = sport.id;
+    option.textContent = L(sport.name);
+    select.appendChild(option);
+  });
+  select.value = gear.sport;
+
+  var advice = $('gearAdvice');
+  advice.innerHTML = '';
+  advice.hidden = !gear.sport;
+  if (gear.sport) {
+    [['gearShoes', 'shoes'], ['gearProtect', 'protect']].forEach(function (pair) {
+      advice.appendChild(document.createElement('h3')).textContent = t(pair[0]);
+      var list = document.createElement('ul');
+      list.className = 'points';
+      GEAR_GUIDE[gear.sport][pair[1]].forEach(function (tip) { list.appendChild(document.createElement('li')).textContent = L(tip); });
+      advice.appendChild(list);
+    });
+  }
+
+  var missingIds = gear.result && gear.result.status === 'missing' ? gear.result.ids : [];
+  var questions = $('shoeQuestions');
+  questions.innerHTML = '';
+  GEAR_SHOE_QUESTIONS.forEach(function (question, i) {
+    var fs = document.createElement('fieldset');
+    if (missingIds.indexOf(question.id) >= 0) fs.className = 'missing';
+    fs.appendChild(document.createElement('legend')).textContent = (i + 1) + '. ' + L(question.text);
+    var options = document.createElement('div');
+    options.className = 'options';
+    YES_NO.forEach(function (opt) {
+      var label = document.createElement('label');
+      var input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'shoe-' + question.id;
+      input.checked = gear.answers[question.id] === opt.value;
+      input.addEventListener('change', function () {
+        gear.answers[question.id] = opt.value;
+        fs.classList.remove('missing');
+      });
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(L(opt.text)));
+      options.appendChild(label);
+    });
+    fs.appendChild(options);
+    questions.appendChild(fs);
+  });
+  $('shoeError').hidden = missingIds.length === 0;
+  $('shoeError').textContent = t('riskMissing');
+
+  var box = $('shoeResult');
+  box.innerHTML = '';
+  var result = gear.result;
+  box.hidden = !result || result.status === 'missing';
+  if (box.hidden) return;
+  if (result.status === 'ok') {
+    box.appendChild(document.createElement('h3')).textContent = t('shoeOk');
+    return;
+  }
+  box.appendChild(document.createElement('h3')).textContent = t('shoeReplace');
+  var list = document.createElement('ul');
+  list.className = 'points';
+  result.reasons.forEach(function (id) {
+    var question = GEAR_SHOE_QUESTIONS.filter(function (q) { return q.id === id; })[0];
+    list.appendChild(document.createElement('li')).textContent = L(question.why);
+  });
+  box.appendChild(list);
+}
+
+$('gearSport').addEventListener('change', function () {
+  gear.sport = this.value;
+  renderGear();
+});
+
+$('shoeForm').addEventListener('submit', function (event) {
+  event.preventDefault();
+  gear.result = shoeCheckResult(gear.answers);
+  renderGear();
+  $(gear.result.status === 'missing' ? 'shoeError' : 'shoeResult').scrollIntoView({behavior: 'smooth', block: 'nearest'});
 });
 
 // ---- Return to sport check ----
