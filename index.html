@@ -282,8 +282,6 @@ h1 a{color:var(--acc)}
 .search-type{display:inline-block;font-size:12px;font-weight:600;color:var(--acc);border:1px solid var(--acc);border-radius:10px;padding:0 8px;margin-inline-end:8px;vertical-align:2px}
 .search-list strong{font-weight:600}
 .search-list small{display:block;color:var(--muted);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.home-search{max-width:480px;margin:0 auto 12px}
-.home-search-results{max-width:480px;margin:-6px auto 14px}
 .search-flash{animation:search-flash 1.6s ease-out}
 @keyframes search-flash{0%,40%{box-shadow:0 0 0 3px #e8a33d}100%{box-shadow:0 0 0 3px transparent}}
 @media (prefers-reduced-motion:reduce){.search-flash{animation:none;outline:3px solid #e8a33d}}
@@ -301,9 +299,7 @@ h1 a{color:var(--acc)}
 .tour-skip{margin:0;padding:8px 0}
 .tour-body{display:grid;gap:8px;margin:10px 0}
 .tour-body:empty{display:none}
-.tour-langs{grid-template-columns:repeat(2,1fr)}
 .tour-body .secondary,.tour-body .primary{width:100%;min-height:48px}
-.tour-body .secondary[aria-pressed="true"]{background:var(--acc-soft)}
 .tour-nav{display:flex;gap:8px;margin-top:12px}
 .tour-nav button{flex:1;min-height:48px}
 .tour-nav .primary{width:auto}
@@ -372,7 +368,6 @@ body.touring .site-header{z-index:21;pointer-events:none}
 /* Soft glow behind the words so they stay sharp over the photo. */
 .cover-text{text-shadow:0 0 18px rgba(var(--veil),.9)}
 .cover-inner{max-width:1180px;margin:0 auto}
-.cover-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
 .facts div{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--acc);border-radius:4px;padding:14px;text-align:center;box-shadow:var(--shadow)}
 .facts strong{display:block;font-size:28px;font-weight:700;color:var(--acc);line-height:1.2}
@@ -387,7 +382,6 @@ body.touring .site-header{z-index:21;pointer-events:none}
 .footer-note a{color:inherit}
 .slogan{font-size:28px;font-weight:700;line-height:1.3;margin:14px 0 12px;color:var(--acc)}
 .cover-intro{color:var(--text);margin:0 auto 22px;max-width:460px}
-.start{display:inline-block;width:auto;text-decoration:none;padding:14px 32px;border-radius:4px}
 .cover-sos{color:var(--red);font-size:15px;font-weight:600;margin:16px 0 0}
 .features{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .feature{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px;color:var(--text);text-decoration:none;box-shadow:var(--shadow)}
@@ -434,7 +428,6 @@ h1 a{text-decoration:none}
 .blocked-row .link-btn{margin:0}
 .chat-crisis{background:var(--red-soft);border:1.5px solid var(--red);border-radius:6px;padding:12px;color:var(--text);margin-top:10px}
 .chat-crisis a{color:var(--red);font-weight:700}
-.start{text-decoration:none}
 @media (prefers-color-scheme:dark){.cover{--veil:15,22,32}.site-footer{background:#0a121b}}
 /* Phones: a narrow screen crops the photos to a thin strip, so the cover is
    a plain light blue with the usual dark words instead, and the photos are
@@ -461,7 +454,6 @@ h1 a{text-decoration:none}
   .cover-veil{background:linear-gradient(90deg,rgba(var(--veil),.94) 0%,rgba(var(--veil),.86) 38%,rgba(var(--veil),.35) 68%,rgba(var(--veil),.25) 100%)}
   .cover-inner{width:100%}
   .cover-text{max-width:700px}
-  .cover-actions{justify-content:flex-start}
   [dir=rtl] .cover-veil{background:linear-gradient(270deg,rgba(var(--veil),.94) 0%,rgba(var(--veil),.86) 38%,rgba(var(--veil),.35) 68%,rgba(var(--veil),.25) 100%)}
   .slogan{font-size:52px;margin-top:0}
   .cover-intro{font-size:20px;margin-inline-start:0;max-width:600px}
@@ -559,9 +551,6 @@ h1 a{text-decoration:none}
       <div class="cover-text">
         <p class="slogan" id="slogan"></p>
         <p class="cover-intro" id="coverIntro"></p>
-        <div class="search-box home-search"><label class="visually-hidden" for="homeSearchInput" id="homeSearchLabel"></label><input id="homeSearchInput" type="search" maxlength="60" autocomplete="off" enterkeyhint="search"></div>
-        <div class="search-results home-search-results" id="homeSearchResults"></div>
-        <div class="cover-actions"><a class="primary start" href="#assess" id="startBtn"></a><a class="secondary start" href="#comfort" id="chatCta"></a></div>
         <p class="tour-again"><button type="button" class="link-btn" id="tourOpen"></button></p>
         <p class="muted tour-again-hint" id="tourAgainHint" role="status" hidden></p>
         <p class="cover-sos" id="coverSos"></p>
@@ -1121,7 +1110,6 @@ var T = {
     seeComfort: 'Look after how you feel',
     slogan: 'On your road back to sport, I\'m always here.',
     coverIntro: 'Got hurt playing sport? That\'s okay. Take a deep breath. It is not your fault, and it is not the end of your sport. We\'ll help you work out what to do now and where to go, then walk with you, step by step, back to the game you love.',
-    startBtn: 'Start the check',
     coverSos: 'Emergency? Call 911 (US) · 120 (China) now.',
     featAssess: 'Check my injury',
     featAssessText: 'A few questions, then clear next steps.',
@@ -1131,7 +1119,6 @@ var T = {
     featCasesText: 'Real stories from people who recovered.',
     featHospitals: 'Nearby hospitals',
     featHospitalsText: 'Find the right kind of place on a map.',
-    chatCta: 'Talk to the AI',
     fact1: 'common sports injuries covered',
     fact2: 'steps: first aid, where to go, rehab',
     fact3: 'counseling hotlines, any time',
@@ -1636,7 +1623,6 @@ var T = {
     seeComfort: 'Cuidar cómo te sientes',
     slogan: 'En tu camino de vuelta al deporte, siempre estoy aquí.',
     coverIntro: '¿Te lesionaste haciendo deporte? Está bien. Respira hondo. No es tu culpa y no es el final de tu deporte. Te ayudamos a saber qué hacer ahora y adónde ir, y te acompañamos, paso a paso, de vuelta al deporte que amas.',
-    startBtn: 'Empezar la evaluación',
     coverSos: '¿Emergencia? Llama ya al 911 (EE. UU.) · 120 (China).',
     featAssess: 'Revisar mi lesión',
     featAssessText: 'Unas preguntas y luego pasos claros.',
@@ -1646,7 +1632,6 @@ var T = {
     featCasesText: 'Historias reales de personas que se recuperaron.',
     featHospitals: 'Hospitales cercanos',
     featHospitalsText: 'Encuentra el tipo de lugar adecuado en un mapa.',
-    chatCta: 'Habla con la IA',
     fact1: 'lesiones deportivas comunes incluidas',
     fact2: 'pasos: primeros auxilios, adónde ir, rehabilitación',
     fact3: 'líneas de ayuda emocional, a cualquier hora',
@@ -2151,7 +2136,6 @@ var T = {
     seeComfort: 'Prendre soin de ce que tu ressens',
     slogan: 'Sur ton chemin de retour au sport, je suis toujours là.',
     coverIntro: 'Blessé en faisant du sport ? Ce n’est pas grave. Respire. Ce n’est pas ta faute, et ce n’est pas la fin de ton sport. On t’aide à savoir quoi faire maintenant et où aller, et on t’accompagne, pas à pas, jusqu’au sport que tu aimes.',
-    startBtn: 'Commencer l’évaluation',
     coverSos: 'Urgence ? Appelle tout de suite le 911 (États-Unis) · 120 (Chine).',
     featAssess: 'Évaluer ma blessure',
     featAssessText: 'Quelques questions, puis des étapes claires.',
@@ -2161,7 +2145,6 @@ var T = {
     featCasesText: 'Histoires vraies de personnes qui se sont rétablies.',
     featHospitals: 'Hôpitaux proches',
     featHospitalsText: 'Trouve le bon type d’endroit sur une carte.',
-    chatCta: 'Parler à l’IA',
     fact1: 'blessures sportives courantes couvertes',
     fact2: 'étapes : premiers secours, où aller, rééducation',
     fact3: 'lignes d’écoute, à toute heure',
@@ -2666,7 +2649,6 @@ var T = {
     seeComfort: 'Позаботься о своих чувствах',
     slogan: 'На твоём пути обратно в спорт я всегда рядом.',
     coverIntro: 'Получил травму на тренировке? Ничего страшного. Сделай вдох. Это не твоя вина и не конец твоего спорта. Мы поможем понять, что делать сейчас и куда обратиться, и шаг за шагом проведём тебя обратно к любимому спорту.',
-    startBtn: 'Начать проверку',
     coverSos: 'Экстренный случай? Звони сейчас: 911 (США) · 120 (Китай).',
     featAssess: 'Проверить травму',
     featAssessText: 'Несколько вопросов, затем понятные шаги.',
@@ -2676,7 +2658,6 @@ var T = {
     featCasesText: 'Настоящие истории людей, которые восстановились.',
     featHospitals: 'Больницы рядом',
     featHospitalsText: 'Найди нужное место на карте.',
-    chatCta: 'Поговорить с ИИ',
     fact1: 'частых спортивных травм',
     fact2: 'шага: первая помощь, куда идти, реабилитация',
     fact3: 'линии психологической помощи, круглосуточно',
@@ -3182,7 +3163,6 @@ var T = {
     seeComfort: 'اعتنِ بمشاعرك',
     slogan: 'في طريق عودتك إلى الرياضة، أنا دائمًا معك.',
     coverIntro: 'أُصبت أثناء التمرين؟ لا بأس. خذ نفسًا. ليس ذنبك، وليست نهاية رياضتك. سنساعدك على معرفة ما تفعله الآن وإلى أين تذهب، ونرافقك خطوة بخطوة حتى تعود إلى الرياضة التي تحبها.',
-    startBtn: 'ابدأ الفحص',
     coverSos: 'حالة طارئة؟ اتصل الآن: 911 (الولايات المتحدة) · 120 (الصين).',
     featAssess: 'افحص إصابتك',
     featAssessText: 'بضعة أسئلة، ثم خطوات واضحة.',
@@ -3192,7 +3172,6 @@ var T = {
     featCasesText: 'قصص حقيقية لأشخاص تعافوا.',
     featHospitals: 'مستشفيات قريبة',
     featHospitalsText: 'جد المكان المناسب على الخريطة.',
-    chatCta: 'تحدّث مع الذكاء الاصطناعي',
     fact1: 'إصابة رياضية شائعة',
     fact2: 'خطوات: الإسعاف الأولي، إلى أين تذهب، التأهيل',
     fact3: 'خطوط دعم نفسي، على مدار الساعة',
@@ -3695,7 +3674,6 @@ var T = {
     seeComfort: '照顾好你的心情',
     slogan: '运动康复路上，我一直都在',
     coverIntro: '运动中受伤了？没关系，先深呼吸。受伤不是你的错，也不是终点。我们会陪你弄清楚现在该做什么、该去哪里，再一步一步，陪你回到热爱的赛场。',
-    startBtn: '开始自测',
     coverSos: '紧急情况？马上打 120（中国）· 911（美国）',
     featAssess: '急救自测',
     featAssessText: '回答几个问题，告诉你下一步怎么做。',
@@ -3705,7 +3683,6 @@ var T = {
     featCasesText: '看看别人是怎么恢复的。',
     featHospitals: '附近医院',
     featHospitalsText: '在地图上找到合适的医院。',
-    chatCta: '和 AI 聊聊',
     fact1: '种常见运动损伤',
     fact2: '步建议：急救、就医、康复',
     fact3: '心理热线，随时可打',
@@ -4202,9 +4179,9 @@ function renderStatic() {
   document.title = t('title');
   ['title', 'welcomeTitle', 'welcomeText', 'alertTitle', 'numbers', 'pickTitle', 'subTitle', 'questionsTitle', 'firstAidTitle', 'whereTitle', 'rehabTitle', 'comfortTitle', 'counselingTitle', 'disclaimer',
    'navHome', 'navAssess', 'navComfort', 'navCases', 'navHospitals', 'navLog', 'navLearn', 'learnTitle', 'learnIntro', 'cityTitle', 'cityIntro', 'cityLabel', 'citySearch', 'hospitalsTitle', 'hospitalsIntro', 'hospitalsEmergency',
-   'slogan', 'coverIntro', 'startBtn', 'coverSos', 'featAssess', 'featAssessText', 'featComfort', 'featComfortText',
+   'slogan', 'coverIntro', 'coverSos', 'featAssess', 'featAssessText', 'featComfort', 'featComfortText',
    'featCases', 'featCasesText', 'featHospitals', 'featHospitalsText', 'chatTitle', 'chatIntro', 'chatInputLabel', 'chatSend', 'chatCrisis',
-   'chatCta', 'fact1', 'fact2', 'fact3', 'fact4', 'featuresTitle', 'footerName', 'footerSos', 'photoCredit']
+   'fact1', 'fact2', 'fact3', 'fact4', 'featuresTitle', 'footerName', 'footerSos', 'photoCredit']
     .forEach(function (id) { $(id).textContent = t(id); });
   $('assessBtn').textContent = t('assess');
   $('restartBtn').textContent = t('restart');
@@ -6225,7 +6202,7 @@ $('dvClear').addEventListener('click', function () {
   renderDoctorVisit();
 });
 
-// ---- First-visit tour ----
+// ---- Guide: how to use this site ----
 // `step` is the index in TOUR_STEPS while the tour is open, or -1.
 var tour = {step: -1, opener: null};
 
@@ -6249,7 +6226,6 @@ function renderTour() {
 
   var body = $('tourBody');
   body.innerHTML = '';
-  body.className = 'tour-body' + (step.id === 'language' ? ' tour-langs' : '');
   function addButton(text, className, onClick) {
     var button = document.createElement('button');
     button.type = 'button';
@@ -6257,21 +6233,8 @@ function renderTour() {
     button.textContent = text;
     button.addEventListener('click', onClick);
     body.appendChild(button);
-    return button;
   }
-  if (step.id === 'language') {
-    document.querySelectorAll('#langList [data-lang]').forEach(function (choice) {
-      var button = addButton(choice.textContent, 'secondary', function () {
-        lang = choice.dataset.lang;
-        saveLang();
-        renderAll();
-        $('tourBody').querySelector('[data-lang="' + lang + '"]').focus();
-      });
-      button.dataset.lang = choice.dataset.lang;
-      button.lang = choice.lang;
-      button.setAttribute('aria-pressed', choice.dataset.lang === lang);
-    });
-  } else if (step.id === 'choose') {
+  if (step.id === 'choose') {
     addButton(t('tourHurt'), 'primary', function () { closeTour('assess'); });
     addButton(t('tourLookAround'), 'secondary', function () { showTourStep(tour.step + 1); });
   } else if (step.go) {
@@ -6306,10 +6269,9 @@ function openTour() {
   showTourStep(0);
 }
 
-// Closes the tour for good on this device. `view` is where to go next, if
-// anywhere; finishing goes home and says how to see it again.
+// `view` is where to go next, if anywhere; finishing goes home and says how
+// to see the guide again.
 function closeTour(view, finished) {
-  markTourSeen();
   tour.step = -1;
   renderTour();
   if (finished) $('tourAgainHint').hidden = false;
@@ -6350,18 +6312,16 @@ document.addEventListener('keydown', function (e) {
 });
 
 // ---- Site search ----
-// Two boxes share the same search: one in the header (behind the magnifier
-// button, on every page) and one on the home page.
+// The box opens from the magnifier button in the header, on every page.
 var SEARCH_ENTRIES = buildSearchEntries(T);
 var SEARCH_TYPE_KEYS = {feature: 'searchTypeFeature', injury: 'searchTypeInjury', topic: 'searchTypeTopic', city: 'searchTypeCity'};
 
 function renderSearch() {
   $('searchBtn').setAttribute('aria-label', t('searchOpen'));
   $('searchBtn').title = t('searchOpen');
-  ['searchLabel', 'homeSearchLabel'].forEach(function (id) { $(id).textContent = t('searchOpen'); });
-  ['searchInput', 'homeSearchInput'].forEach(function (id) { $(id).placeholder = t('searchPlaceholder'); });
+  $('searchLabel').textContent = t('searchOpen');
+  $('searchInput').placeholder = t('searchPlaceholder');
   renderSearchResults($('searchInput'), $('searchResults'), !$('searchPanel').hidden);
-  renderSearchResults($('homeSearchInput'), $('homeSearchResults'), document.activeElement === $('homeSearchInput') || $('homeSearchInput').value !== '');
 }
 
 // `showHelp` shows the suggested words while nothing is typed yet.
@@ -6439,8 +6399,6 @@ function flashSearchTarget(element) {
 function openSearchResult(entry) {
   setSearchPanelOpen(false);
   $('searchInput').value = '';
-  $('homeSearchInput').value = '';
-  renderSearchResults($('homeSearchInput'), $('homeSearchResults'), false);
   var view = {feature: entry.view, injury: 'assess', topic: 'learn', city: 'hospitals'}[entry.type];
   location.hash = view;
   // Showing a view scrolls to the top, so act once it is shown.
@@ -6469,9 +6427,9 @@ function openSearchResult(entry) {
 
 $('searchBtn').addEventListener('click', function () { setSearchPanelOpen($('searchPanel').hidden); });
 
-[[$('searchInput'), $('searchResults')], [$('homeSearchInput'), $('homeSearchResults')]].forEach(function (pair) {
-  var input = pair[0];
-  var box = pair[1];
+(function () {
+  var input = $('searchInput');
+  var box = $('searchResults');
   input.addEventListener('input', function () { renderSearchResults(input, box, true); });
   input.addEventListener('focus', function () { renderSearchResults(input, box, true); });
   input.addEventListener('keydown', function (e) {
@@ -6492,17 +6450,12 @@ $('searchBtn').addEventListener('click', function () { setSearchPanelOpen($('sea
     if (e.key === 'ArrowDown' && index < buttons.length - 1) { e.preventDefault(); buttons[index + 1].focus(); }
     if (e.key === 'ArrowUp') { e.preventDefault(); (index === 0 ? input : buttons[index - 1]).focus(); }
   });
-});
+})();
 
 document.addEventListener('keydown', function (e) {
-  if (e.key !== 'Escape') return;
-  if (!$('searchPanel').hidden) {
+  if (e.key === 'Escape' && !$('searchPanel').hidden) {
     setSearchPanelOpen(false);
     $('searchBtn').focus();
-  } else if ($('homeSearchResults').contains(document.activeElement) || document.activeElement === $('homeSearchInput')) {
-    $('homeSearchInput').value = '';
-    renderSearchResults($('homeSearchInput'), $('homeSearchResults'), false);
-    $('homeSearchInput').focus();
   }
 });
 
@@ -7960,7 +7913,6 @@ if ('serviceWorker' in navigator) {
 
 renderAll();
 showView();
-if (shouldShowTour(tourWasSeen(), currentView())) openTour();
 </script>
 <script type="module" src="firebase-cases.js" onerror="onCaseStoreFailed()"></script>
 <script type="module" src="firebase-account.js" onerror="onAccountFailed()"></script>

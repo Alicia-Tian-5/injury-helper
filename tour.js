@@ -1,16 +1,10 @@
-// The first-visit tour: pick a language, say whether you are hurt right now,
-// then one step for each part of the site with its tab outlined. Shown once
-// per device on the home page; "How to use this site" on the home page shows
-// it again. Uses riskText from risk-check.js.
-
-var TOUR_SEEN_KEY = 'injury-helper-tour-seen';
+// The guide opened by "How to use this site" on the home page: say whether
+// you are hurt right now, then one step for each part of the site with its
+// tab outlined. It never opens by itself. Uses riskText from risk-check.js.
 
 // `tabs` are the views whose tabs are outlined; `go` is the view the "Go
-// there now" button opens. The first two steps have buttons instead of text.
+// there now" button opens. The first step has buttons instead of next.
 var TOUR_STEPS = [
-  {id: 'language', tabs: [],
-    title: riskText('Welcome! First, choose your language', '¡Hola! Primero, elige tu idioma', 'Bienvenue ! D’abord, choisis ta langue', 'Привет! Сначала выбери язык', 'أهلًا بك! اختر لغتك أولًا', '欢迎！先选你的语言'),
-    text: riskText('You can change it any time with the Language button at the top.', 'Puedes cambiarlo cuando quieras con el botón Language de arriba.', 'Tu peux la changer à tout moment avec le bouton Language en haut.', 'Его можно сменить в любой момент кнопкой Language вверху.', 'يمكنك تغييرها في أي وقت من زر Language في الأعلى.', '之后随时可以点最上面的 Language 按钮再换。')},
   {id: 'choose', tabs: [],
     title: riskText('Right now, you are…', 'Ahora mismo…', 'En ce moment…', 'Сейчас ты…', 'الآن أنت…', '你现在是……'),
     text: riskText('If you are hurt, we will go straight to the check. Otherwise, a quick look around takes under a minute.', 'Si te has lesionado, vamos directo a la autoevaluación. Si no, un vistazo rápido lleva menos de un minuto.', 'Si tu es blessé, on va directement au test. Sinon, un petit tour prend moins d’une minute.', 'Если ты травмирован, сразу перейдём к проверке. Если нет, короткий обзор займёт меньше минуты.', 'إذا كنت مصابًا فسننتقل مباشرة إلى الفحص. وإلا، فجولة سريعة تستغرق أقل من دقيقة.', '如果你受伤了，我们直接去自测；不然，花不到一分钟带你转一圈。')},
@@ -28,16 +22,3 @@ var TOUR_STEPS = [
     text: riskText('See where you are most likely to get hurt, warm up along with a timer, log your training, check your gear and shoes, and see if today’s weather is good for sport.', 'Descubre dónde es más probable que te lesiones, calienta con un temporizador, registra tu entrenamiento, revisa tu equipo y calzado, y mira si el tiempo de hoy es bueno para hacer deporte.', 'Vois où tu risques le plus de te blesser, échauffe-toi avec un minuteur, note ton entraînement, vérifie ton équipement et tes chaussures, et regarde si la météo du jour convient au sport.', 'Узнай, где ты рискуешь травмироваться больше всего, разминайся под таймер, веди дневник тренировок, проверь экипировку и обувь и посмотри, подходит ли сегодняшняя погода для спорта.', 'اعرف أين يُرجّح أن تُصاب، وقم بالإحماء مع مؤقت، وسجّل تدريبك، وافحص معداتك وحذاءك، وانظر هل طقس اليوم مناسب للرياضة.', '测测你容易伤在哪、跟着热身、记训练量、看装备和鞋、看今天的天气适不适合运动。')}
 ];
 
-// The tour opens by itself only the first time, and only on the home page:
-// someone opening a link to another page already knows what they came for.
-function shouldShowTour(seen, view) {
-  return !seen && view === 'home';
-}
-
-function tourWasSeen() {
-  try { return localStorage.getItem(TOUR_SEEN_KEY) === 'yes'; } catch (e) { return false; }
-}
-
-function markTourSeen() {
-  try { localStorage.setItem(TOUR_SEEN_KEY, 'yes'); } catch (e) { /* storage blocked: shown again next visit */ }
-}
