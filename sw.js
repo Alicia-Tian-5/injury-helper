@@ -20,6 +20,7 @@ const PAGE_FILES = [
   'training-load.js',
   'gear.js',
   'weather.js',
+  'doctor-visit.js',
   'report.js',
   'backup.js',
   'group-chat.js',

@@ -23,6 +23,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="training-load.js"></script>
 <script src="gear.js"></script>
 <script src="weather.js"></script>
+<script src="doctor-visit.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -475,6 +476,44 @@ test('weather: every reminder is in all six languages', function () {
     WEATHER_TIPS[id].forEach(function (tip) {
       ['en', 'es', 'fr', 'ru', 'ar', 'zh'].forEach(function (code) { if (!tip[code]) throw new Error('missing ' + code + ' in ' + id); });
     });
+  });
+});
+test('doctor visit: the note lists only what was answered, in the language chosen', function () {
+  var answers = dvEmptyAnswers();
+  equal(describeForDoctor(answers, 'en', null).length, 0);
+  answers.part = 'knee';
+  answers.side = 'right';
+  answers.spread = 'point';
+  answers.types = ['sharp'];
+  answers.when = ['stairs'];
+  answers.score = '6';
+  answers.others = ['givingWay'];
+  answers.since = '2026-11-01';
+  var en = describeForDoctor(answers, 'en', findInjury('patella').name);
+  equal(en[0], 'Injury (from a self-check): Kneecap dislocation');
+  equal(en[1], 'Where: Knee, Right side; I can point to it with one finger');
+  equal(en.indexOf('Pain score: 6/10 (hard to ignore; it gets in the way of everyday things)') > 0, true);
+  var zh = describeForDoctor(answers, 'zh', null);
+  equal(zh[0], '部位：膝盖、右侧；能用一根手指指出具体位置');
+  equal(zh.indexOf('疼痛类型：刺痛') > 0, true);
+  equal(zh.indexOf('疼痛程度：6/10（很难忽略，影响日常活动）') > 0, true);
+  equal(describeForDoctor({part: '', side: '', spread: '', since: '', types: [], when: [], score: '0', others: []}, 'en', null)[0], 'Pain score: 0/10 (no pain)');
+});
+test('doctor visit: questions to ask depend on the injury; every text is in all six languages', function () {
+  equal(dvAskQuestions('patella').length, DV_ASK_COMMON.length + 3);
+  equal(dvAskQuestions('').length, DV_ASK_COMMON.length);
+  Object.keys(DV_ASK_BY_INJURY).forEach(function (id) { if (!findInjury(id)) throw new Error('no injury ' + id); });
+  var texts = [];
+  [DV_SIDES, DV_PARTS, DV_SPREADS, DV_PAIN_TYPES, DV_WHENS, DV_OTHERS, DV_BRING].forEach(function (list) {
+    list.forEach(function (item) { texts.push(item.name); if (item.explain) texts.push(item.explain); });
+  });
+  DV_SCORE_MEANINGS.forEach(function (m) { texts.push(m.text); });
+  DV_DOCTOR_ASKS.forEach(function (a) { texts.push(a.q, a.tip); });
+  Object.keys(DV_NOTE_LABELS).forEach(function (key) { texts.push(DV_NOTE_LABELS[key]); });
+  texts = texts.concat(DV_ASK_COMMON);
+  Object.keys(DV_ASK_BY_INJURY).forEach(function (id) { texts = texts.concat(DV_ASK_BY_INJURY[id]); });
+  texts.forEach(function (text) {
+    ['en', 'es', 'fr', 'ru', 'ar', 'zh'].forEach(function (code) { if (!text[code]) throw new Error('missing ' + code + ' in ' + text.en); });
   });
 });
 test('return to sport: any "no" means not yet, with what to work on', function () {

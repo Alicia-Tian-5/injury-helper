@@ -250,6 +250,19 @@ h1 a{color:var(--acc)}
 .weather{margin-bottom:16px}
 .weather-here{margin-top:10px}
 .weather-good{color:var(--green);font-weight:600}
+.dv h3{margin-top:18px}
+.dv fieldset{margin-bottom:14px}
+.dv .options label small{display:block;color:var(--muted);font-size:14px}
+.dv .options label:has(small){align-items:flex-start;flex:1 1 220px}
+.dv .options input{flex-shrink:0}
+.dv-score-meaning{margin:6px 0 0}
+.dv-note{border:1.5px solid var(--acc);border-radius:6px;padding:12px 14px;margin:16px 0;background:var(--acc-soft)}
+.dv-note h3{margin-top:0}
+.dv-note-text p{margin:0 0 4px}
+.dv-note-text{margin-bottom:10px}
+.dv-bring label{flex:1 1 100%}
+.dv-report{margin:8px 0 0;padding:8px 0}
+.dv-asks-tip{display:block;color:var(--muted);font-size:15px}
 .trend{margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .trend svg{display:block;width:100%;height:auto}
 .trend .grid{stroke:var(--line);stroke-width:1}
@@ -668,6 +681,32 @@ h1 a{text-decoration:none}
     <p class="error" id="cityError" role="alert" hidden></p>
     <div id="cityResult" aria-live="polite"></div>
   </section>
+  <section class="card dv" id="dvCard">
+    <h2 id="dvTitle"></h2>
+    <p class="muted" id="dvIntro"></p>
+    <label class="field"><span id="dvInjuryLabel"></span><select id="dvInjury"></select></label>
+    <h3 id="dvDescribeTitle"></h3>
+    <p class="muted" id="dvDescribeIntro"></p>
+    <div id="dvDescribe"></div>
+    <div class="dv-note">
+      <h3 id="dvNoteTitle"></h3>
+      <label class="field"><span id="dvNoteLangLabel"></span><select id="dvNoteLang"></select></label>
+      <p class="muted" id="dvNoteEmpty"></p>
+      <div class="dv-note-text" id="dvNote"></div>
+      <button type="button" class="secondary" id="dvCopy"></button>
+      <p class="success" id="dvCopied" role="status" hidden></p>
+      <p class="error" id="dvCopyFailed" role="alert" hidden></p>
+    </div>
+    <h3 id="dvBringTitle"></h3>
+    <div class="options dv-bring" id="dvBring"></div>
+    <button type="button" class="link-btn dv-report" id="dvOpenReport"></button>
+    <h3 id="dvDoctorAsksTitle"></h3>
+    <ul class="points" id="dvDoctorAsks"></ul>
+    <h3 id="dvAskTitle"></h3>
+    <ul class="points" id="dvAsk"></ul>
+    <p class="error" id="dvSaveFailed" role="alert" hidden></p>
+    <button type="button" class="secondary" id="dvClear"></button>
+  </section>
   <section class="card">
     <h2 id="hospitalsTitle"></h2>
     <p class="muted" id="hospitalsIntro"></p>
@@ -939,6 +978,7 @@ h1 a{text-decoration:none}
 <script src="training-load.js"></script>
 <script src="gear.js"></script>
 <script src="weather.js"></script>
+<script src="doctor-visit.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -1411,7 +1451,36 @@ var T = {
     weatherWarn_rain: 'Rain likely',
     weatherWarn_wind: 'Windy',
     weatherWarn_uv: 'Strong sun',
-    weatherNote: 'Weather data from Open-Meteo. Your location is only used to look up the weather and is not saved.'
+    weatherNote: 'Weather data from Open-Meteo. Your location is only used to look up the weather and is not saved.',
+    dvTitle: 'Getting ready to see a doctor',
+    dvIntro: 'Find the words for how it feels, and see what to bring, what the doctor may ask and what to ask them. Saved on this device only.',
+    dvInjuryLabel: 'What is the injury?',
+    dvInjuryPick: 'Not sure / skip',
+    dvDescribeTitle: 'Describe how it feels',
+    dvDescribeIntro: 'Tap what fits. A note for the doctor is written below as you go.',
+    dvPartLabel: 'Where does it hurt?',
+    dvPartPick: 'Choose a body part',
+    dvSideLabel: 'Which side?',
+    dvSpreadLabel: 'How big is the painful spot?',
+    dvTypesLabel: 'What does the pain feel like? (choose any)',
+    dvWhenLabel: 'When does it hurt most? (choose any)',
+    dvScoreLabel: 'How bad is it at its worst, from 0 to 10?',
+    dvScorePick: 'Choose a score',
+    dvOthersLabel: 'Anything else? (choose any)',
+    dvSinceLabel: 'When did it start?',
+    dvNoteTitle: 'Note for the doctor',
+    dvNoteLangLabel: 'Language of the note',
+    dvNoteEmpty: 'Tap a few answers above and the note appears here.',
+    dvCopy: 'Copy the note',
+    dvCopied: 'Copied. Paste it in a message, or show this screen to the doctor.',
+    dvCopyFailed: 'Could not copy. Press and hold the text to copy it, or show this screen.',
+    dvBringTitle: 'What to bring',
+    dvOpenReport: 'Open the report for your doctor',
+    dvDoctorAsksTitle: 'What the doctor may ask you',
+    dvAskTitle: 'Questions you can ask',
+    dvClear: 'Clear everything',
+    dvClearConfirm: 'Clear all your answers and ticks on this card?',
+    dvSaveFailed: 'Could not save. Your browser may be blocking storage (for example in a private window).'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -1878,7 +1947,36 @@ var T = {
     weatherWarn_rain: 'Probable lluvia',
     weatherWarn_wind: 'Viento fuerte',
     weatherWarn_uv: 'Sol fuerte',
-    weatherNote: 'Datos del tiempo de Open-Meteo. Tu ubicación solo se usa para consultar el tiempo y no se guarda.'
+    weatherNote: 'Datos del tiempo de Open-Meteo. Tu ubicación solo se usa para consultar el tiempo y no se guarda.',
+    dvTitle: 'Prepararte para ir al médico',
+    dvIntro: 'Encuentra las palabras para describir lo que sientes, y mira qué llevar, qué puede preguntarte el médico y qué preguntarle tú. Solo se guarda en este dispositivo.',
+    dvInjuryLabel: '¿Qué lesión es?',
+    dvInjuryPick: 'No lo sé / saltar',
+    dvDescribeTitle: 'Describe lo que sientes',
+    dvDescribeIntro: 'Toca lo que encaje. Abajo se va escribiendo una nota para el médico.',
+    dvPartLabel: '¿Dónde te duele?',
+    dvPartPick: 'Elige una parte del cuerpo',
+    dvSideLabel: '¿De qué lado?',
+    dvSpreadLabel: '¿Qué tamaño tiene la zona que duele?',
+    dvTypesLabel: '¿Cómo es el dolor? (elige los que quieras)',
+    dvWhenLabel: '¿Cuándo duele más? (elige los que quieras)',
+    dvScoreLabel: '¿Cuánto duele en el peor momento, de 0 a 10?',
+    dvScorePick: 'Elige un número',
+    dvOthersLabel: '¿Algo más? (elige los que quieras)',
+    dvSinceLabel: '¿Cuándo empezó?',
+    dvNoteTitle: 'Nota para el médico',
+    dvNoteLangLabel: 'Idioma de la nota',
+    dvNoteEmpty: 'Toca algunas respuestas arriba y la nota aparecerá aquí.',
+    dvCopy: 'Copiar la nota',
+    dvCopied: 'Copiada. Pégala en un mensaje o enséñale esta pantalla al médico.',
+    dvCopyFailed: 'No se pudo copiar. Mantén pulsado el texto para copiarlo, o enseña esta pantalla.',
+    dvBringTitle: 'Qué llevar',
+    dvOpenReport: 'Abrir el informe para tu médico',
+    dvDoctorAsksTitle: 'Lo que el médico puede preguntarte',
+    dvAskTitle: 'Preguntas que puedes hacer',
+    dvClear: 'Borrar todo',
+    dvClearConfirm: '¿Borrar todas tus respuestas y marcas de esta tarjeta?',
+    dvSaveFailed: 'No se pudo guardar. Puede que tu navegador bloquee el almacenamiento (por ejemplo, en una ventana privada).'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -2345,7 +2443,36 @@ var T = {
     weatherWarn_rain: 'Pluie probable',
     weatherWarn_wind: 'Vent fort',
     weatherWarn_uv: 'Soleil fort',
-    weatherNote: 'Données météo d’Open-Meteo. Ta position sert seulement à chercher la météo et n’est pas enregistrée.'
+    weatherNote: 'Données météo d’Open-Meteo. Ta position sert seulement à chercher la météo et n’est pas enregistrée.',
+    dvTitle: 'Se préparer à voir un médecin',
+    dvIntro: 'Trouve les mots pour décrire ce que tu ressens, et vois quoi apporter, ce que le médecin peut demander et quoi lui demander. Enregistré sur cet appareil seulement.',
+    dvInjuryLabel: 'Quelle est la blessure ?',
+    dvInjuryPick: 'Je ne sais pas / passer',
+    dvDescribeTitle: 'Décrire ce que tu ressens',
+    dvDescribeIntro: 'Touche ce qui correspond. Une note pour le médecin s’écrit en dessous au fur et à mesure.',
+    dvPartLabel: 'Où as-tu mal ?',
+    dvPartPick: 'Choisis une partie du corps',
+    dvSideLabel: 'Quel côté ?',
+    dvSpreadLabel: 'Quelle est la taille de la zone douloureuse ?',
+    dvTypesLabel: 'À quoi ressemble la douleur ? (plusieurs choix possibles)',
+    dvWhenLabel: 'Quand est-ce que ça fait le plus mal ? (plusieurs choix possibles)',
+    dvScoreLabel: 'À quel point ça fait mal au pire, de 0 à 10 ?',
+    dvScorePick: 'Choisis une note',
+    dvOthersLabel: 'Autre chose ? (plusieurs choix possibles)',
+    dvSinceLabel: 'Depuis quand ?',
+    dvNoteTitle: 'Note pour le médecin',
+    dvNoteLangLabel: 'Langue de la note',
+    dvNoteEmpty: 'Touche quelques réponses plus haut et la note apparaîtra ici.',
+    dvCopy: 'Copier la note',
+    dvCopied: 'Copiée. Colle-la dans un message, ou montre cet écran au médecin.',
+    dvCopyFailed: 'Impossible de copier. Appuie longuement sur le texte pour le copier, ou montre cet écran.',
+    dvBringTitle: 'Quoi apporter',
+    dvOpenReport: 'Ouvrir le rapport pour ton médecin',
+    dvDoctorAsksTitle: 'Ce que le médecin peut te demander',
+    dvAskTitle: 'Questions que tu peux poser',
+    dvClear: 'Tout effacer',
+    dvClearConfirm: 'Effacer toutes tes réponses et cases cochées de cette carte ?',
+    dvSaveFailed: 'Impossible d’enregistrer. Ton navigateur bloque peut-être le stockage (par exemple en navigation privée).'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -2812,7 +2939,36 @@ var T = {
     weatherWarn_rain: 'Вероятен дождь',
     weatherWarn_wind: 'Сильный ветер',
     weatherWarn_uv: 'Сильное солнце',
-    weatherNote: 'Данные о погоде — Open-Meteo. Местоположение используется только для запроса погоды и не сохраняется.'
+    weatherNote: 'Данные о погоде — Open-Meteo. Местоположение используется только для запроса погоды и не сохраняется.',
+    dvTitle: 'Подготовка к визиту к врачу',
+    dvIntro: 'Подбери слова, чтобы описать ощущения, и посмотри, что взять с собой, что может спросить врач и что спросить у него. Хранится только на этом устройстве.',
+    dvInjuryLabel: 'Что за травма?',
+    dvInjuryPick: 'Не знаю / пропустить',
+    dvDescribeTitle: 'Опиши ощущения',
+    dvDescribeIntro: 'Отмечай, что подходит. Ниже по ходу появляется записка для врача.',
+    dvPartLabel: 'Где болит?',
+    dvPartPick: 'Выбери часть тела',
+    dvSideLabel: 'С какой стороны?',
+    dvSpreadLabel: 'Какого размера болезненное место?',
+    dvTypesLabel: 'Какая это боль? (можно несколько)',
+    dvWhenLabel: 'Когда болит сильнее всего? (можно несколько)',
+    dvScoreLabel: 'Насколько сильно болит в худший момент, от 0 до 10?',
+    dvScorePick: 'Выбери оценку',
+    dvOthersLabel: 'Что-то ещё? (можно несколько)',
+    dvSinceLabel: 'Когда началось?',
+    dvNoteTitle: 'Записка для врача',
+    dvNoteLangLabel: 'Язык записки',
+    dvNoteEmpty: 'Отметь несколько ответов выше, и записка появится здесь.',
+    dvCopy: 'Скопировать записку',
+    dvCopied: 'Скопировано. Вставь в сообщение или покажи этот экран врачу.',
+    dvCopyFailed: 'Не удалось скопировать. Нажми и удерживай текст, чтобы скопировать, или покажи экран.',
+    dvBringTitle: 'Что взять с собой',
+    dvOpenReport: 'Открыть отчёт для врача',
+    dvDoctorAsksTitle: 'Что может спросить врач',
+    dvAskTitle: 'Вопросы, которые можно задать',
+    dvClear: 'Очистить всё',
+    dvClearConfirm: 'Удалить все ответы и отметки в этой карточке?',
+    dvSaveFailed: 'Не удалось сохранить. Возможно, браузер блокирует хранилище (например, в приватном окне).'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -3280,7 +3436,36 @@ var T = {
     weatherWarn_rain: 'مطر محتمل',
     weatherWarn_wind: 'رياح قوية',
     weatherWarn_uv: 'شمس قوية',
-    weatherNote: 'بيانات الطقس من Open-Meteo. يُستخدم موقعك فقط لجلب الطقس ولا يُحفظ.'
+    weatherNote: 'بيانات الطقس من Open-Meteo. يُستخدم موقعك فقط لجلب الطقس ولا يُحفظ.',
+    dvTitle: 'الاستعداد لزيارة الطبيب',
+    dvIntro: 'اعثر على الكلمات لوصف ما تشعر به، واعرف ماذا تحضر، وماذا قد يسألك الطبيب، وماذا تسأله. يُحفظ على هذا الجهاز فقط.',
+    dvInjuryLabel: 'ما الإصابة؟',
+    dvInjuryPick: 'لست متأكدًا / تخطَّ',
+    dvDescribeTitle: 'صف ما تشعر به',
+    dvDescribeIntro: 'اضغط على ما يناسبك. تُكتب ملاحظة للطبيب في الأسفل أثناء ذلك.',
+    dvPartLabel: 'أين يؤلمك؟',
+    dvPartPick: 'اختر جزءًا من الجسم',
+    dvSideLabel: 'أي جهة؟',
+    dvSpreadLabel: 'ما حجم المكان المؤلم؟',
+    dvTypesLabel: 'كيف يبدو الألم؟ (اختر ما يناسب)',
+    dvWhenLabel: 'متى يشتد الألم؟ (اختر ما يناسب)',
+    dvScoreLabel: 'ما شدة الألم في أسوأ حالاته، من 0 إلى 10؟',
+    dvScorePick: 'اختر رقمًا',
+    dvOthersLabel: 'شيء آخر؟ (اختر ما يناسب)',
+    dvSinceLabel: 'متى بدأ؟',
+    dvNoteTitle: 'ملاحظة للطبيب',
+    dvNoteLangLabel: 'لغة الملاحظة',
+    dvNoteEmpty: 'اختر بعض الإجابات في الأعلى وستظهر الملاحظة هنا.',
+    dvCopy: 'انسخ الملاحظة',
+    dvCopied: 'تم النسخ. الصقها في رسالة، أو اعرض هذه الشاشة على الطبيب.',
+    dvCopyFailed: 'تعذّر النسخ. اضغط مطولًا على النص لنسخه، أو اعرض هذه الشاشة.',
+    dvBringTitle: 'ماذا تحضر',
+    dvOpenReport: 'افتح تقرير الطبيب',
+    dvDoctorAsksTitle: 'ما قد يسألك عنه الطبيب',
+    dvAskTitle: 'أسئلة يمكنك طرحها',
+    dvClear: 'امسح الكل',
+    dvClearConfirm: 'هل تريد مسح كل إجاباتك وعلاماتك في هذه البطاقة؟',
+    dvSaveFailed: 'تعذّر الحفظ. ربما يمنع متصفحك التخزين (مثلًا في نافذة خاصة).'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -3745,7 +3930,36 @@ var T = {
     weatherWarn_rain: '可能下雨',
     weatherWarn_wind: '风大',
     weatherWarn_uv: '紫外线强',
-    weatherNote: '天气数据来自 Open-Meteo。你的位置只用来查天气，不会保存。'
+    weatherNote: '天气数据来自 Open-Meteo。你的位置只用来查天气，不会保存。',
+    dvTitle: '看医生前准备',
+    dvIntro: '帮你说清楚受伤的感受，再看看要带什么、医生可能问什么、你可以问医生什么。只保存在这台设备上。',
+    dvInjuryLabel: '是什么伤？',
+    dvInjuryPick: '不确定 / 先跳过',
+    dvDescribeTitle: '帮我描述感受',
+    dvDescribeIntro: '点选符合的就行，下面会边选边写好给医生看的一段话。',
+    dvPartLabel: '哪里疼？',
+    dvPartPick: '选一个部位',
+    dvSideLabel: '哪一侧？',
+    dvSpreadLabel: '疼的地方有多大？',
+    dvTypesLabel: '是什么样的疼？（可多选）',
+    dvWhenLabel: '什么时候最疼？（可多选）',
+    dvScoreLabel: '最疼的时候有多疼？0 到 10 分',
+    dvScorePick: '选一个分数',
+    dvOthersLabel: '还有别的感觉吗？（可多选）',
+    dvSinceLabel: '从哪天开始的？',
+    dvNoteTitle: '给医生看的话',
+    dvNoteLangLabel: '用哪种语言',
+    dvNoteEmpty: '在上面点选几项，这里就会出现给医生看的话。',
+    dvCopy: '复制这段话',
+    dvCopied: '已复制。可以粘贴到消息里，或者直接把这个屏幕给医生看。',
+    dvCopyFailed: '没能复制。可以长按文字手动复制，或者直接给医生看这个屏幕。',
+    dvBringTitle: '要带什么',
+    dvOpenReport: '打开"给医生的报告"',
+    dvDoctorAsksTitle: '医生可能会问你',
+    dvAskTitle: '你可以问医生',
+    dvClear: '全部清空',
+    dvClearConfirm: '清空这张卡片上所有的选择和勾？',
+    dvSaveFailed: '没能保存。你的浏览器可能禁止了存储（比如无痕窗口）。'
   }
 };
 
@@ -5096,6 +5310,7 @@ function renderAll() {
   renderTraining();
   renderGear();
   renderWeather();
+  renderDoctorVisit();
   renderGroupChat();
   renderFriends();
   renderCategories();
@@ -5607,6 +5822,207 @@ $('weatherHereBtn').addEventListener('click', function () {
   }, function (error) {
     weatherFail(request, error.code === error.PERMISSION_DENIED ? 'weatherNoPermission' : 'weatherNoLocation');
   }, {timeout: 15000, maximumAge: 600000});
+});
+
+// ---- Getting ready to see a doctor ----
+// `noteLang` is null until the visitor picks one, so the note follows the page.
+var dv = {answers: loadDoctorVisit(), noteLang: null};
+
+function dvSave() {
+  $('dvSaveFailed').hidden = saveDoctorVisit(dv.answers);
+  $('dvSaveFailed').textContent = t('dvSaveFailed');
+}
+
+// A group of radio buttons or checkboxes. `key` is the answer it fills; a
+// list answer takes several ticks. `explain` adds a second, smaller line.
+function dvChoices(legendText, key, items, multiple) {
+  var fs = document.createElement('fieldset');
+  fs.appendChild(document.createElement('legend')).textContent = legendText;
+  var options = document.createElement('div');
+  options.className = 'options';
+  items.forEach(function (item) {
+    var label = document.createElement('label');
+    var input = document.createElement('input');
+    input.type = multiple ? 'checkbox' : 'radio';
+    input.name = 'dv-' + key;
+    input.checked = multiple ? dv.answers[key].indexOf(item.id) >= 0 : dv.answers[key] === item.id;
+    input.addEventListener('change', function () {
+      if (multiple) {
+        dv.answers[key] = dv.answers[key].filter(function (id) { return id !== item.id; });
+        if (input.checked) dv.answers[key].push(item.id);
+      } else {
+        dv.answers[key] = item.id;
+      }
+      dvSave();
+      renderDvNote();
+    });
+    label.appendChild(input);
+    var text = document.createElement('span');
+    text.textContent = L(item.name);
+    if (item.explain) text.appendChild(document.createElement('small')).textContent = L(item.explain);
+    label.appendChild(text);
+    options.appendChild(label);
+  });
+  fs.appendChild(options);
+  return fs;
+}
+
+function dvSelect(labelText, pickText, values, current, onChange) {
+  var label = document.createElement('label');
+  label.className = 'field';
+  label.appendChild(document.createElement('span')).textContent = labelText;
+  var select = document.createElement('select');
+  select.appendChild(new Option(pickText, ''));
+  values.forEach(function (pair) { select.appendChild(new Option(pair[1], pair[0])); });
+  select.value = current;
+  select.addEventListener('change', function () { onChange(select.value); });
+  label.appendChild(select);
+  return label;
+}
+
+function renderDvNote() {
+  var code = dv.noteLang || lang;
+  var injury = dv.answers.injury ? findInjury(dv.answers.injury) : null;
+  var lines = describeForDoctor(dv.answers, code, injury ? injury.name : null);
+  var box = $('dvNote');
+  box.innerHTML = '';
+  box.lang = code;
+  box.dir = code === 'ar' ? 'rtl' : 'ltr';
+  lines.forEach(function (text) { box.appendChild(document.createElement('p')).textContent = text; });
+  $('dvNoteEmpty').hidden = lines.length > 0;
+  $('dvCopy').hidden = lines.length === 0;
+  $('dvCopied').hidden = true;
+  $('dvCopyFailed').hidden = true;
+  var meaning = $('dvScoreMeaning');
+  if (meaning) meaning.textContent = dv.answers.score === '' ? '' : L(dvScoreMeaning(Number(dv.answers.score)));
+}
+
+function renderDoctorVisit() {
+  ['dvTitle', 'dvIntro', 'dvInjuryLabel', 'dvDescribeTitle', 'dvDescribeIntro', 'dvNoteTitle', 'dvNoteLangLabel', 'dvNoteEmpty', 'dvCopy', 'dvCopied', 'dvCopyFailed',
+    'dvBringTitle', 'dvOpenReport', 'dvDoctorAsksTitle', 'dvAskTitle', 'dvClear']
+    .forEach(function (key) { $(key).textContent = t(key); });
+
+  var injurySelect = $('dvInjury');
+  injurySelect.innerHTML = '';
+  injurySelect.appendChild(new Option(t('dvInjuryPick'), ''));
+  INJURIES.forEach(function (injury) { injurySelect.appendChild(new Option(L(injury.name), injury.id)); });
+  injurySelect.value = dv.answers.injury;
+
+  var describe = $('dvDescribe');
+  describe.innerHTML = '';
+  describe.appendChild(dvSelect(t('dvPartLabel'), t('dvPartPick'), DV_PARTS.map(function (part) { return [part.id, L(part.name)]; }), dv.answers.part, function (value) {
+    dv.answers.part = value;
+    dvSave();
+    renderDvNote();
+  }));
+  describe.appendChild(dvChoices(t('dvSideLabel'), 'side', DV_SIDES, false));
+  describe.appendChild(dvChoices(t('dvSpreadLabel'), 'spread', DV_SPREADS, false));
+  describe.appendChild(dvChoices(t('dvTypesLabel'), 'types', DV_PAIN_TYPES, true));
+  describe.appendChild(dvChoices(t('dvWhenLabel'), 'when', DV_WHENS, true));
+  var scores = [];
+  for (var score = 0; score <= 10; score++) scores.push([String(score), String(score)]);
+  var scoreField = dvSelect(t('dvScoreLabel'), t('dvScorePick'), scores, dv.answers.score, function (value) {
+    dv.answers.score = value;
+    dvSave();
+    renderDvNote();
+  });
+  var meaning = document.createElement('p');
+  meaning.className = 'muted dv-score-meaning';
+  meaning.id = 'dvScoreMeaning';
+  scoreField.appendChild(meaning);
+  describe.appendChild(scoreField);
+  describe.appendChild(dvChoices(t('dvOthersLabel'), 'others', DV_OTHERS, true));
+  var since = document.createElement('label');
+  since.className = 'field';
+  since.appendChild(document.createElement('span')).textContent = t('dvSinceLabel');
+  var sinceInput = document.createElement('input');
+  sinceInput.type = 'date';
+  sinceInput.max = logDateString(new Date());
+  sinceInput.value = dv.answers.since;
+  sinceInput.addEventListener('change', function () {
+    dv.answers.since = DATE_PATTERN.test(sinceInput.value) ? sinceInput.value : '';
+    dvSave();
+    renderDvNote();
+  });
+  since.appendChild(sinceInput);
+  describe.appendChild(since);
+
+  var noteLang = $('dvNoteLang');
+  if (noteLang.options.length === 0) {
+    // The same languages as the Language menu, each named in its own writing.
+    document.querySelectorAll('#langList [data-lang]').forEach(function (button) {
+      var option = new Option(button.textContent, button.dataset.lang);
+      option.lang = button.lang;
+      noteLang.appendChild(option);
+    });
+  }
+  noteLang.value = dv.noteLang || lang;
+  renderDvNote();
+
+  var bring = $('dvBring');
+  bring.innerHTML = '';
+  DV_BRING.forEach(function (item) {
+    var label = document.createElement('label');
+    var input = document.createElement('input');
+    input.type = 'checkbox';
+    input.checked = dv.answers.bring.indexOf(item.id) >= 0;
+    input.addEventListener('change', function () {
+      dv.answers.bring = dv.answers.bring.filter(function (id) { return id !== item.id; });
+      if (input.checked) dv.answers.bring.push(item.id);
+      dvSave();
+    });
+    label.appendChild(input);
+    label.appendChild(document.createTextNode(L(item.name)));
+    bring.appendChild(label);
+  });
+
+  var doctorAsks = $('dvDoctorAsks');
+  doctorAsks.innerHTML = '';
+  DV_DOCTOR_ASKS.forEach(function (ask) {
+    var li = document.createElement('li');
+    li.appendChild(document.createElement('strong')).textContent = L(ask.q);
+    var tip = li.appendChild(document.createElement('span'));
+    tip.className = 'dv-asks-tip';
+    tip.textContent = L(ask.tip);
+    doctorAsks.appendChild(li);
+  });
+  var ask = $('dvAsk');
+  ask.innerHTML = '';
+  dvAskQuestions(dv.answers.injury).forEach(function (question) { ask.appendChild(document.createElement('li')).textContent = L(question); });
+}
+
+$('dvInjury').addEventListener('change', function () {
+  dv.answers.injury = this.value;
+  dvSave();
+  renderDoctorVisit();
+});
+
+$('dvNoteLang').addEventListener('change', function () {
+  dv.noteLang = this.value;
+  renderDvNote();
+});
+
+$('dvCopy').addEventListener('click', function () {
+  var text = Array.prototype.map.call($('dvNote').children, function (p) { return p.textContent; }).join('\n');
+  function shown(ok) {
+    $('dvCopied').hidden = !ok;
+    $('dvCopyFailed').hidden = ok;
+  }
+  if (!navigator.clipboard) return shown(false);
+  navigator.clipboard.writeText(text).then(function () { shown(true); }, function () { shown(false); });
+});
+
+$('dvOpenReport').addEventListener('click', function () {
+  location.hash = 'log';
+  // Wait for the page to switch, then bring the report into sight.
+  setTimeout(function () { $('reportCard').scrollIntoView({behavior: 'smooth', block: 'start'}); }, 50);
+});
+
+$('dvClear').addEventListener('click', function () {
+  if (!confirm(t('dvClearConfirm'))) return;
+  dv.answers = dvEmptyAnswers();
+  dvSave();
+  renderDoctorVisit();
 });
 
 // ---- Return to sport check ----
