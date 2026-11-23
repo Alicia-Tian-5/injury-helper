@@ -24,6 +24,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="gear.js"></script>
 <script src="weather.js"></script>
 <script src="doctor-visit.js"></script>
+<script src="tour.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -514,6 +515,21 @@ test('doctor visit: questions to ask depend on the injury; every text is in all 
   Object.keys(DV_ASK_BY_INJURY).forEach(function (id) { texts = texts.concat(DV_ASK_BY_INJURY[id]); });
   texts.forEach(function (text) {
     ['en', 'es', 'fr', 'ru', 'ar', 'zh'].forEach(function (code) { if (!text[code]) throw new Error('missing ' + code + ' in ' + text.en); });
+  });
+});
+test('tour: opens by itself only the first time, and only on the home page', function () {
+  equal(shouldShowTour(false, 'home'), true);
+  equal(shouldShowTour(true, 'home'), false);
+  equal(shouldShowTour(false, 'hospitals'), false);
+});
+test('tour: starts with language and "are you hurt", every step is in six languages, and every outlined tab exists', function () {
+  equal(TOUR_STEPS.map(function (step) { return step.id; }).join(','), 'language,choose,assess,hospitals,recovery,learn');
+  var views = ['home', 'assess', 'comfort', 'cases', 'hospitals', 'log', 'learn'];
+  TOUR_STEPS.forEach(function (step) {
+    step.tabs.concat(step.go ? [step.go] : []).forEach(function (view) { if (views.indexOf(view) < 0) throw new Error('no view ' + view); });
+    [step.title, step.text].forEach(function (text) {
+      ['en', 'es', 'fr', 'ru', 'ar', 'zh'].forEach(function (code) { if (!text[code]) throw new Error('missing ' + code + ' in ' + step.id); });
+    });
   });
 });
 test('return to sport: any "no" means not yet, with what to work on', function () {
