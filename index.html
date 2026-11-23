@@ -35,6 +35,7 @@ body{margin:0;background:var(--bg);color:var(--text);font:17px/1.6 var(--sans)}
 /* Headings in a serif, like a printed medical handbook; body text in a plain sans for easy reading on phones. */
 h1,h2,h3{font-family:var(--serif)}
 html,body{overflow-x:clip}
+html{scroll-padding-top:calc(var(--header-height,120px) + 10px)}
 main{max-width:680px;margin:0 auto;padding:16px 16px 48px}
 h1{font-size:21px;font-weight:700;margin:0;line-height:1.3;letter-spacing:.01em}
 h2{font-size:20px;font-weight:600;margin:0 0 10px}
@@ -282,9 +283,14 @@ h1 a{color:var(--acc)}
 .search-type{display:inline-block;font-size:12px;font-weight:600;color:var(--acc);border:1px solid var(--acc);border-radius:10px;padding:0 8px;margin-inline-end:8px;vertical-align:2px}
 .search-list strong{font-weight:600}
 .search-list small{display:block;color:var(--muted);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.search-flash{animation:search-flash 1.6s ease-out}
-@keyframes search-flash{0%,40%{box-shadow:0 0 0 3px #e8a33d}100%{box-shadow:0 0 0 3px transparent}}
-@media (prefers-reduced-motion:reduce){.search-flash{animation:none;outline:3px solid #e8a33d}}
+.learn-toc{margin:0 0 16px}
+.learn-toc-list{display:flex;flex-wrap:wrap;gap:8px}
+.learn-toc-list button{background:var(--card);color:var(--acc);border:1.5px solid var(--acc);border-radius:18px;padding:7px 14px;min-height:40px;font-size:15px;font-weight:600}
+.learn-toc-list button:hover{background:var(--acc-soft)}
+.toc-back{display:block;width:fit-content;margin:-8px 0 2px;margin-inline-start:auto;padding:6px 0;font-size:14px}
+.flash-outline{animation:flash-outline 1.6s ease-out}
+@keyframes flash-outline{0%,40%{box-shadow:0 0 0 3px #e8a33d}100%{box-shadow:0 0 0 3px transparent}}
+@media (prefers-reduced-motion:reduce){.flash-outline{animation:none;outline:3px solid #e8a33d}}
 .tour-again{margin:10px 0 0}
 .tour-again .link-btn{margin:0;padding:8px 0}
 .tour-backdrop{position:fixed;inset:0;z-index:20;background:rgba(10,20,35,.45);display:flex;align-items:center;justify-content:center;padding:16px}
@@ -769,7 +775,9 @@ h1 a{text-decoration:none}
 <div class="view" id="view-learn" hidden>
   <h2 class="section-title" id="learnTitle"></h2>
   <p class="muted learn-intro" id="learnIntro"></p>
+  <nav class="learn-toc" id="learnToc" aria-labelledby="learnTocTitle"><h3 class="visually-hidden" id="learnTocTitle"></h3><div class="learn-toc-list" id="learnTocList"></div></nav>
   <section class="card risk" id="riskCard">
+    <button type="button" class="link-btn toc-back" data-toc-back></button>
     <h2 id="riskTitle"></h2>
     <p class="muted" id="riskIntro"></p>
     <button type="button" class="primary" id="riskOpen"></button>
@@ -782,6 +790,7 @@ h1 a{text-decoration:none}
     <p class="muted rts-note" id="riskNote"></p>
   </section>
   <section class="card warmup" id="warmupCard">
+    <button type="button" class="link-btn toc-back" data-toc-back></button>
     <h2 id="warmupTitle"></h2>
     <p class="muted" id="warmupIntro"></p>
     <div id="warmupSetup">
@@ -811,6 +820,7 @@ h1 a{text-decoration:none}
     </div>
   </section>
   <section class="card training" id="trainingCard">
+    <button type="button" class="link-btn toc-back" data-toc-back></button>
     <h2 id="trainingTitle"></h2>
     <p class="muted" id="trainingIntro"></p>
     <form id="trainingForm" novalidate>
@@ -830,6 +840,7 @@ h1 a{text-decoration:none}
     <p class="muted rts-note" id="trainingNote"></p>
   </section>
   <section class="card gear" id="gearCard">
+    <button type="button" class="link-btn toc-back" data-toc-back></button>
     <h2 id="gearTitle"></h2>
     <p class="muted" id="gearIntro"></p>
     <label class="field"><span id="gearSportLabel"></span><select id="gearSport"></select></label>
@@ -843,6 +854,7 @@ h1 a{text-decoration:none}
     <div class="rts-result" id="shoeResult" aria-live="polite" hidden></div>
   </section>
   <section class="card weather" id="weatherCard">
+    <button type="button" class="link-btn toc-back" data-toc-back></button>
     <h2 id="weatherTitle"></h2>
     <p class="muted" id="weatherIntro"></p>
     <form class="city-form" id="weatherForm" novalidate>
@@ -1567,7 +1579,15 @@ var T = {
     searchTypeFeature: 'Feature',
     searchTypeInjury: 'Injury',
     searchTypeTopic: 'Health tip',
-    searchTypeCity: 'City'
+    searchTypeCity: 'City',
+    tocTitle: 'On this page',
+    tocRisk: 'Where I might get hurt',
+    tocWarmup: 'Warm up',
+    tocTraining: 'Training log',
+    tocGear: 'Gear and shoes',
+    tocWeather: 'Today’s weather',
+    tocKnowledge: 'Health tips',
+    tocBack: '↑ Back to contents'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -2079,7 +2099,15 @@ var T = {
     searchTypeFeature: 'Función',
     searchTypeInjury: 'Lesión',
     searchTypeTopic: 'Consejo',
-    searchTypeCity: 'Ciudad'
+    searchTypeCity: 'Ciudad',
+    tocTitle: 'En esta página',
+    tocRisk: 'Dónde me puedo lesionar',
+    tocWarmup: 'Calentamiento',
+    tocTraining: 'Registro de entrenamiento',
+    tocGear: 'Equipo y calzado',
+    tocWeather: 'El tiempo de hoy',
+    tocKnowledge: 'Consejos de salud',
+    tocBack: '↑ Volver al índice'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -2591,7 +2619,15 @@ var T = {
     searchTypeFeature: 'Fonction',
     searchTypeInjury: 'Blessure',
     searchTypeTopic: 'Conseil santé',
-    searchTypeCity: 'Ville'
+    searchTypeCity: 'Ville',
+    tocTitle: 'Sur cette page',
+    tocRisk: 'Où je risque de me blesser',
+    tocWarmup: 'Échauffement',
+    tocTraining: 'Carnet d’entraînement',
+    tocGear: 'Équipement et chaussures',
+    tocWeather: 'La météo du jour',
+    tocKnowledge: 'Conseils santé',
+    tocBack: '↑ Retour au sommaire'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -3103,7 +3139,15 @@ var T = {
     searchTypeFeature: 'Функция',
     searchTypeInjury: 'Травма',
     searchTypeTopic: 'Совет',
-    searchTypeCity: 'Город'
+    searchTypeCity: 'Город',
+    tocTitle: 'На этой странице',
+    tocRisk: 'Где я могу травмироваться',
+    tocWarmup: 'Разминка',
+    tocTraining: 'Дневник тренировок',
+    tocGear: 'Экипировка и обувь',
+    tocWeather: 'Погода сегодня',
+    tocKnowledge: 'Советы о здоровье',
+    tocBack: '↑ К содержанию'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -3616,7 +3660,15 @@ var T = {
     searchTypeFeature: 'ميزة',
     searchTypeInjury: 'إصابة',
     searchTypeTopic: 'نصيحة صحية',
-    searchTypeCity: 'مدينة'
+    searchTypeCity: 'مدينة',
+    tocTitle: 'في هذه الصفحة',
+    tocRisk: 'أين قد أُصاب',
+    tocWarmup: 'الإحماء',
+    tocTraining: 'سجل التدريب',
+    tocGear: 'المعدات والأحذية',
+    tocWeather: 'طقس اليوم',
+    tocKnowledge: 'نصائح صحية',
+    tocBack: '↑ العودة إلى المحتويات'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -4126,7 +4178,15 @@ var T = {
     searchTypeFeature: '功能',
     searchTypeInjury: '伤情',
     searchTypeTopic: '知识',
-    searchTypeCity: '城市'
+    searchTypeCity: '城市',
+    tocTitle: '本页目录',
+    tocRisk: '测测容易伤在哪',
+    tocWarmup: '跟着热身',
+    tocTraining: '训练记录',
+    tocGear: '装备和鞋',
+    tocWeather: '今天的天气',
+    tocKnowledge: '运动知识',
+    tocBack: '↑ 回到目录'
   }
 };
 
@@ -4206,6 +4266,11 @@ function renderKnowledge() {
   KNOWLEDGE.forEach(function (part) {
     var section = document.createElement('section');
     section.className = 'card learn-part';
+    var back = section.appendChild(document.createElement('button'));
+    back.type = 'button';
+    back.className = 'link-btn toc-back';
+    back.dataset.tocBack = '';
+    back.textContent = t('tocBack');
     var heading = document.createElement('h2');
     heading.textContent = L(part.title);
     section.appendChild(heading);
@@ -5480,6 +5545,8 @@ function renderAll() {
   renderDoctorVisit();
   renderTour();
   renderSearch();
+  renderLearnToc();
+  updateHeaderHeight();
   renderGroupChat();
   renderFriends();
   renderCategories();
@@ -6374,13 +6441,14 @@ function setSearchPanelOpen(open) {
   if (open) $('searchInput').focus();
 }
 
-// Briefly outlines what a result opened, so the eye finds it.
-function flashSearchTarget(element) {
+// Scrolls to a section and briefly outlines it, so the eye finds it. Used
+// by search results and the contents list on the health page.
+function flashSection(element) {
   if (!element) return;
   element.scrollIntoView({behavior: 'smooth', block: 'start'});
-  element.classList.remove('search-flash');
+  element.classList.remove('flash-outline');
   void element.offsetWidth;
-  element.classList.add('search-flash');
+  element.classList.add('flash-outline');
 }
 
 function openSearchResult(entry) {
@@ -6392,22 +6460,22 @@ function openSearchResult(entry) {
   setTimeout(function () {
     if (entry.type === 'feature') {
       var anchor = entry.anchor && $(entry.anchor);
-      if (anchor) flashSearchTarget(anchor.closest('section') || anchor);
+      if (anchor) flashSection(anchor.closest('section') || anchor);
     } else if (entry.type === 'injury') {
       var injury = findInjury(entry.injury);
       pickCategory(CATEGORIES.filter(function (category) { return category.injuries.indexOf(injury) >= 0; })[0]);
       pickInjury(injury);
-      flashSearchTarget($('questionsCard'));
+      flashSection($('questionsCard'));
     } else if (entry.type === 'topic') {
       var details = $('learnParts').querySelector('details[data-key="' + entry.topic + '"]');
       details.open = true;
-      flashSearchTarget(details);
+      flashSection(details);
     } else if (entry.type === 'city') {
       var city = CITY_HOSPITALS.filter(function (c) { return c.id === entry.city; })[0];
       $('cityInput').value = city.name[lang] || city.name.en;
       citySearchText = $('cityInput').value;
       renderCityResult();
-      flashSearchTarget($('cityResult').closest('section'));
+      flashSection($('cityResult').closest('section'));
     }
   }, 60);
 }
@@ -6445,6 +6513,39 @@ document.addEventListener('keydown', function (e) {
     $('searchBtn').focus();
   }
 });
+
+// ---- Contents list on the health page ----
+// Each button scrolls to one card; "Back to contents" on each card returns.
+var LEARN_TOC = [['riskCard', 'tocRisk'], ['warmupCard', 'tocWarmup'], ['trainingCard', 'tocTraining'],
+  ['gearCard', 'tocGear'], ['weatherCard', 'tocWeather'], ['learnParts', 'tocKnowledge']];
+
+function renderLearnToc() {
+  $('learnTocTitle').textContent = t('tocTitle');
+  var list = $('learnTocList');
+  list.innerHTML = '';
+  LEARN_TOC.forEach(function (pair) {
+    var button = list.appendChild(document.createElement('button'));
+    button.type = 'button';
+    button.textContent = t(pair[1]);
+    button.addEventListener('click', function () {
+      var target = $(pair[0]);
+      flashSection(pair[0] === 'learnParts' ? target.firstElementChild : target);
+    });
+  });
+  document.querySelectorAll('#view-learn [data-toc-back]').forEach(function (button) { button.textContent = t('tocBack'); });
+}
+
+$('view-learn').addEventListener('click', function (e) {
+  if (!e.target.matches('[data-toc-back]')) return;
+  $('learnToc').scrollIntoView({behavior: 'smooth', block: 'start'});
+  $('learnTocList').firstElementChild.focus({preventScroll: true});
+});
+
+// The header stays at the top, so scrolling to a section leaves room for it.
+function updateHeaderHeight() {
+  document.documentElement.style.setProperty('--header-height', document.querySelector('.site-header').offsetHeight + 'px');
+}
+window.addEventListener('resize', updateHeaderHeight);
 
 // ---- Return to sport check ----
 // Answers are kept while the page is open, so switching language keeps them.
