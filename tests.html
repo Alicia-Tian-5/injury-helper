@@ -20,6 +20,7 @@ body{margin:0;padding:16px;background:#fff;color:#1d2330;font:15px/1.5 -apple-sy
 <script src="return-to-sport.js"></script>
 <script src="risk-check.js"></script>
 <script src="warmup.js"></script>
+<script src="training-load.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -397,6 +398,34 @@ test('warm-up: a paused timer does not count down, and skip keeps it paused', fu
   equal(warmupTogglePause(timer).paused, false);
   equal(warmupClock(90), '1:30');
   equal(warmupClock(45), '0:45');
+});
+test('training log: a big week after two steady weeks is a jump; removing it takes the warning away', function () {
+  var today = '2026-11-22';
+  var old = {id: 'a', date: '2026-11-08', minutes: 60, effort: 5, createdAt: 1};
+  var big = {id: 'b', date: today, minutes: 120, effort: 8, createdAt: 2};
+  var result = trainingLoadResult([old, big], today);
+  equal(result.status, 'jump');
+  equal(result.thisWeek, 960);
+  equal(result.average, 150);
+  equal(trainingLoadResult([old], today).status, 'steady');
+});
+test('training log: under two weeks of records is too soon; up to 30% more is steady', function () {
+  var today = '2026-11-22';
+  equal(trainingLoadResult([], today).status, 'empty');
+  equal(trainingLoadResult([{id: 'a', date: '2026-11-15', minutes: 60, effort: 5, createdAt: 1}], today).status, 'tooSoon');
+  var weeks = ['2026-10-25', '2026-11-01', '2026-11-08', '2026-11-15'].map(function (date, i) { return {id: 'w' + i, date: date, minutes: 100, effort: 5, createdAt: i}; });
+  var steady = trainingLoadResult(weeks.concat([{id: 'n', date: today, minutes: 130, effort: 5, createdAt: 9}]), today);
+  equal(steady.status, 'steady');
+  equal(steady.percent, 30);
+  equal(trainingLoadResult(weeks.concat([{id: 'n', date: today, minutes: 140, effort: 5, createdAt: 9}]), today).status, 'jump');
+});
+test('training log: bad dates, minutes and effort are caught', function () {
+  var today = '2026-11-22';
+  equal(trainingEntryProblems(today, '60', '5', today).length, 0);
+  equal(trainingEntryProblems('2026-11-23', '60', '5', today).join(','), 'date');
+  equal(trainingEntryProblems('', '0', '11', today).join(','), 'date,minutes,effort');
+  equal(trainingEntryProblems(today, '601', '', today).join(','), 'minutes,effort');
+  equal(trainingEntryProblems(today, '1.5', '5', today).join(','), 'minutes');
 });
 test('return to sport: any "no" means not yet, with what to work on', function () {
   var answers = {walk: 'yes', swelling: 'yes', motion: 'yes', balance: 'no', hop: 'yes', cutting: 'yes'};

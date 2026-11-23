@@ -240,6 +240,11 @@ h1 a{color:var(--acc)}
 .warmup-buttons .primary{width:auto;flex:1 1 140px}
 .warmup-buttons .secondary{flex:1 1 100px;min-height:48px}
 #warmupList{text-align:start}
+.training{margin-bottom:16px}
+.training-list{list-style:none;margin:0;padding:0}
+.training-list li{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding:8px 0}
+.training-list .secondary{padding:6px 14px;font-size:15px}
+.training-jump{color:var(--red);font-weight:600}
 .trend{margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .trend svg{display:block;width:100%;height:auto}
 .trend .grid{stroke:var(--line);stroke-width:1}
@@ -710,6 +715,25 @@ h1 a{text-decoration:none}
       <button type="button" class="secondary" id="warmupAgain"></button>
     </div>
   </section>
+  <section class="card training" id="trainingCard">
+    <h2 id="trainingTitle"></h2>
+    <p class="muted" id="trainingIntro"></p>
+    <form id="trainingForm" novalidate>
+      <div class="plan-dates">
+        <label class="field"><span id="trainingDateLabel"></span><input id="trainingDate" type="date"></label>
+        <label class="field"><span id="trainingMinutesLabel"></span><input id="trainingMinutes" type="number" inputmode="numeric" min="1" max="600"></label>
+      </div>
+      <label class="field"><span id="trainingEffortLabel"></span><select id="trainingEffort"></select></label>
+      <button type="submit" class="primary" id="trainingSave"></button>
+      <p class="error" id="trainingError" role="alert" hidden></p>
+    </form>
+    <p class="success" id="trainingSaved" role="status" hidden></p>
+    <div class="rts-result" id="trainingResult" aria-live="polite"></div>
+    <h3 id="trainingListTitle"></h3>
+    <p class="muted" id="trainingEmpty"></p>
+    <ul class="training-list" id="trainingList"></ul>
+    <p class="muted rts-note" id="trainingNote"></p>
+  </section>
   <div class="learn-parts" id="learnParts"></div>
 </div>
 
@@ -881,6 +905,7 @@ h1 a{text-decoration:none}
 <script src="return-to-sport.js"></script>
 <script src="risk-check.js"></script>
 <script src="warmup.js"></script>
+<script src="training-load.js"></script>
 <script src="report.js"></script>
 <script src="backup.js"></script>
 <script src="group-chat.js"></script>
@@ -1292,7 +1317,34 @@ var T = {
     warmupStop: 'Stop',
     warmupDoneTitle: 'Warm-up done!',
     warmupDoneText: 'Your body is ready. Start your sport gently for the first few minutes, and stop if anything hurts.',
-    warmupAgain: 'Back to the start'
+    warmupAgain: 'Back to the start',
+    trainingTitle: 'Training log',
+    trainingIntro: 'Write down each session. If this week\'s training jumps well above your usual weeks, you\'ll get a warning, because sudden jumps are a common cause of injury.',
+    trainingDateLabel: 'Date',
+    trainingMinutesLabel: 'Minutes',
+    trainingEffortLabel: 'How hard was it?',
+    trainingEffortPick: 'Choose 1–10',
+    trainingEffort1: 'very easy',
+    trainingEffort5: 'quite tiring',
+    trainingEffort10: 'as hard as I can go',
+    trainingSave: 'Save',
+    trainingSavedMsg: 'Saved.',
+    trainingBad_date: 'Choose a date that is not in the future.',
+    trainingBad_minutes: 'Enter whole minutes from 1 to 600.',
+    trainingBad_effort: 'Choose how hard it was, from 1 to 10.',
+    trainingBad_storage: 'The session could not be saved. Your browser may be blocking storage (for example in a private window).',
+    trainingThisWeek: 'This week (last 7 days): {0}.',
+    trainingAverage: 'Usual week before: {0}.',
+    trainingTooSoon: 'Keep logging for a couple of weeks, then this week can be compared with your usual weeks.',
+    trainingJump: 'This week is {0}% above your usual week. That is a big jump.',
+    trainingJumpFromZero: 'You are training again after a quiet spell. That is a big jump.',
+    trainingJumpTip: 'Next week, train a little less or more gently, and add no more than about 10% a week after that.',
+    trainingSteady: 'Your training is going up steadily. Good.',
+    trainingLighter: 'This week is lighter than usual. That is fine for a rest week; build back up slowly.',
+    trainingListTitle: 'Recent sessions',
+    trainingEmpty: 'No sessions yet.',
+    trainingEntry: '{0} · {1} min · effort {2}/10 · load {3}',
+    trainingNote: 'Load = minutes × how hard (1–10). Saved on this device only.'
   },
   // Spanish: written by Claude, not yet checked by a Spanish speaker.
   es: {
@@ -1698,7 +1750,34 @@ var T = {
     warmupStop: 'Parar',
     warmupDoneTitle: '¡Calentamiento hecho!',
     warmupDoneText: 'Tu cuerpo está listo. Empieza tu deporte con suavidad los primeros minutos y para si algo duele.',
-    warmupAgain: 'Volver al inicio'
+    warmupAgain: 'Volver al inicio',
+    trainingTitle: 'Registro de entrenamiento',
+    trainingIntro: 'Apunta cada sesión. Si esta semana entrenas mucho más que en tus semanas normales, verás un aviso, porque los aumentos bruscos son una causa común de lesiones.',
+    trainingDateLabel: 'Fecha',
+    trainingMinutesLabel: 'Minutos',
+    trainingEffortLabel: '¿Qué tan duro fue?',
+    trainingEffortPick: 'Elige de 1 a 10',
+    trainingEffort1: 'muy fácil',
+    trainingEffort5: 'bastante cansado',
+    trainingEffort10: 'al máximo',
+    trainingSave: 'Guardar',
+    trainingSavedMsg: 'Guardado.',
+    trainingBad_date: 'Elige una fecha que no sea futura.',
+    trainingBad_minutes: 'Escribe minutos enteros de 1 a 600.',
+    trainingBad_effort: 'Elige qué tan duro fue, de 1 a 10.',
+    trainingBad_storage: 'No se pudo guardar la sesión. Puede que tu navegador bloquee el almacenamiento (por ejemplo, en una ventana privada).',
+    trainingThisWeek: 'Esta semana (últimos 7 días): {0}.',
+    trainingAverage: 'Semana normal anterior: {0}.',
+    trainingTooSoon: 'Sigue apuntando un par de semanas y luego podrás comparar esta semana con tus semanas normales.',
+    trainingJump: 'Esta semana está un {0}% por encima de tu semana normal. Es un aumento grande.',
+    trainingJumpFromZero: 'Vuelves a entrenar después de una temporada tranquila. Es un aumento grande.',
+    trainingJumpTip: 'La próxima semana entrena un poco menos o más suave, y después no subas más de un 10% por semana.',
+    trainingSteady: 'Tu entrenamiento sube de forma estable. Bien.',
+    trainingLighter: 'Esta semana es más ligera de lo normal. Está bien si es una semana de descanso; vuelve a subir poco a poco.',
+    trainingListTitle: 'Sesiones recientes',
+    trainingEmpty: 'Todavía no hay sesiones.',
+    trainingEntry: '{0} · {1} min · esfuerzo {2}/10 · carga {3}',
+    trainingNote: 'Carga = minutos × dureza (1–10). Solo se guarda en este dispositivo.'
   },
   // French: written by Claude, not yet checked by a French speaker.
   fr: {
@@ -2104,7 +2183,34 @@ var T = {
     warmupStop: 'Arrêter',
     warmupDoneTitle: 'Échauffement terminé !',
     warmupDoneText: 'Ton corps est prêt. Reprends ton sport en douceur les premières minutes, et arrête si quelque chose fait mal.',
-    warmupAgain: 'Revenir au début'
+    warmupAgain: 'Revenir au début',
+    trainingTitle: 'Carnet d’entraînement',
+    trainingIntro: 'Note chaque séance. Si cette semaine dépasse nettement tes semaines habituelles, tu verras une alerte, car les hausses brusques sont une cause fréquente de blessure.',
+    trainingDateLabel: 'Date',
+    trainingMinutesLabel: 'Minutes',
+    trainingEffortLabel: 'C’était dur comment ?',
+    trainingEffortPick: 'Choisis de 1 à 10',
+    trainingEffort1: 'très facile',
+    trainingEffort5: 'assez fatigant',
+    trainingEffort10: 'à fond',
+    trainingSave: 'Enregistrer',
+    trainingSavedMsg: 'Enregistré.',
+    trainingBad_date: 'Choisis une date qui n’est pas dans le futur.',
+    trainingBad_minutes: 'Indique des minutes entières de 1 à 600.',
+    trainingBad_effort: 'Choisis la difficulté, de 1 à 10.',
+    trainingBad_storage: 'La séance n’a pas pu être enregistrée. Ton navigateur bloque peut-être le stockage (par exemple en navigation privée).',
+    trainingThisWeek: 'Cette semaine (7 derniers jours) : {0}.',
+    trainingAverage: 'Semaine habituelle avant : {0}.',
+    trainingTooSoon: 'Continue à noter pendant deux semaines, puis cette semaine pourra être comparée à tes semaines habituelles.',
+    trainingJump: 'Cette semaine est {0} % au-dessus de ta semaine habituelle. C’est une forte hausse.',
+    trainingJumpFromZero: 'Tu reprends après une période calme. C’est une forte hausse.',
+    trainingJumpTip: 'La semaine prochaine, entraîne-toi un peu moins ou plus doucement, puis n’ajoute pas plus d’environ 10 % par semaine.',
+    trainingSteady: 'Ton entraînement augmente régulièrement. C’est bien.',
+    trainingLighter: 'Cette semaine est plus légère que d’habitude. C’est bien pour une semaine de repos ; remonte doucement ensuite.',
+    trainingListTitle: 'Séances récentes',
+    trainingEmpty: 'Aucune séance pour l’instant.',
+    trainingEntry: '{0} · {1} min · effort {2}/10 · charge {3}',
+    trainingNote: 'Charge = minutes × difficulté (1–10). Enregistré sur cet appareil seulement.'
   },
   // Russian: written by Claude, not yet checked by a Russian speaker.
   ru: {
@@ -2510,7 +2616,34 @@ var T = {
     warmupStop: 'Остановить',
     warmupDoneTitle: 'Разминка закончена!',
     warmupDoneText: 'Тело готово. Первые минуты занимайся спокойно и остановись, если что-то болит.',
-    warmupAgain: 'В начало'
+    warmupAgain: 'В начало',
+    trainingTitle: 'Дневник тренировок',
+    trainingIntro: 'Записывай каждую тренировку. Если на этой неделе нагрузка намного выше обычной, ты увидишь предупреждение: резкий рост нагрузки — частая причина травм.',
+    trainingDateLabel: 'Дата',
+    trainingMinutesLabel: 'Минуты',
+    trainingEffortLabel: 'Насколько было тяжело?',
+    trainingEffortPick: 'Выбери от 1 до 10',
+    trainingEffort1: 'очень легко',
+    trainingEffort5: 'довольно тяжело',
+    trainingEffort10: 'на пределе',
+    trainingSave: 'Сохранить',
+    trainingSavedMsg: 'Сохранено.',
+    trainingBad_date: 'Выбери дату не позже сегодняшней.',
+    trainingBad_minutes: 'Введи целое число минут от 1 до 600.',
+    trainingBad_effort: 'Выбери, насколько было тяжело, от 1 до 10.',
+    trainingBad_storage: 'Не удалось сохранить тренировку. Возможно, браузер блокирует хранилище (например, в приватном окне).',
+    trainingThisWeek: 'Эта неделя (последние 7 дней): {0}.',
+    trainingAverage: 'Обычная неделя до этого: {0}.',
+    trainingTooSoon: 'Записывай ещё пару недель, и тогда эту неделю можно будет сравнить с обычными.',
+    trainingJump: 'Эта неделя на {0}% выше обычной. Это резкий рост.',
+    trainingJumpFromZero: 'Ты снова тренируешься после перерыва. Это резкий рост.',
+    trainingJumpTip: 'На следующей неделе тренируйся чуть меньше или легче, а потом добавляй не больше 10% в неделю.',
+    trainingSteady: 'Нагрузка растёт плавно. Хорошо.',
+    trainingLighter: 'На этой неделе нагрузка ниже обычной. Для недели отдыха это нормально; возвращайся к нагрузке постепенно.',
+    trainingListTitle: 'Последние тренировки',
+    trainingEmpty: 'Тренировок пока нет.',
+    trainingEntry: '{0} · {1} мин · тяжесть {2}/10 · нагрузка {3}',
+    trainingNote: 'Нагрузка = минуты × тяжесть (1–10). Хранится только на этом устройстве.'
   },
   // Arabic: written by Claude, not yet checked by an Arabic speaker. The page
   // reads right to left in Arabic (see isRightToLeft).
@@ -2917,7 +3050,34 @@ var T = {
     warmupStop: 'إنهاء',
     warmupDoneTitle: 'انتهى الإحماء!',
     warmupDoneText: 'جسمك جاهز. ابدأ رياضتك بهدوء في الدقائق الأولى، وتوقف إذا شعرت بأي ألم.',
-    warmupAgain: 'العودة إلى البداية'
+    warmupAgain: 'العودة إلى البداية',
+    trainingTitle: 'سجل التدريب',
+    trainingIntro: 'سجّل كل حصة تدريب. إذا زاد تدريب هذا الأسبوع كثيرًا عن أسابيعك المعتادة فسترى تنبيهًا، لأن الزيادة المفاجئة سبب شائع للإصابة.',
+    trainingDateLabel: 'التاريخ',
+    trainingMinutesLabel: 'الدقائق',
+    trainingEffortLabel: 'ما مدى صعوبتها؟',
+    trainingEffortPick: 'اختر من 1 إلى 10',
+    trainingEffort1: 'سهلة جدًا',
+    trainingEffort5: 'متعبة إلى حد ما',
+    trainingEffort10: 'أقصى جهدي',
+    trainingSave: 'حفظ',
+    trainingSavedMsg: 'تم الحفظ.',
+    trainingBad_date: 'اختر تاريخًا ليس في المستقبل.',
+    trainingBad_minutes: 'أدخل عدد دقائق صحيحًا من 1 إلى 600.',
+    trainingBad_effort: 'اختر مدى الصعوبة من 1 إلى 10.',
+    trainingBad_storage: 'تعذّر حفظ الحصة. ربما يمنع متصفحك التخزين (مثلًا في نافذة خاصة).',
+    trainingThisWeek: 'هذا الأسبوع (آخر 7 أيام): {0}.',
+    trainingAverage: 'الأسبوع المعتاد قبله: {0}.',
+    trainingTooSoon: 'واصل التسجيل لأسبوعين تقريبًا، ثم يمكن مقارنة هذا الأسبوع بأسابيعك المعتادة.',
+    trainingJump: 'هذا الأسبوع أعلى من أسبوعك المعتاد بنسبة {0}%. هذه زيادة كبيرة.',
+    trainingJumpFromZero: 'عدت إلى التدريب بعد فترة هادئة. هذه زيادة كبيرة.',
+    trainingJumpTip: 'في الأسبوع القادم تدرّب أقل قليلًا أو بلطف أكثر، وبعد ذلك لا تزد أكثر من نحو 10% أسبوعيًا.',
+    trainingSteady: 'تدريبك يزداد بثبات. أحسنت.',
+    trainingLighter: 'تدريب هذا الأسبوع أخف من المعتاد. لا بأس في أسبوع راحة؛ عُد إلى مستواك تدريجيًا.',
+    trainingListTitle: 'الحصص الأخيرة',
+    trainingEmpty: 'لا توجد حصص بعد.',
+    trainingEntry: '{0} · {1} دقيقة · الجهد {2}/10 · الحمل {3}',
+    trainingNote: 'الحمل = الدقائق × الصعوبة (1–10). يُحفظ على هذا الجهاز فقط.'
   },
   zh: {
     title: '运动损伤急救助手',
@@ -3321,7 +3481,34 @@ var T = {
     warmupStop: '结束',
     warmupDoneTitle: '热身完成！',
     warmupDoneText: '身体已经热起来了。刚开始运动的几分钟慢一点，哪里疼就停下来。',
-    warmupAgain: '回到开始'
+    warmupAgain: '回到开始',
+    trainingTitle: '训练记录',
+    trainingIntro: '每次训练记一笔。如果这周的训练量比平时高出一大截，这里会提醒你，因为训练量突然加大是常见的受伤原因。',
+    trainingDateLabel: '日期',
+    trainingMinutesLabel: '练了多少分钟',
+    trainingEffortLabel: '累不累？',
+    trainingEffortPick: '选 1–10',
+    trainingEffort1: '很轻松',
+    trainingEffort5: '挺累的',
+    trainingEffort10: '累到极限',
+    trainingSave: '保存',
+    trainingSavedMsg: '已保存。',
+    trainingBad_date: '请选一个不晚于今天的日期。',
+    trainingBad_minutes: '请填 1 到 600 之间的整数分钟。',
+    trainingBad_effort: '请选累的程度，1 到 10。',
+    trainingBad_storage: '没能保存。你的浏览器可能禁止了存储（比如无痕窗口）。',
+    trainingThisWeek: '本周（最近 7 天）：{0}。',
+    trainingAverage: '之前平均每周：{0}。',
+    trainingTooSoon: '再记一两周，就能和你平时的训练量比较了。',
+    trainingJump: '这周比平时高出 {0}%，加得有点猛。',
+    trainingJumpFromZero: '你刚从一段休息后恢复训练，这周加得有点猛。',
+    trainingJumpTip: '下周少练一点或练得轻一点，之后每周增加不要超过 10% 左右。',
+    trainingSteady: '训练量增加得很稳，继续保持。',
+    trainingLighter: '这周比平时练得少。休息周没问题，之后慢慢加回来。',
+    trainingListTitle: '最近的训练',
+    trainingEmpty: '还没有训练记录。',
+    trainingEntry: '{0} · {1} 分钟 · 累 {2}/10 · 训练量 {3}',
+    trainingNote: '训练量 = 分钟 × 累的程度（1–10）。只保存在这台设备上。'
   }
 };
 
@@ -4669,6 +4856,7 @@ function renderAll() {
   renderReturnToSport();
   renderRiskCheck();
   renderWarmup();
+  renderTraining();
   renderGroupChat();
   renderFriends();
   renderCategories();
@@ -4872,6 +5060,108 @@ function warmupBackToStart() {
 }
 $('warmupStop').addEventListener('click', warmupBackToStart);
 $('warmupAgain').addEventListener('click', warmupBackToStart);
+
+// ---- Training load log ----
+var training = {entries: loadTrainingEntries(), problems: [], saved: false};
+
+function renderTraining() {
+  ['trainingTitle', 'trainingIntro', 'trainingDateLabel', 'trainingMinutesLabel', 'trainingEffortLabel', 'trainingSave', 'trainingListTitle', 'trainingEmpty', 'trainingNote']
+    .forEach(function (key) { $(key).textContent = t(key); });
+  var today = logDateString(new Date());
+  $('trainingDate').max = today;
+  if (!$('trainingDate').value) $('trainingDate').value = today;
+  var effort = $('trainingEffort');
+  var chosen = effort.value;
+  effort.innerHTML = '';
+  var first = document.createElement('option');
+  first.value = '';
+  first.textContent = t('trainingEffortPick');
+  effort.appendChild(first);
+  for (var level = 1; level <= 10; level++) {
+    var option = document.createElement('option');
+    option.value = String(level);
+    var word = {1: 'trainingEffort1', 5: 'trainingEffort5', 10: 'trainingEffort10'}[level];
+    option.textContent = word ? level + ' · ' + t(word) : String(level);
+    effort.appendChild(option);
+  }
+  effort.value = chosen;
+  $('trainingError').hidden = training.problems.length === 0;
+  $('trainingError').textContent = training.problems.map(function (field) { return t('trainingBad_' + field); }).join(' ');
+  $('trainingSaved').hidden = !training.saved;
+  $('trainingSaved').textContent = t('trainingSavedMsg');
+
+  var box = $('trainingResult');
+  box.innerHTML = '';
+  var result = trainingLoadResult(training.entries, today);
+  box.hidden = result.status === 'empty';
+  function add(text, className) {
+    var p = document.createElement('p');
+    p.textContent = text;
+    if (className) p.className = className;
+    box.appendChild(p);
+  }
+  if (result.status === 'tooSoon') {
+    add(t('trainingThisWeek').replace('{0}', result.thisWeek));
+    add(t('trainingTooSoon'), 'muted');
+  } else if (result.status === 'jump' || result.status === 'steady') {
+    add(t('trainingThisWeek').replace('{0}', result.thisWeek) + ' ' + t('trainingAverage').replace('{0}', result.average));
+    if (result.status === 'jump') {
+      add(result.percent === null ? t('trainingJumpFromZero') : t('trainingJump').replace('{0}', result.percent), 'training-jump');
+      add(t('trainingJumpTip'));
+    } else {
+      add(t(result.thisWeek < result.average ? 'trainingLighter' : 'trainingSteady'));
+    }
+  }
+
+  var list = $('trainingList');
+  list.innerHTML = '';
+  var sorted = sortTrainingEntries(training.entries);
+  $('trainingEmpty').hidden = sorted.length > 0;
+  sorted.forEach(function (entry) {
+    var li = document.createElement('li');
+    var text = document.createElement('span');
+    text.textContent = t('trainingEntry').replace('{0}', entry.date).replace('{1}', entry.minutes).replace('{2}', entry.effort).replace('{3}', trainingLoad(entry));
+    var remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'secondary';
+    remove.textContent = t('logDelete');
+    remove.addEventListener('click', function () {
+      if (!confirm(t('logDeleteConfirm'))) return;
+      var kept = training.entries.filter(function (other) { return other.id !== entry.id; });
+      if (!saveTrainingEntries(kept)) return alert(t('logSaveFailed'));
+      training.entries = kept;
+      training.saved = false;
+      renderTraining();
+    });
+    li.appendChild(text);
+    li.appendChild(remove);
+    list.appendChild(li);
+  });
+}
+
+$('trainingForm').addEventListener('submit', function (event) {
+  event.preventDefault();
+  var today = logDateString(new Date());
+  var date = $('trainingDate').value;
+  var minutes = $('trainingMinutes').value.trim();
+  var effort = $('trainingEffort').value;
+  training.problems = trainingEntryProblems(date, minutes, effort, today);
+  training.saved = false;
+  if (training.problems.length === 0) {
+    var entry = {id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), date: date, minutes: Number(minutes), effort: Number(effort), createdAt: Date.now()};
+    var entries = training.entries.concat([entry]);
+    if (saveTrainingEntries(entries)) {
+      training.entries = entries;
+      training.saved = true;
+      $('trainingMinutes').value = '';
+      $('trainingEffort').value = '';
+    } else {
+      training.problems = ['storage'];
+    }
+  }
+  renderTraining();
+  $(training.saved ? 'trainingResult' : 'trainingError').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+});
 
 // ---- Return to sport check ----
 // Answers are kept while the page is open, so switching language keeps them.
